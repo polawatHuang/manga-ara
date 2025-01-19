@@ -20,13 +20,7 @@ const ChevronRightIcon = () => (
 );
 
 const cardData = [
-  { id: 1, title: "Card 1", image: "/images/manga-1.webp" },
-  { id: 2, title: "Card 2", image: "/images/manga-1.webp" },
-  { id: 3, title: "Card 3", image: "/images/manga-1.webp" },
-  { id: 4, title: "Card 4", image: "/images/manga-1.webp" },
-  { id: 5, title: "Card 5", image: "/images/manga-1.webp" },
-  { id: 6, title: "Card 6", image: "/images/manga-1.webp" },
-  { id: 7, title: "Card 7", image: "/images/manga-1.webp" },
+  { id: 1, title: "Tensei Kizoku no Isekai Boukenroku เกิดใหม่เป็นขุนนางไปผจญภัยในต่างโลก", image: "/images/tensei-kizoku-no-isekai-boukenroku-jichou-wo-shiranai-kamigami-no-shito/bg.webp" },
 ];
 
 export default function CardSliderComponent() {
