@@ -6,6 +6,7 @@ import { useRef, useState, useEffect } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 const ChevronLeftIcon = () => (
   <svg className="w-10 h-10 text-gray-700 hover:text-gray-900" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -69,8 +70,8 @@ export default function CardSliderComponent() {
       >
         {cardData.map((card) => (
           <SwiperSlide key={card.id}>
-            <Link className="shadow-lg rounded-sm overflow-hidden" href={"/"}>
-              <img src={card.image} alt={card.title} className="w-full h-52 object-cover" />
+            <Link className="shadow-lg overflow-hidden" href={"/"}>
+              <Image width={187} height={268} src={card.image} alt={card.title} className="h-full w-auto object-cover" loading="lazy" />
               <div className="py-4">
                 <h2 className="text-lg font-semibold text-white">{card.title}</h2>
               </div>
