@@ -79,14 +79,20 @@ export default function SlugPage({ params }) {
           <hr className="my-2" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <Link
-              href="/"
+              href={params.slug + "/1"}
               className="w-full bg-gray-800 hover:bg-gray-900 p-4 text-center hover:no-underline"
             >
               <span>ตอนแรก</span>
               <h4>ตอนที่ 1</h4>
             </Link>
             <Link
-              href="/"
+              href={
+                params.slug +
+                "/" +
+                mangas
+                  .filter((item) => item.slug.includes(params.slug))
+                  .map((item) => item.ep.length)
+              }
               className="w-full bg-gray-800 hover:bg-gray-900 p-4 text-center hover:no-underline"
             >
               <span>ตอนล่าสุด</span>
@@ -113,17 +119,22 @@ export default function SlugPage({ params }) {
               filteredEpisodes.map(({ episode, created_date }) => (
                 <Link
                   key={episode}
-                  href={"/"}
+                  href={params.slug + "/" + episode}
                   className="bg-blue-500 hover:bg-blue-600 hover:no-underline px-4 py-2 flex justify-between"
                 >
-                  <span className="text-white font-[600]">ตอนที่ {episode}</span>
+                  <span className="text-white font-[600]">
+                    ตอนที่ {episode}
+                  </span>
                   <span className="text-white opacity-50">
                     {dayjs(created_date).format("DD/MM/YYYY")}
                   </span>
                 </Link>
               ))
             ) : (
-              <p className="text-gray-500">ขออภัยค่ะ ไม่มีตอนที่ระบุดังกล่าว แต่สามารถคลิกที่รายชื่อตอนที่มีได้นะคะ</p>
+              <p className="text-gray-500">
+                ขออภัยค่ะ ไม่มีตอนที่ระบุดังกล่าว
+                แต่สามารถคลิกที่รายชื่อตอนที่มีได้นะคะ
+              </p>
             )}
           </div>
         </div>
