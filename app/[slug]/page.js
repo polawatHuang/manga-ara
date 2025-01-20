@@ -26,7 +26,7 @@ export default function SlugPage({ params }) {
         </div>
       </section>
       {/* Manga detail */}
-      <section className="md:px-[12%] mt-4 grid grid-cols-1 md:grid-cols-12">
+      <section className="px-4 md:px-[12%] mt-4 grid grid-cols-1 md:grid-cols-12">
         <img
           src={mangas
             .filter((item) => item.slug.includes(params.slug))
@@ -37,7 +37,7 @@ export default function SlugPage({ params }) {
           className="col-span-12 md:col-span-4 h-[350px] w-auto object-cover"
           loading="lazy"
         />
-        <div className="col-span-12 md:col-span-8">
+        <div className="col-span-12 md:col-span-8 mt-8">
           <h1>
             ชื่อเรื่อง:{" "}
             {mangas
