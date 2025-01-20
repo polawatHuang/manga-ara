@@ -91,7 +91,7 @@ export default function EpisodePage() {
           <p className="text-white flex items-center gap-4 mt-3">
             Tags:{" "}
             {manga.tag.map((tag) => (
-              <Link key={tag} className="px-4 py-1 bg-gray-700 hover:bg-gray-800 rounded" href={`/tags/${tag}`}>
+              <Link key={tag} className="px-4 py-1 bg-gray-700 hover:bg-gray-800" href={`/tags/${tag}`}>
                 {tag}
               </Link>
             ))}
