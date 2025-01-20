@@ -12,7 +12,7 @@ export default function SlugPage({ params }) {
   const filteredEpisodes = filterEpisodes(mangas[0].ep, searchTerm);
 
   return (
-    <div className="relative w-full min-h-screen md:p-8 pb-20 gap-16 sm:p-2">
+    <div className="relative w-full min-h-screen max-w-6xl mx-auto md:p-8 pb-20 gap-16 sm:p-2">
       {/* Advertise */}
       <section>
         <AdvertiseComponent />

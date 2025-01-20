@@ -6,7 +6,7 @@ import { FireIcon, HeartIcon } from "@heroicons/react/24/solid";
 
 export default function Home() {
   return (
-    <div className="relative w-full min-h-screen md:p-8 pb-20 gap-16 sm:p-2">
+    <div className="relative w-full min-h-screen max-w-6xl mx-auto md:p-8 pb-20 gap-16 sm:p-2">
       {/* Advertise */}
       <section>
         <AdvertiseComponent />

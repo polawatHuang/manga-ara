@@ -57,7 +57,7 @@ export default function EpisodePage() {
   }
 
   return (
-    <div className="relative w-full min-h-screen md:p-8 pb-20 gap-16 sm:p-2">
+    <div className="relative w-full min-h-screen max-w-6xl mx-auto md:p-8 pb-20 gap-16 sm:p-2">
       {/* Advertise */}
       <section>
         <AdvertiseComponent />
@@ -108,7 +108,7 @@ export default function EpisodePage() {
       {showScroll && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full shadow-lg transition-opacity duration-300"
+          className="fixed bottom-8 right-8 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4  rounded-full shadow-lg transition-opacity duration-300"
         >
           ↑ Top
         </button>
