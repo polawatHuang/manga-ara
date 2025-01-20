@@ -1,6 +1,7 @@
 import AdvertiseComponent from "@/components/AdvertiseComponent";
 import CardComponent from "@/components/CardComponent";
 import CardSliderComponent from "@/components/CardSliderComponent";
+import mangas from "@/database/mangas";
 import { FireIcon, HeartIcon } from "@heroicons/react/24/solid";
 
 export default function Home() {
@@ -16,7 +17,7 @@ export default function Home() {
           <FireIcon className="size-7 text-red-600" />
           10 อันดับมังงะยอดฮิต
         </h2>
-        <CardSliderComponent />
+        <CardSliderComponent mangaList={mangas}  />
       </section>
       {/* Favorite manga */}
       <section>
@@ -24,7 +25,7 @@ export default function Home() {
           <HeartIcon className="size-7 text-pink-600" />
           มังงะที่กดถูกใจ
         </h2>
-        <CardSliderComponent />
+        <CardSliderComponent mangaList={mangas} />
       </section>
       {/* New Manga */}
       <section className="w-full grid grid-cols-1 md:grid-cols-12 gap-4">
@@ -32,7 +33,7 @@ export default function Home() {
           <h3 className="flex items-center gap-2">มังงะอัพเดทใหม่</h3>
           <hr className="opacity-50 my-2" />
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
-            <CardComponent />
+            {mangas.map(manga=>{return(<CardComponent key={manga.id} manga={manga} />)})}
           </div>
         </div>
         <div className="col-span-2 bg-gray-700 px-4 py-5">

@@ -24,7 +24,7 @@ const cardData = [
   { id: 1, title: "Tensei Kizoku no Isekai Boukenroku เกิดใหม่เป็นขุนนางไปผจญภัยในต่างโลก", image: "/images/tensei-kizoku-no-isekai-boukenroku-jichou-wo-shiranai-kamigami-no-shito/bg.webp" },
 ];
 
-export default function CardSliderComponent() {
+export default function CardSliderComponent({mangaList}) {
   const swiperRef = useRef(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
@@ -68,12 +68,12 @@ export default function CardSliderComponent() {
         }}
         className="w-full"
       >
-        {cardData.map((card) => (
+        {mangaList.map((card) => (
           <SwiperSlide key={card.id}>
-            <Link className="shadow-lg overflow-hidden" href={"/"}>
-              <Image width={187} height={268} src={card.image} alt={card.title} className="h-full w-auto object-cover" loading="lazy" />
+            <Link className="overflow-hidden bg-yellow-500" href={"/"}>
+              <Image width={187} height={268} src={card.backgroundImage} alt={card.name} className="h-[350px] w-full object-cover" loading="lazy" />
               <div className="py-4">
-                <h2 className="text-lg font-semibold text-white">{card.title}</h2>
+                <h2 className="text-lg font-semibold text-white">{card.name}</h2>
               </div>
             </Link>
           </SwiperSlide>

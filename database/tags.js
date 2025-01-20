@@ -1,0 +1,20 @@
+const tags = [
+  {
+    id: 1,
+    name: "ต่อสู้",
+  },
+  {
+    id: 2,
+    name: "คอมมาดี้",
+  },
+  {
+    id: 3,
+    name: "ทำอาหาร",
+  },
+  {
+    id: 4,
+    name: "ผจญภัย",
+  },
+];
+
+export default tags;
