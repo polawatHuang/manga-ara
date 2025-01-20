@@ -16,11 +16,11 @@ const HeaderComponent = () => {
     <div className="relative w-full">
       <div className="flex text-white gap-4 justify-between lg:justify-start items-center relative w-full bg-gray-800 h-16 px-2 md:px-12 py-2">
         {/* Logo */}
-        <div className="text-[24px] font-[600]">
+        <div>
           {/* PC Logo */}
-          <span className="hidden md:block">MANGA <span className="text-pink-500">LOVER</span> <sup>[TH]</sup></span>
+          <Link href="/" className="hidden md:block hover:no-underline text-[24px] font-[600]">MANGA <span className="text-pink-500">LOVER</span> <sup>[TH]</sup></Link>
           {/* Mobile Logo */}
-          <span className="md:hidden">M<sup>TH</sup></span>
+          <Link href="/" className="md:hidden hover:no-underline text-[24px] font-[600]">M<sup>TH</sup></Link>
         </div>
         {/* Search bar */}
         <div>
