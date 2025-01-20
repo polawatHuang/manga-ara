@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { ArrowUturnLeftIcon } from "@heroicons/react/24/solid";
 
 export default function MangaReader({mangaImages}) {
   const [viewMode, setViewMode] = useState("full"); // "full" or "single"
@@ -16,6 +17,8 @@ export default function MangaReader({mangaImages}) {
     <div className="w-full p-4 bg-black text-white min-h-screen">
       {/* Top Menu */}
       <div className="flex justify-between items-center mb-4">
+        <ArrowUturnLeftIcon className="p-1 bg-gray-700 hover:bg-gray-800 size-7" />
+
         <span className="px-3 py-1 bg-gray-700 text-sm">ตอนที่ {params.ep}</span>
 
         {/* View Mode Dropdown */}
@@ -24,8 +27,8 @@ export default function MangaReader({mangaImages}) {
           onChange={(e) => setViewMode(e.target.value)}
           value={viewMode}
         >
-          <option value="full">Full Page</option>
-          <option value="single">Single Page</option>
+          <option value="full">อ่านแบบหน้ายาว</option>
+          <option value="single">อ่านแบบที่ละหน้า</option>
         </select>
 
         {/* Navigation Buttons (Only for Single Page Mode) */}
