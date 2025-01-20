@@ -40,9 +40,9 @@ const HeaderComponent = () => {
             {menubar.map((item) => {
               return (
                 <li key={item.id}>
-                  <Link className="hover:text-underline" href={item.href}>
+                  <div className="hover:text-underline cursor-pointer" onClick={()=>window.alert("ขออภัยค่ะ หน้าดังกล่าวยังไม่พร้อมใช้งานในขณะนี้")}>
                     {item.name}
-                  </Link>
+                  </div>
                 </li>
               );
             })}

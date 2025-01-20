@@ -13,7 +13,7 @@ const CardComponent = ({manga}) => {
         loading="lazy"
       />
       <div className="py-4">
-        <h2 className="text-lg font-semibold text-white">{manga.name}</h2>
+        <h2 className="text-lg font-semibold text-white text-ellipsis line-clamp-3">{manga.name}</h2>
       </div>
     </Link>
   );
