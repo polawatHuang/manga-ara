@@ -30,14 +30,14 @@ export default function Home() {
       {/* New Manga */}
       <section className="w-full grid grid-cols-1 md:grid-cols-12 gap-4">
         <div className="col-span-10 bg-gray-700 px-4 py-5">
-          <h3 className="flex items-center gap-2">มังงะอัพเดทใหม่</h3>
+          <h3 className="flex items-center gap-2 text-2xl font-[600]">มังงะอัพเดทใหม่</h3>
           <hr className="opacity-50 my-2" />
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mt-4">
             {mangas.map(manga=>{return(<CardComponent key={manga.id} manga={manga} />)})}
           </div>
         </div>
         <div className="col-span-2 bg-gray-700 px-4 py-5">
-            <h3 className="flex items-center gap-2">Tag ทั้งหมด</h3>
+            <h3 className="flex items-center gap-2 text-2xl font-[600]">Tag ทั้งหมด</h3>
             <hr className="opacity-50 my-2" />
         </div>
       </section>
