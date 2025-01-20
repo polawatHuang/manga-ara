@@ -16,11 +16,11 @@ export default function MangaReader({mangaImages}) {
     <div className="w-full p-4 bg-black text-white min-h-screen">
       {/* Top Menu */}
       <div className="flex justify-between items-center mb-4">
-        <span className="px-3 py-1 bg-gray-700 text-sm rounded">ตอนที่ {params.ep}</span>
+        <span className="px-3 py-1 bg-gray-700 text-sm">ตอนที่ {params.ep}</span>
 
         {/* View Mode Dropdown */}
         <select
-          className="px-3 py-1 bg-gray-800 text-white text-sm rounded cursor-pointer"
+          className="px-3 py-1 bg-gray-800 text-white text-sm cursor-pointer"
           onChange={(e) => setViewMode(e.target.value)}
           value={viewMode}
         >
@@ -31,10 +31,10 @@ export default function MangaReader({mangaImages}) {
         {/* Navigation Buttons (Only for Single Page Mode) */}
         {viewMode === "single" && (
           <div className="flex items-center gap-2">
-            <button className="px-3 py-1 bg-gray-700 rounded cursor-pointer">
+            <button className="px-3 py-1 bg-gray-700 cursor-pointer">
               Prev
             </button>
-            <button className="px-3 py-1 bg-gray-700 rounded cursor-not-allowed">
+            <button className="px-3 py-1 bg-gray-700 cursor-not-allowed">
               Next
             </button>
           </div>
