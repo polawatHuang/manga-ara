@@ -3,23 +3,45 @@
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/solid";
+import Link from "next/link";
+import mangas from "@/database/mangas"; // Import manga data
 
-export default function MangaReader({mangaImages}) {
+export default function MangaReader({ mangaImages }) {
   const [viewMode, setViewMode] = useState("full"); // "full" or "single"
-    const params = useParams();
+  const params = useParams();
+  const router = useRouter(); // ✅ Allows navigation on episode change
+
+  // Find the current manga using `slug`
+  const manga = mangas.find((item) => item.slug.includes(params.slug));
 
   return (
     <div className="w-full p-4 bg-black text-white min-h-screen">
       {/* Top Menu */}
       <div className="flex justify-between items-center mb-4">
-        <ArrowUturnLeftIcon className="p-1 bg-gray-700 hover:bg-gray-800 size-7" />
+        {/* Back Button */}
+        <Link href={"/" + params.slug}>
+          <ArrowUturnLeftIcon className="p-1 bg-gray-700 hover:bg-gray-800 size-7" />
+        </Link>
 
-        <span className="px-3 py-1 bg-gray-700 text-sm">ตอนที่ {params.ep}</span>
+        {/* ✅ Episode Selection Dropdown */}
+        <select
+          className="px-3 py-1 bg-gray-800 text-white text-sm cursor-pointer"
+          value={params.ep}
+          onChange={(e) => {
+            router.push(`/${params.slug}/${e.target.value}`);
+          }}
+        >
+          {manga?.ep.map((episode) => (
+            <option key={episode.episode} value={episode.episode}>
+              ตอนที่ {episode.episode}
+            </option>
+          ))}
+        </select>
 
         {/* View Mode Dropdown */}
         <select
