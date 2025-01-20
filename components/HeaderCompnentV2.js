@@ -26,10 +26,10 @@ const HeaderComponent = () => {
         <div>
           <form className="flex">
             <input
-              className="h-[40px] hover:bg-gray-600 md:min-w-[150px] rounded-l-sm bg-gray-500 px-3"
+              className="h-[40px] hover:bg-gray-600 md:min-w-[150px] bg-gray-500 px-3"
               placeholder="ค้นหาชื่อมังงะ ..."
             />
-            <button className="bg-blue-500 hover:bg-blue-600 rounded-r-sm py-1 px-2">
+            <button className="bg-blue-500 hover:bg-blue-600 py-1 px-2">
               <MagnifyingGlassIcon className="size-6 text-white" />
             </button>
           </form>
