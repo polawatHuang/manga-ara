@@ -71,7 +71,7 @@ export default function CardSliderComponent({mangaList}) {
         {mangaList.map((card) => (
           <SwiperSlide key={card.id}>
             <Link className="overflow-hidden bg-yellow-500" href={card.slug}>
-              <Image width={187} height={268} src={card.backgroundImage} alt={card.name} className="h-[350px] w-full object-cover" loading="lazy" />
+              <Image width={187} height={268} src={card.backgroundImage} alt={card.name} className="h-[300px] w-full object-cover" loading="lazy" />
               <div className="py-4">
                 <h2 className="text-lg font-semibold text-white text-ellipsis line-clamp-3">{card.name}</h2>
               </div>

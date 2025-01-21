@@ -9,7 +9,7 @@ const CardComponent = ({manga}) => {
         height={268}
         src={manga.backgroundImage}
         alt={manga.name}
-        className="h-[350px] w-full object-cover"
+        className="h-[300px] w-full object-cover"
         loading="lazy"
       />
       <div className="py-4">
