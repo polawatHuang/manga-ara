@@ -20,6 +20,24 @@ const mangas = [
     created_date: "2025-01-01",
     updated_date: "2025-01-02",
   },
+  {
+    id: 2,
+    name: "Guild no Uketsukejou desu ga ถ้าสาวกิลด์จะเหนื่อยเบอร์นี้ ขอไปขยี้บอสเองได้มั้ยคะ",
+    description:
+      "Uketsukejou เป็นเรื่องราวของสาวกิลด์ที่ต้องรับมือกับเหล่าผู้ผจญภัยสุดป่วน งานล้นมือจนแทบจะไม่มีเวลาพักผ่อนเลยทีเดียว แม้จะเป็นแค่พนักงานต้อนรับ แต่ก็ต้องรับผิดชอบเรื่องมากมาย ตั้งแต่จัดการตั๋วภารกิจ จัดการอุปกรณ์ จนถึงต้องไปเคลียร์ปัญหาที่ผู้ผจญภัยสร้างขึ้นเองซะอีก! เรียกได้ว่าเป็นการ์ตูนที่สะท้อนให้เห็นถึงงานเบื้องหลังของกิลด์ที่หลายคนอาจมองข้ามไปค่ะ",
+    ep: [
+      { episode: "1", totalPage: 41, created_date: "2025-01-21" },
+    ],
+    tag: tags
+      .filter((item) => ["ผจญภัย", "ต่อสู้"].includes(item.name))
+      .map((item) => item.name),
+    view: 100,
+    backgroundImage:
+      "/images/guild-no-uketsukejou-desu-ga/bg.webp",
+    slug: "/guild-no-uketsukejou-desu-ga",
+    created_date: "2025-01-21",
+    updated_date: "2025-01-21",
+  },
 ];
 
 export default mangas;
