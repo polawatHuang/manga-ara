@@ -18,9 +18,9 @@ const HeaderComponent = () => {
         {/* Logo */}
         <div>
           {/* PC Logo */}
-          <Link href="/" className="hidden md:block hover:no-underline text-[24px] font-[600]">MANGA <span className="text-pink-500">LOVER</span> <sup>[TH]</sup></Link>
+          <Link href="/" className="hidden md:block hover:no-underline text-[24px] font-[600]">MANGA <span className="text-pink-500">ARA</span></Link>
           {/* Mobile Logo */}
-          <Link href="/" className="md:hidden hover:no-underline text-[24px] font-[600]">M<sup>TH</sup></Link>
+          <Link href="/" className="md:hidden hover:no-underline text-[24px] font-[600]">M <span className="text-pink-500">R</span></Link>
         </div>
         {/* Search bar */}
         <div>
