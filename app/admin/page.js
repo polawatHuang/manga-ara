@@ -140,19 +140,22 @@ export default function AdminPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           {mangas.map((manga, index) => (
             <div key={manga.id} className="bg-gray-800 p-4 rounded shadow-lg">
+                <span>ชื่อเรื่อง:</span>
               <input
                 type="text"
                 value={manga.name}
                 onChange={(e) => handleEditManga(index, "name", e.target.value)}
                 className="w-full bg-gray-700 px-3 py-2 mb-2"
               />
+              <span>เรื่องย่อ:</span>
               <textarea
                 value={manga.description}
                 onChange={(e) =>
                   handleEditManga(index, "description", e.target.value)
                 }
-                className="w-full bg-gray-700 px-3 py-2 mb-2"
+                className="w-full min-h-[10vw] bg-gray-700 px-3 py-2 mb-2"
               />
+              <span>รูปปก:</span>
               <input
                 type="text"
                 value={manga.backgroundImage}
@@ -191,7 +194,7 @@ export default function AdminPage() {
             onChange={(e) =>
               setNewEpisode({ ...newEpisode, episode: e.target.value })
             }
-            className="bg-gray-700 px-3 py-2 mr-2"
+            className="bg-gray-700 px-3 py-2 mr-2 mb-2"
           />
           <input
             type="text"
@@ -229,6 +232,7 @@ export default function AdminPage() {
         <input
           type="text"
           value={newTag}
+          placeholder="ใส่ชื่อ Tag ใหม่ที่ต้องการ"
           onChange={(e) => setNewTag(e.target.value)}
           className="bg-gray-700 px-3 py-2"
         />

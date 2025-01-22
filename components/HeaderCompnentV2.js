@@ -55,7 +55,7 @@ const HeaderComponent = () => {
         <div className="relative">
           <form className="flex">
             <input
-              className="h-[40px] hover:bg-gray-600 focus:outline-none ring:none md:min-w-[150px] bg-gray-500 px-3 text-white"
+              className="h-[40px] hover:bg-gray-600 focus:outline-none rounded-0 ring:none md:min-w-[150px] bg-gray-500 px-3 text-white"
               placeholder="ค้นหาชื่อมังงะ..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -107,7 +107,7 @@ const HeaderComponent = () => {
       </div>
 
       {/* Mobile menu bar */}
-      <MobileMenubarComponent menuItems={menubar} isShowMenu={isShowMenu} />
+      <MobileMenubarComponent menuItems={menubar} isShowMenu={isShowMenu} toggleMenu={() => setIsShowMenu(false)} />
     </div>
   );
 };
