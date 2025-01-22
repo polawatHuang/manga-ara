@@ -9,16 +9,19 @@ export default function AdminPage() {
   const [tags, setTags] = useState([]);
   const [selectedManga, setSelectedManga] = useState(null);
   const [newTag, setNewTag] = useState("");
+  const [newEpisode, setNewEpisode] = useState({ episode: "", totalPage: "" });
+  const [imageFiles, setImageFiles] = useState([]);
 
-  // ✅ Load data from localStorage or default data
+  // ✅ Load data from LocalStorage or Default Data
   useEffect(() => {
-    const storedMangas = JSON.parse(localStorage.getItem("mangas")) || mangasData;
+    const storedMangas =
+      JSON.parse(localStorage.getItem("mangas")) || mangasData;
     const storedTags = JSON.parse(localStorage.getItem("tags")) || tagsData;
     setMangas(storedMangas);
     setTags(storedTags);
   }, []);
 
-  // ✅ Save to localStorage
+  // ✅ Save Data to LocalStorage
   const saveMangas = (data) => {
     setMangas(data);
     localStorage.setItem("mangas", JSON.stringify(data));
@@ -72,14 +75,67 @@ export default function AdminPage() {
     saveTags(updatedTags);
   };
 
+  // ✅ Select Manga for Adding Episodes
+  const handleSelectManga = (manga) => {
+    setSelectedManga(manga);
+  };
+
+  // ✅ Add Episode to Selected Manga
+  const addEpisode = () => {
+    if (!selectedManga || !newEpisode.episode || !newEpisode.totalPage) return;
+
+    const updatedMangas = mangas.map((manga) => {
+      if (manga.id === selectedManga.id) {
+        return {
+          ...manga,
+          ep: [
+            ...manga.ep,
+            {
+              ...newEpisode,
+              view: 0,
+              created_date: new Date().toISOString().split("T")[0],
+            },
+          ],
+        };
+      }
+      return manga;
+    });
+
+    saveMangas(updatedMangas);
+    setNewEpisode({ episode: "", totalPage: "" });
+  };
+
+  // ✅ Handle Image Upload
+  const handleImageUpload = async () => {
+    if (!selectedManga || !newEpisode.episode || imageFiles.length === 0)
+      return;
+    const formData = new FormData();
+    formData.append("mangaSlug", selectedManga.slug);
+    formData.append("episode", newEpisode.episode);
+    imageFiles.forEach((file) => formData.append("images", file));
+
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) throw new Error("Upload failed");
+      alert("Images uploaded successfully!");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-8 text-white">
-      <h1 className="text-center mb-6">Admin Panel</h1>
+      <h1 className="text-center mb-6 text-3xl font-bold">Admin Panel</h1>
 
       {/* Manga Management Section */}
       <section className="mb-12">
-        <h2 className="mb-4">Manage Mangas</h2>
-        <button onClick={addManga} className="bg-green-500 px-4 py-2 rounded">+ Add New Manga</button>
+        <h2 className="mb-4 text-2xl font-semibold">Manage Mangas</h2>
+        <button onClick={addManga} className="bg-green-500 px-4 py-2 rounded">
+          + Add New Manga
+        </button>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           {mangas.map((manga, index) => (
@@ -92,18 +148,28 @@ export default function AdminPage() {
               />
               <textarea
                 value={manga.description}
-                onChange={(e) => handleEditManga(index, "description", e.target.value)}
+                onChange={(e) =>
+                  handleEditManga(index, "description", e.target.value)
+                }
                 className="w-full bg-gray-700 px-3 py-2 mb-2"
               />
               <input
                 type="text"
                 value={manga.backgroundImage}
-                onChange={(e) => handleEditManga(index, "backgroundImage", e.target.value)}
+                onChange={(e) =>
+                  handleEditManga(index, "backgroundImage", e.target.value)
+                }
                 className="w-full bg-gray-700 px-3 py-2 mb-2"
               />
               <button
+                onClick={() => handleSelectManga(manga)}
+                className="bg-blue-500 px-3 py-1 rounded mt-2"
+              >
+                Add Episode
+              </button>
+              <button
                 onClick={() => deleteManga(index)}
-                className="bg-red-600 px-3 py-1 mt-2 rounded"
+                className="bg-red-600 px-3 py-1 mt-2 rounded ml-2"
               >
                 Delete
               </button>
@@ -112,25 +178,77 @@ export default function AdminPage() {
         </div>
       </section>
 
-      {/* Tag Management Section */}
-      <section>
-        <h2 className="text-2xl font-semibold mb-4">Manage Tags</h2>
-        <div className="flex gap-2 mb-4">
+      {/* Episode Management */}
+      {selectedManga && (
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4">
+            Add Episode to {selectedManga.name}
+          </h2>
           <input
             type="text"
-            value={newTag}
-            onChange={(e) => setNewTag(e.target.value)}
-            placeholder="Add new tag..."
+            placeholder="Episode Number"
+            value={newEpisode.episode}
+            onChange={(e) =>
+              setNewEpisode({ ...newEpisode, episode: e.target.value })
+            }
+            className="bg-gray-700 px-3 py-2 mr-2"
+          />
+          <input
+            type="text"
+            placeholder="Total Pages"
+            value={newEpisode.totalPage}
+            onChange={(e) =>
+              setNewEpisode({ ...newEpisode, totalPage: e.target.value })
+            }
             className="bg-gray-700 px-3 py-2"
           />
-          <button onClick={addTag} className="bg-blue-500 px-4 py-2 rounded">+ Add</button>
-        </div>
+          <button
+            onClick={addEpisode}
+            className="bg-green-500 px-4 py-2 ml-2 rounded"
+          >
+            + Add
+          </button>
+          <input
+            type="file"
+            multiple
+            onChange={(e) => setImageFiles([...e.target.files])}
+            className="block mt-4"
+          />
+          <button
+            onClick={handleImageUpload}
+            className="bg-blue-500 px-4 py-2 mt-2"
+          >
+            Upload Images
+          </button>
+        </section>
+      )}
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {/* Tag Management */}
+      <section>
+        <h2 className="text-2xl font-semibold mb-4">Manage Tags</h2>
+        <input
+          type="text"
+          value={newTag}
+          onChange={(e) => setNewTag(e.target.value)}
+          className="bg-gray-700 px-3 py-2"
+        />
+        <button onClick={addTag} className="bg-blue-500 px-4 py-2 ml-2">
+          + Add
+        </button>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
           {tags.map((tag) => (
-            <div key={tag.id} className="bg-gray-700 px-4 py-2 flex justify-between items-center rounded">
+            <div
+              key={tag.id}
+              className="bg-gray-700 px-4 py-2 flex justify-between items-center rounded"
+            >
               <span>{tag.name}</span>
-              <button onClick={() => deleteTag(tag.name)} className="text-red-500">✕</button>
+              <button
+                onClick={() => deleteTag(tag.name)}
+                className="text-red-500"
+              >
+                ✕
+              </button>
             </div>
           ))}
         </div>

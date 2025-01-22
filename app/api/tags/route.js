@@ -1,19 +1,31 @@
 import fs from "fs";
 import path from "path";
 
-const filePath = path.resolve("database/tags.json");
+// File path to tags.json
+const tagsFilePath = path.join(process.cwd(), "database", "tags.json");
+
+// Read tags data
+const readTags = () => JSON.parse(fs.readFileSync(tagsFilePath, "utf-8"));
+
+// Write tags data
+const writeTags = (data) => fs.writeFileSync(tagsFilePath, JSON.stringify(data, null, 2), "utf-8");
 
 export async function GET() {
-  const data = fs.readFileSync(filePath, "utf8");
-  return new Response(data, { status: 200, headers: { "Content-Type": "application/json" } });
+  return Response.json(readTags());
 }
 
 export async function POST(req) {
-  try {
-    const newData = await req.json();
-    fs.writeFileSync(filePath, JSON.stringify(newData, null, 2));
-    return new Response(JSON.stringify({ message: "Updated Successfully" }), { status: 200 });
-  } catch (error) {
-    return new Response(JSON.stringify({ error: "Failed to update" }), { status: 500 });
-  }
+  const newTag = await req.json();
+  const tags = readTags();
+  tags.push(newTag);
+  writeTags(tags);
+  return Response.json({ message: "Tag added successfully" });
+}
+
+export async function DELETE(req) {
+  const { id } = await req.json();
+  let tags = readTags();
+  tags = tags.filter((t) => t.id !== id);
+  writeTags(tags);
+  return Response.json({ message: "Tag deleted successfully" });
 }
