@@ -33,9 +33,13 @@ export default function SlugPage() {
     fetchManga();
   }, [decodedSlug]);
 
-  // Show loading state
+  // ✅ Loading animation (Spinner)
   if (loading) {
-    return <p className="text-center text-white">กำลังโหลดข้อมูล...</p>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black gap-4">
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" /><span>กำลังโหลดข้อมูล...</span>
+      </div>
+    );
   }
 
   // Show error message if manga is not found
