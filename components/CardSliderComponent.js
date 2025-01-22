@@ -20,23 +20,30 @@ const ChevronRightIcon = () => (
   </svg>
 );
 
-const cardData = [
-  { id: 1, title: "Tensei Kizoku no Isekai Boukenroku เกิดใหม่เป็นขุนนางไปผจญภัยในต่างโลก", image: "/images/tensei-kizoku-no-isekai-boukenroku-jichou-wo-shiranai-kamigami-no-shito/bg.webp" },
-];
-
-export default function CardSliderComponent({mangaList}) {
+export default function CardSliderComponent({ mangaList , hasFevFunction = false }) {
   const swiperRef = useRef(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
+  const [favorites, setFavorites] = useState([]);
 
+  // Load favorite mangas from localStorage
   useEffect(() => {
-    if (swiperRef.current) {
-      swiperRef.current.on("slideChange", () => {
-        setIsBeginning(swiperRef.current.isBeginning);
-        setIsEnd(swiperRef.current.isEnd);
-      });
-    }
+    const storedFavorites = JSON.parse(localStorage.getItem("favoriteMangas")) || [];
+    setFavorites(storedFavorites);
   }, []);
+
+  // Toggle favorite manga
+  const toggleFavorite = (manga) => {
+    let updatedFavorites;
+    if (favorites.some((fav) => fav.id === manga.id)) {
+      updatedFavorites = favorites.filter((fav) => fav.id !== manga.id); // Remove favorite
+    } else {
+      updatedFavorites = [...favorites, manga]; // Add favorite
+    }
+
+    setFavorites(updatedFavorites);
+    localStorage.setItem("favoriteMangas", JSON.stringify(updatedFavorites));
+  };
 
   return (
     <div className="relative w-full px-4 py-6">
@@ -68,12 +75,25 @@ export default function CardSliderComponent({mangaList}) {
         }}
         className="w-full"
       >
-        {mangaList.map((card) => (
-          <SwiperSlide key={card.id}>
-            <Link className="overflow-hidden bg-yellow-500" href={card.slug}>
-              <Image width={187} height={268} src={card.backgroundImage} alt={card.name} className="h-[300px] w-full object-cover" loading="lazy" />
+        {mangaList.map((manga) => (
+          <SwiperSlide key={manga.id} className="relative">
+            {/* Favorite Button */}
+            {hasFevFunction && <button
+              onClick={() => toggleFavorite(manga)}
+              className="absolute top-1 right-1 p-2 bg-black h-9 bg-opacity-50 rounded-full flex items-center"
+            >
+              {favorites.some((fav) => fav.id === manga.id) ? (
+                <span className="text-pink-500 text-xl">❤️</span>
+              ) : (
+                <span className="text-white text-xl mt-[2px]">🤍</span>
+              )}
+            </button>}
+
+            {/* Manga Card */}
+            <Link className="overflow-hidden bg-yellow-500" href={manga.slug}>
+              <Image width={187} height={268} src={manga.backgroundImage} alt={manga.name} className="h-[300px] w-full object-cover" loading="lazy" />
               <div className="py-4">
-                <h2 className="text-lg font-semibold text-white text-ellipsis line-clamp-3">{card.name}</h2>
+                <h2 className="text-lg font-semibold text-white text-ellipsis line-clamp-3">{manga.name}</h2>
               </div>
             </Link>
           </SwiperSlide>

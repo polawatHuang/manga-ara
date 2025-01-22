@@ -57,7 +57,7 @@ const HeaderComponent = () => {
                   {item.name === "สุ่มเลือกอ่านมังงะ" ? (
                     <div
                       onClick={() => goToRandomManga(router)} // ✅ Call function with `router`
-                      className="hover:text-underline cursor-pointer"
+                      className="hover:underline cursor-pointer"
                     >
                       {item.name}
                     </div>

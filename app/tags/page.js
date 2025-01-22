@@ -31,6 +31,12 @@ export default function TagsPage() {
     }
   }, [sortType]);
 
+  // Thai Alphabet (ก-ฮ)
+  const thaiAlphabet = "กขคฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผพภมยรลวศษสหฬอฮ".split("");
+
+  // English Alphabet Navigation
+  const englishAlphabet = ["#", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"]; 
+
   // Filter tags by starting letter
   const filterByLetter = (letter) => {
     if (letter === "#") {
@@ -52,26 +58,35 @@ export default function TagsPage() {
       {/* Sorting Buttons */}
       <div className="flex justify-center gap-4 mt-4">
         <button
-          className={`px-4 py-2 ${
-            sortType === "A-Z" ? "bg-gray-700" : "bg-gray-900"
-          }`}
+          className={`px-4 py-2 ${sortType === "A-Z" ? "bg-gray-700" : "bg-gray-900"}`}
           onClick={() => setSortType("A-Z")}
         >
-          A-Z
+         ก-ฮ หรือ A-Z 
         </button>
         <button
-          className={`px-4 py-2 ${
-            sortType === "Popular" ? "bg-gray-700" : "bg-gray-900"
-          }`}
+          className={`px-4 py-2 ${sortType === "Popular" ? "bg-gray-700" : "bg-gray-900"}`}
           onClick={() => setSortType("Popular")}
         >
-          Popular
+          ยอดนิยม
         </button>
       </div>
 
-      {/* Alphabet Navigation */}
-      <div className="flex justify-center gap-2 mt-4 text-gray-400">
-        {["#", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"].map((letter) => (
+      {/* Thai Alphabet Navigation */}
+      <div className="flex flex-wrap justify-center gap-2 mt-4 text-gray-400 text-sm">
+        {thaiAlphabet.map((letter) => (
+          <button
+            key={letter}
+            className="hover:text-white"
+            onClick={() => filterByLetter(letter)}
+          >
+            {letter}
+          </button>
+        ))}
+      </div>
+
+      {/* English Alphabet Navigation */}
+      <div className="flex flex-wrap justify-center gap-2 mt-2 text-gray-400 text-sm">
+        {englishAlphabet.map((letter) => (
           <button
             key={letter}
             className="hover:text-white"
@@ -83,15 +98,15 @@ export default function TagsPage() {
       </div>
 
       {/* Tags Grid */}
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mt-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-6">
         {tags.map((tag) => (
           <Link
             key={tag.name}
             href={`/tags/${tag.name}`}
-            className="bg-gray-800 p-2 flex flex-col md:flex-row justify-between rounded hover:bg-gray-700"
+            className="bg-gray-800 p-2 flex flex-col justify-between hover:bg-gray-700 hover:no-underline"
           >
-            <span>{tag.name}</span>
-            <span className="opacity-50">{tag.count} Views</span>
+            <span className="text-center font-medium">{tag.name}</span>
+            <span className="text-center text-xs opacity-50">{tag.count} Views</span>
           </Link>
         ))}
       </div>
