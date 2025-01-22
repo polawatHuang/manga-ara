@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import AdvertiseComponent from "@/components/AdvertiseComponent";
 import MangaReader from "@/components/MangaReader";
 import Link from "next/link";
+import copyToClipboard from "@/utils/copyToClipboard";
 
 export default function EpisodePage() {
   const { slug, ep } = useParams();
@@ -100,7 +101,6 @@ export default function EpisodePage() {
           <h1 className="text-xl font-bold">ชื่อเรื่อง: {manga.name}</h1>
           <hr className="my-2" />
           <p className="text-white mt-2">เรื่องย่อ: {manga.description}</p>
-
           {/* Tags Section */}
           <p className="text-white flex items-center gap-4 mt-3">
             Tags:{" "}
@@ -109,6 +109,9 @@ export default function EpisodePage() {
                 {tag}
               </Link>
             ))}
+          </p>
+          <p className="text-white flex items-center gap-4 mt-3">
+            แชร์เรื่องนี้ให้เพื่อน: <div onClick={()=>copyToClipboard()} className="px-4 rounded-full bg-gray-700 hover:bg-gray-800 flex gap-1 items-center cursor-pointer">แชร์ <ShareIcon className="size-4" /></div>
           </p>
         </div>
       </section>

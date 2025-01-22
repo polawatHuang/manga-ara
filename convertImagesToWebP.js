@@ -2,8 +2,8 @@ const fs = require("fs-extra");
 const path = require("path");
 const sharp = require("sharp");
 
-const inputDir = path.join(__dirname, "public/images/dan-da-dan/ep1");
-const outputDir = path.join(__dirname, "public/images/dan-da-dan/ep1-copy");
+const inputDir = path.join(__dirname, "public/images/amagami-san-chi-no-enmusubi/ep1");
+const outputDir = path.join(__dirname, "public/images/amagami-san-chi-no-enmusubi/ep1-copy");
 
 async function convertImagesToWebP() {
   try {
