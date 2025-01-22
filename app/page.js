@@ -29,7 +29,7 @@ export default function Home() {
       <section>
         <h2 className="flex items-center gap-2">
           <FireIcon className="size-7 text-red-600" />
-          10 อันดับมังงะยอดฮิต
+          อ่านการ์ตูนยอดนิยมประจำวัน
         </h2>
         <CardSliderComponent mangaList={mangas} hasFevFunction={true} />
       </section>
@@ -50,9 +50,8 @@ export default function Home() {
         )}
       </section>}
 
-      
       <section className="w-full grid grid-cols-1 md:grid-cols-12 gap-4">
-        <div className="col-span-12 md:col-span-10">
+        <div className="col-span-12 md:col-span-8">
           {/* New Manga */}
           <div className="w-full bg-gray-700 px-4 py-5 mb-4">
             <h3 className="flex items-center gap-2 text-2xl font-[600]">มังงะอัพเดทใหม่</h3>
@@ -65,7 +64,7 @@ export default function Home() {
           </div>
 
           {/* New Manhua */}
-          <div className="w-full bg-gray-700 px-4 py-5 mb-4">
+          {/* <div className="w-full bg-gray-700 px-4 py-5 mb-4">
             <h3 className="flex items-center gap-2 text-2xl font-[600]">มังฮวา (จีน เกาหลี)</h3>
             <hr className="opacity-50 my-2" />
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
@@ -73,7 +72,7 @@ export default function Home() {
                 <CardComponent key={manga.id} manga={manga} />
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Recomman Manga */}
           <div className="w-full bg-gray-700 px-4 py-5">
@@ -87,7 +86,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="col-span-12 md:col-span-2 bg-gray-700 px-4 py-5 relative">
+        <div className="col-span-12 md:col-span-4 bg-gray-700 px-4 py-5 relative">
           <h3 className="flex items-center gap-2 text-2xl font-[600]">Tag ทั้งหมด</h3>
           <hr className="opacity-50 my-2" />
           <div className="w-full flex flex-wrap gap-2">

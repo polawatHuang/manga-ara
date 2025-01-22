@@ -15,8 +15,9 @@ const HeaderComponent = () => {
 
   const menubar = [
     { id: 1, name: "สุ่มเลือกอ่านมังงะ", href: "" },
+    { id: 3, name: "มังฮวาจีนเกาหลี", href: "/manhuas" },
     { id: 2, name: "Tag ทั้งหมด", href: "/tags" },
-    { id: 3, name: "มังงะที่กดถูกใจ", href: "/favorite-manga" },
+    { id: 4, name: "มังงะที่กดถูกใจ", href: "/favorite-manga" },
   ];
 
   // ✅ Filter manga list dynamically based on search query
@@ -55,12 +56,12 @@ const HeaderComponent = () => {
         <div className="relative">
           <form className="flex">
             <input
-              className="h-[40px] hover:bg-gray-600 focus:outline-none rounded-0 ring:none md:min-w-[150px] bg-gray-500 px-3 text-white"
+              className="h-[40px] hover:bg-gray-600 focus:outline-none !rounded-l-full ring:none md:min-w-[150px] bg-gray-500 px-3 text-white"
               placeholder="ค้นหาชื่อมังงะ..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <button type="submit" className="bg-blue-500 hover:bg-blue-600 py-1 px-2">
+            <button type="submit" className="bg-blue-500 hover:bg-blue-600 !rounded-r-full py-1 px-2">
               <MagnifyingGlassIcon className="size-6 text-white" />
             </button>
           </form>

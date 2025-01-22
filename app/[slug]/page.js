@@ -3,9 +3,10 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import AdvertiseComponent from "@/components/AdvertiseComponent";
 import { filterEpisodes } from "@/utils/filterEpisodes";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { MagnifyingGlassIcon, ShareIcon } from "@heroicons/react/24/solid";
 import dayjs from "dayjs";
 import Link from "next/link";
+import copyToClipboard from "@/utils/copyToClipboard";
 
 export default function SlugPage() {
   const { slug } = useParams();
@@ -75,7 +76,7 @@ export default function SlugPage() {
           loading="lazy"
         />
         <div className="col-span-12 md:col-span-8 mt-8">
-          <h1>ชื่อเรื่อง: {manga.name}</h1>
+          <h1 className="text-2xl">ชื่อเรื่อง: {manga.name}</h1>
           <hr className="my-2" />
           <br />
           <p className="text-white">เรื่องย่อ: {manga.description}</p>
@@ -91,6 +92,10 @@ export default function SlugPage() {
                 {tag}
               </Link>
             ))}
+          </p>
+          <br />
+          <p className="text-white flex items-center gap-4">
+            แชร์เรื่องนี้ให้เพื่อน: <div onClick={()=>copyToClipboard()} className="px-4 rounded-full bg-gray-700 hover:bg-gray-800 flex gap-1 items-center cursor-pointer">แชร์ <ShareIcon className="size-4" /></div>
           </p>
         </div>
       </section>
