@@ -42,6 +42,20 @@ export default function EpisodePage() {
     fetchManga();
   }, [slug, ep]);
 
+  // ✅ Handle Scroll for "Go to Top" Button
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScroll(window.scrollY > 300);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // ✅ Scroll to Top Function
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   // ✅ Loading animation (Spinner)
   if (loading) {
     return (
@@ -107,7 +121,7 @@ export default function EpisodePage() {
       {/* ✅ "Go to Top" Button */}
       {showScroll && (
         <button
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          onClick={scrollToTop}
           className="fixed bottom-8 right-8 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full shadow-lg transition-opacity duration-300"
         >
           ↑ Top
