@@ -27,7 +27,7 @@ export default function EpisodePage() {
         const images = Array.from(
           { length: selectedEpisode.totalPage },
           (_, i) =>
-            `/images/tensei-kizoku-no-isekai-boukenroku-jichou-wo-shiranai-kamigami-no-shito/ep${params.ep}/page${i + 1}.jpg`
+            `/images/${params.slug}/ep${params.ep}/page${i + 1}.jpg`
         );
         setMangaImages(images);
       }
