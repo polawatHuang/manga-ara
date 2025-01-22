@@ -3,13 +3,17 @@ import { MagnifyingGlassIcon, Bars3Icon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import MobileMenubarComponent from "./MobileMenubar";
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // ✅ Correct import
+import { goToRandomManga } from "@/utils/randomManga"; // ✅ Import function
 
 const HeaderComponent = () => {
   const [isShowMenu, setIsShowMenu] = useState(false);
+  const router = useRouter(); // ✅ Correct use of `useRouter()`
+  
   const menubar = [
-    { id: 1, name: "สุ่มเลือกอ่านมังงะ", href: "/random" },
+    { id: 1, name: "สุ่มเลือกอ่านมังงะ", href: "" },
     { id: 2, name: "Tag ทั้งหมด", href: "/tags" },
-    { id: 3, name: "มังงะที่กดถูกใจ", href: "/fevorited-manga" },
+    { id: 3, name: "มังงะที่กดถูกใจ", href: "/favorite-manga" },
   ];
 
   return (
@@ -18,9 +22,19 @@ const HeaderComponent = () => {
         {/* Logo */}
         <div>
           {/* PC Logo */}
-          <Link href="/" className="hidden md:block hover:no-underline text-[24px] font-[600]">MANGA <span className="text-pink-500">ARA</span></Link>
+          <Link
+            href="/"
+            className="hidden md:block hover:no-underline text-[24px] font-[600]"
+          >
+            MANGA <span className="text-pink-500">ARA</span>
+          </Link>
           {/* Mobile Logo */}
-          <Link href="/" className="md:hidden hover:no-underline text-[24px] font-[600]">M <span className="text-pink-500">R</span></Link>
+          <Link
+            href="/"
+            className="md:hidden hover:no-underline text-[24px] font-[600]"
+          >
+            M <span className="text-pink-500">R</span>
+          </Link>
         </div>
         {/* Search bar */}
         <div>
@@ -40,9 +54,21 @@ const HeaderComponent = () => {
             {menubar.map((item) => {
               return (
                 <li key={item.id}>
-                  <div className="hover:text-underline cursor-pointer" onClick={()=>window.alert("ขออภัยค่ะ หน้าดังกล่าวยังไม่พร้อมใช้งานในขณะนี้")}>
-                    {item.name}
-                  </div>
+                  {item.name === "สุ่มเลือกอ่านมังงะ" ? (
+                    <div
+                      onClick={() => goToRandomManga(router)} // ✅ Call function with `router`
+                      className="hover:text-underline cursor-pointer"
+                    >
+                      {item.name}
+                    </div>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className="hover:text-underline cursor-pointer"
+                    >
+                      {item.name}
+                    </Link>
+                  )}
                 </li>
               );
             })}
