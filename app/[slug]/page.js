@@ -1,23 +1,49 @@
 "use client";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import AdvertiseComponent from "@/components/AdvertiseComponent";
-import mangas from "@/database/mangas";
 import { filterEpisodes } from "@/utils/filterEpisodes";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import dayjs from "dayjs";
 import Link from "next/link";
-import { useState } from "react";
 
-export default function SlugPage({ params }) {
+export default function SlugPage() {
+  const { slug } = useParams();
+  const decodedSlug = decodeURIComponent(slug); // ✅ Decode Thai slugs properly
   const [searchTerm, setSearchTerm] = useState("");
+  const [manga, setManga] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Find the manga by slug
-  const manga = mangas.find((item) => item.slug === `/${params.slug}`);
+  // ✅ Fetch manga details dynamically
+  useEffect(() => {
+    async function fetchManga() {
+      try {
+        const response = await fetch("/api/mangas");
+        if (!response.ok) throw new Error("Failed to fetch manga data");
 
+        const data = await response.json();
+        const foundManga = data.find((item) => item.slug === `/${decodedSlug}`);
+        setManga(foundManga || null);
+      } catch (error) {
+        console.error("Error fetching manga:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchManga();
+  }, [decodedSlug]);
+
+  // Show loading state
+  if (loading) {
+    return <p className="text-center text-white">กำลังโหลดข้อมูล...</p>;
+  }
+
+  // Show error message if manga is not found
   if (!manga) {
     return <p className="text-center text-white">ไม่พบข้อมูลมังงะที่ระบุ</p>;
   }
 
-  // Filter episodes based on search term
+  // ✅ Filter episodes based on search term
   const filteredEpisodes = filterEpisodes(manga.ep, searchTerm);
 
   return (
@@ -32,7 +58,7 @@ export default function SlugPage({ params }) {
         <div className="w-full bg-gray-700 px-4 py-2">
           <Link href="/">Homepage</Link>
           {" / "}
-          <Link href="/">{params.slug}</Link>
+          <Link href="/">{decodedSlug}</Link>
         </div>
       </section>
 
@@ -72,14 +98,14 @@ export default function SlugPage({ params }) {
           <hr className="my-2" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <Link
-              href={`${params.slug}/1`}
+              href={`${decodedSlug}/1`}
               className="w-full bg-gray-800 hover:bg-gray-900 p-4 text-center hover:no-underline"
             >
               <span>ตอนแรก</span>
               <h4>ตอนที่ 1</h4>
             </Link>
             <Link
-              href={`${params.slug}/${manga.ep.length}`}
+              href={`${decodedSlug}/${manga.ep.length}`}
               className="w-full bg-gray-800 hover:bg-gray-900 p-4 text-center hover:no-underline"
             >
               <span>ตอนล่าสุด</span>
@@ -101,7 +127,7 @@ export default function SlugPage({ params }) {
               filteredEpisodes.map(({ episode, created_date }) => (
                 <Link
                   key={episode}
-                  href={`${params.slug}/${episode}`}
+                  href={`${decodedSlug}/${episode}`}
                   className="bg-blue-500 hover:bg-blue-600 hover:no-underline px-4 py-2 flex justify-between"
                 >
                   <span className="text-white font-[600]">

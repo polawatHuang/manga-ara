@@ -4,44 +4,73 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import AdvertiseComponent from "@/components/AdvertiseComponent";
 import MangaReader from "@/components/MangaReader";
-import mangas from "@/database/mangas";
 import Link from "next/link";
 
 export default function EpisodePage() {
-  const params = useParams();
-  const [searchTerm, setSearchTerm] = useState("");
+  const { slug, ep } = useParams();
+  const decodedSlug = decodeURIComponent(slug); // ✅ Decode Thai slugs properly
   const [manga, setManga] = useState(null);
   const [mangaImages, setMangaImages] = useState([]);
-  const [showScroll, setShowScroll] = useState(false); // ✅ State for "Go to Top" button
+  const [loading, setLoading] = useState(true);
+  const [showScroll, setShowScroll] = useState(false);
 
+  // ✅ Fetch manga details dynamically
   useEffect(() => {
-    // Find the manga based on the slug
-    const foundManga = mangas.find((item) => item.slug.includes(params.slug));
-    if (foundManga) {
-      setManga(foundManga);
+    async function fetchManga() {
+      try {
+        const response = await fetch("/api/mangas");
+        if (!response.ok) throw new Error("Failed to fetch manga data");
 
-      // Find the selected episode
-      const selectedEpisode = foundManga.ep.find((ep) => ep.episode === params.ep);
-      if (selectedEpisode) {
-        // Generate images based on `totalPage`
-        const images = Array.from(
-          { length: selectedEpisode.totalPage },
-          (_, i) =>
-            `/images/${params.slug}/ep${params.ep}/page${i + 1}.jpg`
-        );
-        setMangaImages(images);
+        const data = await response.json();
+        const foundManga = data.find((item) => item.slug === `/${decodedSlug}`);
+        setManga(foundManga || null);
+
+        if (foundManga) {
+          const selectedEpisode = foundManga.ep.find((episode) => episode.episode === ep);
+          if (selectedEpisode) {
+            // ✅ Generate image URLs dynamically (support multiple formats)
+            getAvailableImages(decodedSlug, ep, selectedEpisode.totalPage).then(setMangaImages);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching manga:", error);
+      } finally {
+        setLoading(false);
       }
     }
-  }, [params, searchTerm]);
+    fetchManga();
+  }, [decodedSlug, ep]);
+
+  // ✅ Function to check available images dynamically
+  async function getAvailableImages(slug, ep, totalPages) {
+    const formats = ["jpg","webp","jpeg","png"]; // Prioritize webp > png > jpg > jpeg
+    const placeholder = "/images/placeholder.jpg"; // Fallback image
+
+    const checkImage = async (url) => {
+      try {
+        const response = await fetch(url, { method: "HEAD" });
+        return response.ok ? url : null;
+      } catch {
+        return null;
+      }
+    };
+
+    const imagePromises = Array.from({ length: totalPages }, async (_, i) => {
+      for (const format of formats) {
+        const url = `/images/${slug}/ep${ep}/page${i + 1}.${format}`;
+        const validUrl = await checkImage(url);
+        if (validUrl) return validUrl;
+      }
+      return placeholder;
+    });
+
+    return Promise.all(imagePromises);
+  }
 
   // ✅ Handle Scroll for "Go to Top" Button
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScroll(true);
-      } else {
-        setShowScroll(false);
-      }
+      setShowScroll(window.scrollY > 300);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -52,8 +81,18 @@ export default function EpisodePage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // ✅ Loading animation (Spinner)
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  // Show error message if manga or episode is not found
   if (!manga) {
-    return <p className="text-center text-white">Loading...</p>;
+    return <p className="text-center text-white">ไม่พบข้อมูลมังงะที่ระบุ</p>;
   }
 
   return (
@@ -68,9 +107,9 @@ export default function EpisodePage() {
         <div className="w-full bg-gray-700 px-4 py-2">
           <Link href="/">Homepage</Link>
           {" / "}
-          <Link href="/">{params.slug}</Link>
+          <Link href={`/manga/${slug}`}>{decodedSlug}</Link>
           {" / "}
-          <Link href="/">ตอนที่ {params.ep}</Link>
+          <Link href={`/manga/${slug}/ep${ep}`}>ตอนที่ {ep}</Link>
         </div>
       </section>
 

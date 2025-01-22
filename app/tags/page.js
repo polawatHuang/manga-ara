@@ -1,115 +1,158 @@
 "use client";
+
 import { useState, useEffect } from "react";
+import AdvertiseComponent from "@/components/AdvertiseComponent";
+import CardComponent from "@/components/CardComponent";
+import CardSliderComponent from "@/components/CardSliderComponent";
+import { FireIcon, HeartIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
-import mangas from "@/database/mangas";
 
-export default function TagsPage() {
-  const [sortType, setSortType] = useState("A-Z");
+export default function Home() {
+  const [mangas, setMangas] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [favoriteMangas, setFavoriteMangas] = useState([]);
 
-  // Extract and count tags from mangas' episodes
-  const extractTags = () => {
-    const tagCount = {};
-    mangas.forEach((manga) => {
-      manga.tag.forEach((tag) => {
-        if (!tagCount[tag]) tagCount[tag] = 0;
-        manga.ep.forEach((episode) => {
-          tagCount[tag] += episode.view; // Sum episode views
-        });
-      });
-    });
-
-    return Object.entries(tagCount).map(([name, count]) => ({ name, count }));
-  };
-
-  const [tags, setTags] = useState(extractTags());
-
+  // ✅ Fetch mangas from API
   useEffect(() => {
-    if (sortType === "A-Z") {
-      setTags((prev) => [...prev].sort((a, b) => a.name.localeCompare(b.name)));
-    } else {
-      setTags((prev) => [...prev].sort((a, b) => b.count - a.count)); // Sort by most views
+    async function fetchMangas() {
+      try {
+        const response = await fetch("/api/mangas");
+        if (!response.ok) throw new Error("Failed to fetch mangas");
+        const data = await response.json();
+        setMangas(data);
+      } catch (error) {
+        console.error("Error fetching mangas:", error);
+      }
     }
-  }, [sortType]);
+    fetchMangas();
+  }, []);
 
-  // Thai Alphabet (ก-ฮ)
-  const thaiAlphabet = "กขคฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผพภมยรลวศษสหฬอฮ".split("");
-
-  // English Alphabet Navigation
-  const englishAlphabet = ["#", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"]; 
-
-  // Filter tags by starting letter
-  const filterByLetter = (letter) => {
-    if (letter === "#") {
-      setTags(extractTags());
-    } else {
-      setTags(
-        extractTags().filter((tag) =>
-          tag.name.toLowerCase().startsWith(letter.toLowerCase())
-        )
-      );
+  // ✅ Fetch tags from API
+  useEffect(() => {
+    async function fetchTags() {
+      try {
+        const response = await fetch("/api/tags");
+        if (!response.ok) throw new Error("Failed to fetch tags");
+        const data = await response.json();
+        setTags(data);
+      } catch (error) {
+        console.error("Error fetching tags:", error);
+      }
     }
-  };
+    fetchTags();
+  }, []);
+
+  // ✅ Load favorite mangas from localStorage
+  useEffect(() => {
+    const storedFavorites = JSON.parse(localStorage.getItem("favoriteMangas")) || [];
+    setFavoriteMangas(storedFavorites);
+  }, []);
 
   return (
-    <div className="w-full min-h-screen bg-black text-white px-6 py-8">
-      {/* Page Title */}
-      <h1 className="text-center">Tags</h1>
+    <div className="relative w-full min-h-screen max-w-6xl mx-auto md:p-8 pb-20 gap-16 sm:p-2">
+      {/* Advertise */}
+      <section>
+        <AdvertiseComponent />
+      </section>
 
-      {/* Sorting Buttons */}
-      <div className="flex justify-center gap-4 mt-4">
-        <button
-          className={`px-4 py-2 ${sortType === "A-Z" ? "bg-gray-700" : "bg-gray-900"}`}
-          onClick={() => setSortType("A-Z")}
-        >
-         ก-ฮ หรือ A-Z 
-        </button>
-        <button
-          className={`px-4 py-2 ${sortType === "Popular" ? "bg-gray-700" : "bg-gray-900"}`}
-          onClick={() => setSortType("Popular")}
-        >
-          ยอดนิยม
-        </button>
-      </div>
+      {/* Top 10 manga this month */}
+      <section>
+        <h2 className="flex items-center gap-2">
+          <FireIcon className="size-7 text-red-600" />
+          10 อันดับมังงะยอดฮิต
+        </h2>
+        {mangas.length > 0 ? (
+          <CardSliderComponent mangaList={mangas.slice(0, 10)} hasFevFunction={true} />
+        ) : (
+          <p className="text-center text-gray-400 mt-4">📌 ไม่มีข้อมูลมังงะ</p>
+        )}
+      </section>
 
-      {/* Thai Alphabet Navigation */}
-      <div className="flex flex-wrap justify-center gap-2 mt-4 text-gray-400 text-sm">
-        {thaiAlphabet.map((letter) => (
-          <button
-            key={letter}
-            className="hover:text-white"
-            onClick={() => filterByLetter(letter)}
-          >
-            {letter}
-          </button>
-        ))}
-      </div>
+      {/* Favorite Manga */}
+      {favoriteMangas.length > 0 && (
+        <section>
+          <h2 className="flex items-center gap-2">
+            <HeartIcon className="size-7 text-pink-600" />
+            มังงะที่กดถูกใจ
+          </h2>
 
-      {/* English Alphabet Navigation */}
-      <div className="flex flex-wrap justify-center gap-2 mt-2 text-gray-400 text-sm">
-        {englishAlphabet.map((letter) => (
-          <button
-            key={letter}
-            className="hover:text-white"
-            onClick={() => filterByLetter(letter)}
-          >
-            {letter}
-          </button>
-        ))}
-      </div>
+          {favoriteMangas.length > 0 ? (
+            <CardSliderComponent mangaList={favoriteMangas} hasFevFunction={false} />
+          ) : (
+            <div className="w-full h-[280px] flex items-center justify-center bg-gray-500 opacity-50 my-4">
+              <p className="text-white text-center mt-4">❌ ยังไม่มีมังงะที่คุณกดถูกใจ</p>
+            </div>
+          )}
+        </section>
+      )}
 
-      {/* Tags Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-6">
-        {tags.map((tag) => (
-          <Link
-            key={tag.name}
-            href={`/tags/${tag.name}`}
-            className="bg-gray-800 p-2 flex flex-col justify-between hover:bg-gray-700 hover:no-underline"
-          >
-            <span className="text-center font-medium">{tag.name}</span>
-            <span className="text-center text-xs opacity-50">{tag.count} Views</span>
-          </Link>
-        ))}
-      </div>
+      <section className="w-full grid grid-cols-1 md:grid-cols-12 gap-4">
+        <div className="col-span-12 md:col-span-10">
+          {/* New Manga */}
+          <div className="w-full bg-gray-700 px-4 py-5 mb-4">
+            <h3 className="flex items-center gap-2 text-2xl font-[600]">มังงะอัพเดทใหม่</h3>
+            <hr className="opacity-50 my-2" />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+              {mangas.length > 0 ? (
+                mangas.map((manga) => <CardComponent key={manga.id} manga={manga} />)
+              ) : (
+                <p className="text-center text-gray-400 col-span-4">📌 ไม่มีข้อมูลมังงะ</p>
+              )}
+            </div>
+          </div>
+
+          {/* New Manhua */}
+          <div className="w-full bg-gray-700 px-4 py-5 mb-4">
+            <h3 className="flex items-center gap-2 text-2xl font-[600]">มังฮวา (จีน เกาหลี)</h3>
+            <hr className="opacity-50 my-2" />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+              {mangas.length > 0 ? (
+                mangas.map((manga) => <CardComponent key={manga.id} manga={manga} />)
+              ) : (
+                <p className="text-center text-gray-400 col-span-4">📌 ไม่มีข้อมูลมังงะ</p>
+              )}
+            </div>
+          </div>
+
+          {/* Recommended Manga */}
+          <div className="w-full bg-gray-700 px-4 py-5">
+            <h3 className="flex items-center gap-2 text-2xl font-[600]">แนะนำสำหรับคุณโดยเฉพาะ</h3>
+            <hr className="opacity-50 my-2" />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+              {mangas.length > 0 ? (
+                mangas.map((manga) => <CardComponent key={manga.id} manga={manga} />)
+              ) : (
+                <p className="text-center text-gray-400 col-span-4">📌 ไม่มีข้อมูลมังงะ</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="col-span-12 md:col-span-2 bg-gray-700 px-4 py-5 relative">
+          <h3 className="flex items-center gap-2 text-2xl font-[600]">Tag ทั้งหมด</h3>
+          <hr className="opacity-50 my-2" />
+          <div className="w-full flex flex-wrap gap-2">
+            {tags.length > 0 ? (
+              tags.map((item) => (
+                <Link
+                  key={item.name}
+                  href={`/tags/${item.name}`}
+                  className="rounded-full bg-gray-500 hover:bg-blue-500 hover:no-underline px-2 py-1"
+                >
+                  {item.name}
+                </Link>
+              ))
+            ) : (
+              <p className="text-center text-gray-400">📌 ไม่มีข้อมูลแท็ก</p>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Advertise */}
+      <section className="mt-[60px]">
+        <AdvertiseComponent />
+      </section>
     </div>
   );
 }

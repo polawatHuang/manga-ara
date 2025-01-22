@@ -1,15 +1,32 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import mangas from "@/database/mangas";
 
 export default function TagPage() {
   const { tag } = useParams();
   const decodedTag = decodeURIComponent(tag); // ✅ Fix Thai encoding issue
+  const [filteredMangas, setFilteredMangas] = useState([]);
 
-  // Filter mangas by tag
-  const filteredMangas = mangas.filter((manga) => manga.tag.includes(decodedTag));
+  // ✅ Fetch mangas from API
+  useEffect(() => {
+    async function fetchMangas() {
+      try {
+        const response = await fetch("/api/mangas");
+        if (!response.ok) throw new Error("Failed to fetch mangas");
+        const mangas = await response.json();
+
+        // ✅ Filter mangas by tag
+        const matchedMangas = mangas.filter((manga) => manga.tag.includes(decodedTag));
+        setFilteredMangas(matchedMangas);
+      } catch (error) {
+        console.error("Error fetching mangas:", error);
+      }
+    }
+
+    fetchMangas();
+  }, [decodedTag]); // ✅ Ensure it fetches when tag changes
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 text-white">
@@ -23,7 +40,7 @@ export default function TagPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredMangas.map((manga) => (
             <Link key={manga.id} href={manga.slug} className="hover:no-underline">
-              <div className="bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
+              <div className="bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 hover:scale-105">
                 <img
                   src={manga.backgroundImage}
                   alt={manga.name}
@@ -41,7 +58,7 @@ export default function TagPage() {
           ))}
         </div>
       ) : (
-        <p className="text-center text-gray-400">ยังไม่มีมังงะสำหรับแท็กนี้</p>
+        <p className="text-center text-gray-400 mt-4">❌ ยังไม่มีมังงะสำหรับแท็กนี้</p>
       )}
     </div>
   );
