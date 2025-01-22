@@ -35,7 +35,7 @@ export default function Home() {
       </section>
 
       {/* Favorite Manga */}
-      <section>
+      {favoriteMangas.length > 0 && <section>
         <h2 className="flex items-center gap-2">
           <HeartIcon className="size-7 text-pink-600" />
           มังงะที่กดถูกใจ
@@ -44,23 +44,50 @@ export default function Home() {
         {favoriteMangas.length > 0 ? (
           <CardSliderComponent mangaList={favoriteMangas} hasFevFunction={false} />
         ) : (
-          <p className="text-white text-center mt-4">ยังไม่มีมังงะที่คุณกดถูกใจ</p>
+          <div className="w-full h-[280px] flex items-center justify-center bg-gray-500 opacity-50 my-4">
+            <p className="text-white text-center mt-4">ยังไม่มีมังงะที่คุณกดถูกใจ</p>
+          </div>
         )}
-      </section>
+      </section>}
 
-      {/* New Manga */}
+      
       <section className="w-full grid grid-cols-1 md:grid-cols-12 gap-4">
-        <div className="col-span-10 bg-gray-700 px-4 py-5">
-          <h3 className="flex items-center gap-2 text-2xl font-[600]">มังงะอัพเดทใหม่</h3>
-          <hr className="opacity-50 my-2" />
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-            {mangas.map((manga) => (
-              <CardComponent key={manga.id} manga={manga} />
-            ))}
+        <div className="col-span-12 md:col-span-10">
+          {/* New Manga */}
+          <div className="w-full bg-gray-700 px-4 py-5 mb-4">
+            <h3 className="flex items-center gap-2 text-2xl font-[600]">มังงะอัพเดทใหม่</h3>
+            <hr className="opacity-50 my-2" />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+              {mangas.map((manga) => (
+                <CardComponent key={manga.id} manga={manga} />
+              ))}
+            </div>
+          </div>
+
+          {/* New Manhua */}
+          <div className="w-full bg-gray-700 px-4 py-5 mb-4">
+            <h3 className="flex items-center gap-2 text-2xl font-[600]">มังฮวา (จีน เกาหลี)</h3>
+            <hr className="opacity-50 my-2" />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+              {mangas.map((manga) => (
+                <CardComponent key={manga.id} manga={manga} />
+              ))}
+            </div>
+          </div>
+
+          {/* Recomman Manga */}
+          <div className="w-full bg-gray-700 px-4 py-5">
+            <h3 className="flex items-center gap-2 text-2xl font-[600]">แนะนำสำหรับคุณโดยเฉพาะ</h3>
+            <hr className="opacity-50 my-2" />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+              {mangas.map((manga) => (
+                <CardComponent key={manga.id} manga={manga} />
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="col-span-2 bg-gray-700 px-4 py-5 relative">
+        <div className="col-span-12 md:col-span-2 bg-gray-700 px-4 py-5 relative">
           <h3 className="flex items-center gap-2 text-2xl font-[600]">Tag ทั้งหมด</h3>
           <hr className="opacity-50 my-2" />
           <div className="w-full flex flex-wrap gap-2">
@@ -73,6 +100,11 @@ export default function Home() {
             })}
           </div>
         </div>
+      </section>
+
+      {/* Advertise */}
+      <section className="mt-[60px]">
+        <AdvertiseComponent />
       </section>
     </div>
   );
