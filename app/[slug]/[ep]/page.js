@@ -28,7 +28,7 @@ export default function EpisodePage() {
           if (selectedEpisode) {
             const images = Array.from(
               { length: selectedEpisode.totalPage },
-              (_, i) => `/images/${slug}/ep${ep}/page${i + 1}.jpg`
+              (_, i) => `/images/${slug}/ep${ep}/page${i + 1}.webp`
             );
             setMangaImages(images);
           }
