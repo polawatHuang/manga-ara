@@ -60,5 +60,20 @@
     "slug": "/amagami-san-chi-no-enmusubi",
     "created_date": "2025-01-22",
     "updated_date": "2025-01-22"
+  },
+  {
+    "id": 5,
+    "name": "Kono Kaisha ni Suki na Hito ga Imasu บริษัทนี้มีความรัก",
+    "description":
+      "ทาเทอิชิ พนักงานบัญชีของบริษัทขนม มีความลับสุดซึ้ง นั่นคือเขากำลังคบกับ มิตสึยะ เพื่อนร่วมงานสาวสวยที่อยู่แผนกวางแผน! ความรักของทั้งคู่เกิดขึ้นในที่ทำงาน และเป็นความสัมพันธ์ที่ต้องเก็บเป็นความลับ แต่ความสนุกสนานและเรื่องราววุ่นๆ ในออฟฟิศก็ทำให้ความรักของทั้งคู่เข้มข้นยิ่งขึ้น",
+    "ep": [
+      { "episode": "1", "totalPage": 24, "view": 214, "created_date": "2025-01-23" }
+    ],
+    "tag": ["คอมมาดี้", "โรแมนติก"],
+    "backgroundImage":
+      "/images/kono-kaisha-ni-suki-na-hito-ga-imasu/bg.webp",
+    "slug": "/kono-kaisha-ni-suki-na-hito-ga-imasu",
+    "created_date": "2025-01-23",
+    "updated_date": "2025-01-23"
   }
 ]
