@@ -48,7 +48,7 @@ export default function CardSliderComponent({ mangaList , hasFevFunction = false
   return (
     <div className="relative w-full px-4 py-6">
       {/* Left Arrow */}
-      <button
+      {/* <button
         onClick={() => swiperRef.current?.slidePrev()}
         className={`absolute left-0 top-[39%] -translate-y-1/2 z-10 p-2 bg-white shadow-md rounded-full hover:bg-gray-200 transition-opacity ${
           isBeginning ? "hidden cursor-not-allowed" : "opacity-100"
@@ -56,7 +56,7 @@ export default function CardSliderComponent({ mangaList , hasFevFunction = false
         disabled={isBeginning}
       >
         <ChevronLeftIcon />
-      </button>
+      </button> */}
 
       <Swiper
         modules={[Navigation, Autoplay]}
@@ -101,7 +101,7 @@ export default function CardSliderComponent({ mangaList , hasFevFunction = false
       </Swiper>
 
       {/* Right Arrow */}
-      <button
+      {/* <button
         onClick={() => swiperRef.current?.slideNext()}
         className={`absolute right-0 top-[39%] -translate-y-1/2 z-10 p-2 bg-white shadow-md rounded-full hover:bg-gray-200 transition-opacity ${
           isEnd ? "hidden cursor-not-allowed" : "opacity-100"
@@ -109,7 +109,7 @@ export default function CardSliderComponent({ mangaList , hasFevFunction = false
         disabled={isEnd}
       >
         <ChevronRightIcon />
-      </button>
+      </button> */}
     </div>
   );
 }
