@@ -48,7 +48,7 @@ const CardComponent = ({ manga, hasFevFunction = true }) => {
           height={268}
           src={manga.backgroundImage}
           alt={manga.name}
-          className="h-[300px] w-full object-cover"
+          className="h-[220px] w-full object-cover"
           loading="lazy"
         />
         <div className="py-4">
