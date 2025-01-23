@@ -18,6 +18,7 @@ const HeaderComponent = () => {
     { id: 3, name: "มังฮวาจีนเกาหลี", href: "/manhuas" },
     { id: 2, name: "Tag ทั้งหมด", href: "/tags" },
     { id: 4, name: "มังงะที่กดถูกใจ", href: "/favorite-manga" },
+    { id: 5, name: "Hentai 18+", href: "/tags/Hentai" },
   ];
 
   // ✅ Filter manga list dynamically based on search query
