@@ -3,14 +3,40 @@
 import { useState, useEffect } from "react";
 import AdvertiseComponent from "@/components/AdvertiseComponent";
 import CardComponent from "@/components/CardComponent";
-import CardSliderComponent from "@/components/CardSliderComponent";
-import mangas from "@/database/mangas";
+import CardSliderComponent from "@/components/CardSliderComponent"
 import { FireIcon, HeartIcon } from "@heroicons/react/24/solid";
-import tags from "@/database/tags";
 import Link from "next/link";
 
 export default function Home() {
   const [favoriteMangas, setFavoriteMangas] = useState([]);
+  const [mangas, setMangas] = useState([]);
+  const [tags, setTags] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const mangaAPI = await fetch("/api/mangas");
+        const tagAPI = await fetch("/api/tags");  // ✅ Corrected the route from '/api/tag' to '/api/tags'
+  
+        if (!mangaAPI.ok) {
+          throw new Error(`Manga API error: ${mangaAPI.status}`); // ✅ Fixed incorrect reference to response.status
+        }
+        if (!tagAPI.ok) {
+          throw new Error(`Tag API error: ${tagAPI.status}`);     // ✅ Fixed incorrect reference to response.status
+        }
+  
+        const mangaData = await mangaAPI.json();
+        const tagData = await tagAPI.json();
+  
+        setMangas(mangaData);
+        setTags(tagData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    fetchData();
+  }, []);  
 
   // Load favorite mangas from localStorage
   useEffect(() => {

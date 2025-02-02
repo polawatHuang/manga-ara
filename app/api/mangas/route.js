@@ -1,66 +1,50 @@
-import fs from "fs";
-import path from "path";
 import { db } from "@/firebaseConfig";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from "firebase/firestore";
 
-// File path to mangas.json
-const mangasFilePath = path.join(process.cwd(), "database", "mangas.json");
+const mangasCollection = collection(db, "manga");
 
-// Read mangas data
-const readMangas = () => JSON.parse(fs.readFileSync(mangasFilePath, "utf-8"));
-
-// Write mangas data
-const writeMangas = (data) => fs.writeFileSync(mangasFilePath, JSON.stringify(data, null, 2), "utf-8");
-
+// GET: Fetch all mangas
 export async function GET() {
-  return Response.json(readMangas());
-}
-
-export async function POST(req, res) {
-  if (req.method === "POST") {
-    try {
-      const mangaData = {
-        id: 5,
-        name: "Kono Kaisha ni Suki na Hito ga Imasu บริษัทนี้มีความรัก",
-        description:
-          "ทาเทอิชิ พนักงานบัญชีของบริษัทขนม มีความลับสุดซึ้ง นั่นคือเขากำลังคบกับ มิตสึยะ เพื่อนร่วมงานสาวสวยที่อยู่แผนกวางแผน! ความรักของทั้งคู่เกิดขึ้นในที่ทำงาน และเป็นความสัมพันธ์ที่ต้องเก็บเป็นความลับ แต่ความสนุกสนานและเรื่องราววุ่นๆ ในออฟฟิศก็ทำให้ความรักของทั้งคู่เข้มข้นยิ่งขึ้น",
-        ep: [
-          {
-            episode: "1",
-            totalPage: 24,
-            view: 214,
-            created_date: "2025-01-23",
-          },
-        ],
-        tag: ["คอมมาดี้", "โรแมนติก"],
-        backgroundImage: "/images/kono-kaisha-ni-suki-na-hito-ga-imasu/bg.webp",
-        slug: "/kono-kaisha-ni-suki-na-hito-ga-imasu",
-        created_date: "2025-01-23",
-        updated_date: "2025-01-23",
-      };
-
-      const docRef = await addDoc(collection(db, "manga"), mangaData);
-      res.status(200).json({ message: "Manga added successfully", id: docRef.id });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  } else {
-    res.status(405).json({ message: "Method Not Allowed" });
+  try {
+    const snapshot = await getDocs(mangasCollection);
+    const mangas = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return Response.json(mangas);
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
   }
 }
 
-export async function PUT(req) {
-  const updatedManga = await req.json();
-  let mangas = readMangas();
-  mangas = mangas.map((m) => (m.id === updatedManga.id ? updatedManga : m));
-  writeMangas(mangas);
-  return Response.json({ message: "Manga updated successfully" });
+// POST: Add a new manga
+export async function POST(req) {
+  try {
+    const mangaData = await req.json();
+    const docRef = await addDoc(mangasCollection, mangaData);
+    return Response.json({ message: "Manga added successfully", id: docRef.id });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 }
 
+// PUT: Update an existing manga
+export async function PUT(req) {
+  try {
+    const { id, ...updatedManga } = await req.json();
+    const mangaDoc = doc(db, "manga", id);
+    await updateDoc(mangaDoc, updatedManga);
+    return Response.json({ message: "Manga updated successfully" });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+}
+
+// DELETE: Remove a manga
 export async function DELETE(req) {
-  const { id } = await req.json();
-  let mangas = readMangas();
-  mangas = mangas.filter((m) => m.id !== id);
-  writeMangas(mangas);
-  return Response.json({ message: "Manga deleted successfully" });
+  try {
+    const { id } = await req.json();
+    const mangaDoc = doc(db, "manga", id);
+    await deleteDoc(mangaDoc);
+    return Response.json({ message: "Manga deleted successfully" });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 }

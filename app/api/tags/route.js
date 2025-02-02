@@ -1,31 +1,38 @@
-import fs from "fs";
-import path from "path";
+import { db } from "@/firebaseConfig";
+import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore";
 
-// File path to tags.json
-const tagsFilePath = path.join(process.cwd(), "database", "tags.json");
+const tagsCollection = collection(db, "tag");
 
-// Read tags data
-const readTags = () => JSON.parse(fs.readFileSync(tagsFilePath, "utf-8"));
-
-// Write tags data
-const writeTags = (data) => fs.writeFileSync(tagsFilePath, JSON.stringify(data, null, 2), "utf-8");
-
+// ✅ GET: Fetch all tags from Firestore
 export async function GET() {
-  return Response.json(readTags());
+  try {
+    const snapshot = await getDocs(tagsCollection);
+    const tags = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return Response.json(tags);
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 }
 
+// ✅ POST: Add a new tag to Firestore
 export async function POST(req) {
-  const newTag = await req.json();
-  const tags = readTags();
-  tags.push(newTag);
-  writeTags(tags);
-  return Response.json({ message: "Tag added successfully" });
+  try {
+    const newTag = await req.json();
+    const docRef = await addDoc(tagsCollection, newTag);
+    return Response.json({ message: "Tag added successfully", id: docRef.id });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 }
 
+// ✅ DELETE: Remove a tag from Firestore
 export async function DELETE(req) {
-  const { id } = await req.json();
-  let tags = readTags();
-  tags = tags.filter((t) => t.id !== id);
-  writeTags(tags);
-  return Response.json({ message: "Tag deleted successfully" });
+  try {
+    const { id } = await req.json();
+    const tagDoc = doc(db, "tags", id);
+    await deleteDoc(tagDoc);
+    return Response.json({ message: "Tag deleted successfully" });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 }
