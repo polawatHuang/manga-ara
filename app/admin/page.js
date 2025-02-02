@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Select from "react-select";
 
 export default function AdminPage() {
   const [mangas, setMangas] = useState([]);
@@ -100,25 +101,64 @@ export default function AdminPage() {
     saveTags(updatedTags);
   };
 
+  const returnAllTag = (data) => {
+    return data && data.map(item => ({ value: item, label: item }));
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-8 text-white">
       <h1 className="text-center mb-6 text-3xl font-bold">Admin Panel</h1>
 
       <section className="mb-12">
-        <h2 className="mb-4 text-2xl font-semibold">Manage Mangas</h2>
+        <h2 className="mb-4 text-2xl font-semibold">จัดการหน้า Manga</h2>
+        <h3 className="text-white text-lg">ขั้นตอนการอับโหลดเรื่องใหม่</h3>
+        <p className="text-white">1. อับโหลดรูปปกเรื่อง โดยให้ใส่ที่อยู่รูปดังนี้ (/images/ชื่่อเรื่องภาษาอังกฤษ เช่น dan-da-dan มีขีดด้วย!/bg.webp)</p>
+        <p className="text-white">2. Copy URL ที่ได้หลังจากอับโหลดรูปปกเสร็จแล้ว</p>
+        <p className="text-white">3. กดคลิกเพิ่มเรื่องใหม่และใส่ข้อมูลให้เรียบร้อยและเอา URL ที่ได้จากการ Copy เมื่อกี้มาใส่ใน Background Image</p>
+        <p className="text-white">4. กด Upload เรื่อง</p>
+        <br />
         <button onClick={addManga} className="bg-green-500 px-4 py-2 rounded">
-          + Add New Manga
+          + เพิ่มเรื่องใหม่
         </button>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           {mangas.map((manga, index) => (
             <div key={manga.id} className="bg-gray-800 p-4 rounded shadow-lg">
+              <span>ชื่อเรื่อง</span>
               <input
                 type="text"
                 value={manga.name}
                 onChange={(e) => handleEditManga(index, "name", e.target.value)}
                 className="w-full bg-gray-700 px-3 py-2 mb-2"
               />
+              <span>รูปปกเรื่อง</span>
+              <input
+                type="text"
+                value={manga.backgroundImage}
+                onChange={(e) => handleEditManga(index, "backgroundImage", e.target.value)}
+                className="w-full bg-gray-700 px-3 py-2 mb-2"
+              />
+              <span>Slug (ใส่ / + ชื่อเรื่องภาษาอังกฤษ ใส่ขีดแทนเว้นวรรค)</span>
+              <input
+                type="text"
+                value={manga.slug}
+                onChange={(e) => handleEditManga(index, "slug", e.target.value)}
+                className="w-full bg-gray-700 px-3 py-2 mb-2"
+              />
+              <span>Tags</span>
+              <Select 
+                isMulti 
+                options={returnAllTag(tags.map(tag => tag.name))} 
+                value={returnAllTag(manga.tag)} 
+                onChange={(selectedOptions) => handleEditManga(index, "tag", selectedOptions.map(option => option.value))}
+                className="mb-2" 
+                classNamePrefix="select text-[#808080]"
+                styles={{
+                  option: (provided) => ({ ...provided, color: "black" }),
+                  menu: (provided) => ({ ...provided, color: "black" }),
+                }}
+              />
+              <span>เรื่องย่อ</span>
               <textarea
                 value={manga.description}
                 onChange={(e) =>
@@ -126,6 +166,14 @@ export default function AdminPage() {
                 }
                 className="w-full min-h-[10vw] bg-gray-700 px-3 py-2 mb-2"
               />
+              <div className="w-full flex justify-end">
+              <button
+                onClick={() => handleSaveManga(index)}
+                className="bg-blue-500 px-4 py-2 rounded mt-2"
+              >
+                Save
+              </button>
+              </div>
             </div>
           ))}
         </div>
