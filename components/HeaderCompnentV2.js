@@ -15,10 +15,9 @@ const HeaderComponent = () => {
 
   const menubar = [
     { id: 1, name: "สุ่มเลือกอ่านมังงะ", href: "" },
-    { id: 2, name: "มังฮวาจีนเกาหลี", href: "/manhuas" },
-    { id: 3, name: "Hentai (18+)", href: "/tags/Hentai" },
-    { id: 4, name: "Tag ทั้งหมด", href: "/tags" },
-    { id: 5, name: "มังงะที่กดถูกใจ", href: "/favorite-manga" },
+    { id: 2, name: "มังฮวาเกาหลี", href: "/manhuas" },
+    { id: 3, name: "Tag ทั้งหมด", href: "/tags" },
+    { id: 4, name: "มังงะที่กดถูกใจ", href: "/favorite-manga" },
   ];
 
   // ✅ Filter manga list dynamically based on search query
