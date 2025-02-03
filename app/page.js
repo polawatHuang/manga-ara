@@ -163,7 +163,7 @@ export default function Home() {
                                 <Link
                                   key={item}
                                   href={"/tags/" + item}
-                                  className="rounded-full bg-gray-500 hover:bg-blue-500 hover:no-underline px-2"
+                                  className="rounded-full bg-blue-500 hover:bg-blue-600 hover:no-underline px-2"
                                 >
                                   {item}
                                 </Link>

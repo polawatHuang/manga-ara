@@ -103,6 +103,7 @@ export default function AdminPage() {
         description: mangaDescription,
         backgroundImage: backgroundUrl,
         tag: tagArray,
+        view: 0,
         created_date: Timestamp.now().toDate().toISOString(),
         updated_date: Timestamp.now().toDate().toISOString(),
       });
