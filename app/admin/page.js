@@ -451,14 +451,14 @@ export default function AdminPage() {
       {/* ============ MANGA TAB ============ */}
       {activeTab === "manga" && (
         <section>
-          <div className="p-4 bg-gray-700 mb-4">
+          <div className="p-4 bg-gray-700 mb-4 overflow-hidden relative">
             <h2 className="mb-6">การจัดการ Manga</h2>
             <div className="mb-4 flex gap-2 items-center">
               <label>ชื่อเรื่อง:</label>
               <input
                 style={blackInputStyle}
                 value={mangaName}
-                className="px-2 h-[36px] rounded-[4px]"
+                className="px-2 max-w-[30vw] h-[36px] rounded-[4px]"
                 placeholder="กรุณาใส่ชื่อเรื่อง"
                 onChange={(e) => {
                   setMangaName(e.target.value);
