@@ -453,12 +453,12 @@ export default function AdminPage() {
         <section>
           <div className="p-4 bg-gray-700 mb-4">
             <h2 className="mb-6">การจัดการ Manga</h2>
-            <div className="mb-4 flex gap-2">
+            <div className="mb-4 flex gap-2 items-center">
               <label>ชื่อเรื่อง:</label>
               <input
                 style={blackInputStyle}
                 value={mangaName}
-                className="bg-gray-500 px-2"
+                className="px-2 h-[36px] rounded-[4px]"
                 placeholder="กรุณาใส่ชื่อเรื่อง"
                 onChange={(e) => {
                   setMangaName(e.target.value);
@@ -468,12 +468,12 @@ export default function AdminPage() {
                 }}
               />
             </div>
-            <div className="mb-4 flex gap-2">
+            <div className="mb-4 flex gap-2 items-center">
               <label>Slug: </label>
               <input
                 style={blackInputStyle}
                 value={mangaSlug}
-                className="bg-gray-500 px-2"
+                className="px-2 h-[36px] rounded-[4px]"
                 placeholder="กรุณาใส่ชื่อ URL ของเรื่องนี้"
                 onChange={(e) => setMangaSlug(e.target.value)}
               />
@@ -483,12 +483,12 @@ export default function AdminPage() {
               <textarea
                 style={blackInputStyle}
                 value={mangaDescription}
-                className="bg-gray-500 px-2"
+                className="px-2 rounded-[4px]"
                 placeholder="กรุณาใส่เรื่องย่อ"
                 onChange={(e) => setMangaDescription(e.target.value)}
               />
             </div>
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-2 mb-4 items-center">
               <label>Tags ของเรื่อง: </label>
               <Select
                 isMulti
@@ -499,7 +499,7 @@ export default function AdminPage() {
                 onChange={(values) => setSelectedTags(values || [])}
               />
             </div>
-            <div className="mb-4 flex gap-2">
+            <div className="mb-4 flex gap-2 items-center">
               <label>รูปปกเรื่อง: </label>
               <input
                 style={blackInputStyle}
@@ -547,16 +547,19 @@ export default function AdminPage() {
                 onChange={(e) => setSearchKeyword(e.target.value)}
                 type="text"
                 placeholder="ค้นหาชื่อเรื่อง ..."
-                className="w-[30vw] h-[36px] bg-gray-500 pl-10 pr-4 rounded-full"
+                className="h-[36px] bg-gray-500 pl-10 pr-4 rounded-full"
               />
             </div>
             <ul className="p-4 bg-gray-500">
-              {mangaList.filter((item) => item.name.toLowerCase().includes(searchKeyword.toLowerCase()))
-                .length === 0 ? (
+              {mangaList.filter((item) =>
+                item.name.toLowerCase().includes(searchKeyword.toLowerCase())
+              ).length === 0 ? (
                 <li>ขออภัยด้วยค่ะ! ไม่มีชื่อเรื่องดังกล่าว</li>
               ) : null}
               {mangaList
-                .filter((item) => item.name.toLowerCase().includes(searchKeyword.toLowerCase()))
+                .filter((item) =>
+                  item.name.toLowerCase().includes(searchKeyword.toLowerCase())
+                )
                 .map((m, index) => (
                   <li key={m.docId} className="mb-[0.5rem]">
                     <strong>{m.name}</strong>
@@ -566,7 +569,14 @@ export default function AdminPage() {
                     >
                       Edit
                     </button>
-                    {index+1 !== mangaList.filter((item) => item.name.toLowerCase().includes(searchKeyword.toLowerCase())).length && <div className="h-[1px] w-full bg-gray-400 my-4" />}
+                    {index + 1 !==
+                      mangaList.filter((item) =>
+                        item.name
+                          .toLowerCase()
+                          .includes(searchKeyword.toLowerCase())
+                      ).length && (
+                      <div className="h-[1px] w-full bg-gray-400 my-4" />
+                    )}
                   </li>
                 ))}
             </ul>
@@ -578,10 +588,11 @@ export default function AdminPage() {
       {activeTab === "episodes" && (
         <section className="p-4 bg-gray-700 mb-4">
           <h2 className="mb-4">การจัดการ Episode</h2>
-          <div className="mb-4 flex gap-2">
+          <div className="mb-4 flex gap-2 items-center">
             <label>ชื่อเรื่อง: </label>
             <select
               style={blackInputStyle}
+              className="h-[36px] rounded-[4px] px-2"
               onChange={(e) => handleSelectMangaForEpisode(e.target.value)}
               value={selectedMangaId}
             >
@@ -595,11 +606,11 @@ export default function AdminPage() {
               ))}
             </select>
           </div>
-          <div className="mb-4 flex gap-2">
+          <div className="mb-4 flex gap-2 items-center">
             <label>เลข Episode: </label>
             <input
               type="number"
-              className="px-2"
+              className="px-2 h-[36px] rounded-[4px]"
               style={blackInputStyle}
               value={episodeNumber}
               placeholder="ระบุเลขตอน"
@@ -619,7 +630,10 @@ export default function AdminPage() {
               }}
             />
           </div>
-          <button onClick={createEpisode} className="px-4 py-2 bg-green-600 hover:bg-green-700">
+          <button
+            onClick={createEpisode}
+            className="px-4 py-2 bg-green-600 hover:bg-green-700"
+          >
             Create Episode
           </button>
         </section>
@@ -627,98 +641,111 @@ export default function AdminPage() {
 
       {/* ============ TAGS TAB ============ */}
       {activeTab === "tags" && (
-        <section style={{ border: "1px solid #ccc", padding: "1rem" }}>
-          <h2>Tag Management</h2>
-          <div>
-            <label>Tag Name: </label>
-            <input
-              style={blackInputStyle}
-              value={tagName}
-              onChange={(e) => setTagName(e.target.value)}
-            />
+        <section>
+          <div className="p-4 bg-gray-700 mb-4">
+            <h2 className="mb-4">การจัดการ Tag</h2>
+            <div className="mb-4 flex gap-2 items-center">
+              <label>ชื่อ Tag: </label>
+              <input
+                style={blackInputStyle}
+                value={tagName}
+                placeholder="กรุณาใส่ชื่อ Tag"
+                className="px-2 h-[36px] rounded-[4px]"
+                onChange={(e) => setTagName(e.target.value)}
+              />
+            </div>
+            <div className="hidden">
+              <label>Tag ID: </label>
+              <input
+                style={blackInputStyle}
+                value={tagIdValue === ""? tagList.length + 1 : tagIdValue}
+                onChange={(e) => setTagIdValue(e.target.value)}
+              />
+            </div>
+
+            {!editingTagDocId ? (
+              <button onClick={createTag} className="px-4 py-2 bg-green-600 hover:bg-green-700 mt-[1rem]">
+                Create Tag
+              </button>
+            ) : (
+              <button onClick={updateTag} className="px-4 py-2 bg-orange-600 hover:bg-orange-700 mt-[1rem]">
+                Update Tag
+              </button>
+            )}
+
+            {editingTagDocId && (
+              <button
+                onClick={resetTagForm}
+                style={{ marginLeft: "1rem", marginTop: "0.5rem" }}
+              >
+                Cancel
+              </button>
+            )}
           </div>
-          <div>
-            <label>Tag ID: </label>
-            <input
-              style={blackInputStyle}
-              value={tagIdValue}
-              onChange={(e) => setTagIdValue(e.target.value)}
-            />
+
+          <div className="p-4 bg-gray-700 mb-4">
+            <h3 className="mb-4">Existing Tags</h3>
+            <div className="p-4 bg-gray-500">
+            <ul>
+              {tagList.map((t,index) => (
+                <li key={t.docId} style={{ marginBottom: "0.5rem" }}>
+                  {t.name}
+                  <button
+                    className="ml-[1rem] px-2 bg-blue-500 hover:bg-blue-600 rounded-full"
+                    onClick={() => handleEditTag(t.docId)}
+                  >
+                    Edit
+                  </button>
+                  {index+1 !== tagList.length ? <div className="w-full h-[1px] bg-gray-400 my-4" /> : null}
+                </li>
+              ))}
+            </ul>
+            </div>
           </div>
-
-          {!editingTagDocId ? (
-            <button onClick={createTag} style={{ marginTop: "0.5rem" }}>
-              Create Tag
-            </button>
-          ) : (
-            <button onClick={updateTag} style={{ marginTop: "0.5rem" }}>
-              Update Tag
-            </button>
-          )}
-
-          {editingTagDocId && (
-            <button
-              onClick={resetTagForm}
-              style={{ marginLeft: "1rem", marginTop: "0.5rem" }}
-            >
-              Cancel
-            </button>
-          )}
-
-          <hr style={{ margin: "1rem 0" }} />
-
-          <h3>Existing Tags</h3>
-          <ul>
-            {tagList.map((t) => (
-              <li key={t.docId} style={{ marginBottom: "0.5rem" }}>
-                {t.name} (ID: {t.id})
-                <button
-                  style={{ marginLeft: "1rem" }}
-                  onClick={() => handleEditTag(t.docId)}
-                >
-                  Edit
-                </button>
-              </li>
-            ))}
-          </ul>
         </section>
       )}
 
       {/* ============ MENU BAR TAB ============ */}
       {activeTab === "menubar" && (
-        <section style={{ border: "1px solid #ccc", padding: "1rem" }}>
-          <h2>Menu Bar Management</h2>
-          <div>
-            <label>Menu Name: </label>
+        <section>
+          <div className="p-4 bg-gray-700 mb-4">
+          <h2 className="mb-4">การจัดการ Menu Bar</h2>
+          <div className="mb-4 flex gap-2 items-center">
+            <label>ชื่อ Menu: </label>
             <input
               style={blackInputStyle}
               value={menuName}
+              placeholder="กรุณาตั้งชื่อเมนู"
+              className="px-2 rounded-[4px] h-[36px]"
               onChange={(e) => setMenuName(e.target.value)}
             />
           </div>
-          <div>
+          <div className="mb-4 flex gap-2 items-center">
             <label>Href: </label>
             <input
               style={blackInputStyle}
               value={menuHref}
+              placeholder="ตั้งชื่อ Link นี้"
+              className="px-2 rounded-[4px] h-[36px]"
               onChange={(e) => setMenuHref(e.target.value)}
             />
           </div>
-          <div>
+          <div className="mb-4 flex gap-2 items-center hidden">
             <label>Menu ID: </label>
             <input
               style={blackInputStyle}
-              value={menuIdValue}
+              value={menuIdValue === "" ? menuList.length+1 : menuIdValue}
+              className="px-2 rounded-[4px] h-[36px]"
               onChange={(e) => setMenuIdValue(e.target.value)}
             />
           </div>
 
           {!editingMenuDocId ? (
-            <button onClick={createMenuItem} style={{ marginTop: "0.5rem" }}>
+            <button onClick={createMenuItem} className="mt-[0.5rem] px-4 py-2 bg-green-500 hover:bg-green-600">
               Create Menu Item
             </button>
           ) : (
-            <button onClick={updateMenuItem} style={{ marginTop: "0.5rem" }}>
+            <button onClick={updateMenuItem} className="mt-[0.5rem] px-4 py-2 bg-orange-500 hover:bg-orange-600">
               Update Menu Item
             </button>
           )}
@@ -726,28 +753,32 @@ export default function AdminPage() {
           {editingMenuDocId && (
             <button
               onClick={resetMenuForm}
-              style={{ marginLeft: "1rem", marginTop: "0.5rem" }}
+              className="mt-[0.5rem] px-4 py-2 bg-red-500 hover:bg-red-600 ml-4"
             >
               Cancel
             </button>
           )}
+          </div>
 
-          <hr style={{ margin: "1rem 0" }} />
-
-          <h3>Existing Menu Items</h3>
+          <div className="p-4 bg-gray-700 mb-4">
+          <h3 className="mb-4">Existing Menu Items</h3>
+          <div className="p-4 bg-gray-500 ">
           <ul>
-            {menuList.map((m) => (
+            {menuList.map((m,index) => (
               <li key={m.docId} style={{ marginBottom: "0.5rem" }}>
-                {m.name} – {m.href} (ID: {m.id})
+                {m.name} - {m.href}
                 <button
-                  style={{ marginLeft: "1rem" }}
+                  className="ml-[1rem] px-2 rounded-full bg-blue-500 hover:bg-blue-600"
                   onClick={() => handleEditMenuItem(m.docId)}
                 >
                   Edit
                 </button>
+                {index+1 !== menuList.length? <div className="w-full h-[1px] bg-gray-400 my-4" /> : null}
               </li>
             ))}
           </ul>
+          </div>
+          </div>
         </section>
       )}
     </main>
