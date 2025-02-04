@@ -10,55 +10,84 @@ import copyToClipboard from "@/utils/copyToClipboard";
 
 export default function EpisodePage() {
   const { slug, ep } = useParams();
-  const [manga, setManga] = useState(null);
+  const [mangaData, setMangaData] = useState(null);
   const [mangaImages, setMangaImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showScroll, setShowScroll] = useState(false);
+  // Holds the episode string that was successfully loaded
+  const [currentEpisode, setCurrentEpisode] = useState(ep);
 
-  useEffect(() => {
-    async function fetchManga() {
-      try {
-        const response = await fetch("/api/mangas");
-        if (!response.ok) throw new Error("Failed to fetch manga data");
+  // Utility: extract a number from an episode string (e.g. "ep3" → 3)
+  const getEpisodeNumber = (episodeStr) => {
+    const num = parseInt(episodeStr.replace("ep", ""), 10);
+    return isNaN(num) ? 1 : num;
+  };
 
-        const data = await response.json();
-        const foundManga = data.find((item) => item.slug.includes(slug));
-        setManga(foundManga || null);
+  // Fetch images and manga details for a given episode.
+  // Expects the images API to return an object like { images: [ ... ] }.
+  async function fetchMangaData(episode) {
+    try {
+      // Fetch manga images for the specific episode.
+      const response = await fetch(`/api/${slug}/${episode}`);
+      // Fetch overall manga details.
+      const mangaRes = await fetch(`/api/mangas`);
 
-        if (foundManga) {
-          const selectedEpisode = foundManga.ep.find((episode) => episode.episode === ep);
-          if (selectedEpisode) {
-            const images = Array.from(
-              { length: selectedEpisode.totalPage },
-              (_, i) => `/images/${slug}/ep${ep}/page${i + 1}.webp`
-            );
-            setMangaImages(images);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching manga:", error);
-      } finally {
-        setLoading(false);
+      if (!response.ok) throw new Error("Failed to fetch manga image");
+      if (!mangaRes.ok) throw new Error("Failed to fetch manga data");
+
+      const data = await response.json();
+      const mangaDT = await mangaRes.json();
+
+      // The API returns the slug with a leading slash (e.g. "/guild-no-uketsukejou-desu-ga").
+      // Compare with the route parameter by prepending "/" to slug.
+      const foundManga = mangaDT.find((item) => item.slug === `/${slug}`);
+      if (foundManga) {
+        setMangaData(foundManga);
       }
+
+      // Return the array of image URLs.
+      return data.images;
+    } catch (error) {
+      console.error("Error fetching manga for", episode, error);
+      return null;
     }
-    fetchManga();
+  }
+
+  // Load images: try the requested episode; if not found, fall back to the previous episode.
+  useEffect(() => {
+    async function loadManga() {
+      let data = await fetchMangaData(ep);
+      let episodeToLoad = ep;
+      if (!data) {
+        const currentEpNumber = getEpisodeNumber(ep);
+        if (currentEpNumber > 1) {
+          episodeToLoad = `ep${currentEpNumber - 1}`;
+          data = await fetchMangaData(episodeToLoad);
+        }
+      }
+      if (data) {
+        setMangaImages(data);
+        setCurrentEpisode(episodeToLoad);
+      } else {
+        setMangaImages([]);
+      }
+      setLoading(false);
+    }
+    loadManga();
   }, [slug, ep]);
 
-  // ✅ Handle Scroll for "Go to Top" Button
+  // Listen for scroll events to show/hide the "Go to Top" button.
   useEffect(() => {
-    const handleScroll = () => {
-      setShowScroll(window.scrollY > 300);
-    };
+    const handleScroll = () => setShowScroll(window.scrollY > 300);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // ✅ Scroll to Top Function
+  // Scroll to Top function.
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // ✅ Loading animation (Spinner)
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-black gap-4">
@@ -68,9 +97,19 @@ export default function EpisodePage() {
     );
   }
 
-  if (!manga) {
+  if (mangaImages.length === 0) {
     return <p className="text-center text-white">ไม่พบข้อมูลมังงะที่ระบุ</p>;
   }
+
+  // Determine navigation based on the successfully loaded episode.
+  const currentEpNumber = getEpisodeNumber(currentEpisode);
+  const prevEpisode = currentEpNumber > 1 ? `ep${currentEpNumber - 1}` : null;
+  const nextEpisode = `ep${currentEpNumber + 1}`;
+
+  // Use mangaData.ep.episode as the latest available episode.
+  const latestEpisode =
+    mangaData && mangaData.ep ? Number(mangaData.ep.episode) : 0;
+  const canShowNext = currentEpNumber < latestEpisode;
 
   return (
     <div className="relative w-full min-h-screen max-w-6xl mx-auto md:p-8 pb-20 gap-16 sm:p-2">
@@ -84,39 +123,81 @@ export default function EpisodePage() {
         <div className="w-full bg-gray-700 px-4 py-2">
           <Link href="/">Homepage</Link>
           {" / "}
-          <Link href={`/manga/${slug}`}>{slug}</Link>
+          <Link href={`/manga/${slug}`}>
+            {mangaData ? mangaData.name : slug}
+          </Link>
           {" / "}
-          <Link href={`/manga/${slug}/ep${ep}`}>ตอนที่ {ep}</Link>
+          <Link href={`/manga/${slug}/${currentEpisode}`}>
+            ตอนที่ {currentEpNumber}
+          </Link>
         </div>
       </section>
 
       {/* Manga Detail */}
       <section className="px-4 md:px-[12%] mt-4 grid grid-cols-1 md:grid-cols-12">
         <img
-          src={manga.backgroundImage}
-          alt={manga.name}
+          src={
+            mangaData && mangaData.backgroundImage
+              ? mangaData.backgroundImage
+              : "/placeholder.jpg"
+          }
+          alt={`Background for ${mangaData ? mangaData.name : slug}`}
           className="col-span-12 md:col-span-4 h-[350px] w-auto object-cover"
           loading="lazy"
         />
         <div className="col-span-12 md:col-span-8 mt-8">
-          <h1 className="text-xl font-bold">ชื่อเรื่อง: {manga.name}</h1>
+          <h1 className="text-xl font-bold">
+            ชื่อเรื่อง: {mangaData ? mangaData.name : slug}
+          </h1>
           <hr className="my-2" />
-          <p className="text-white mt-2">เรื่องย่อ: {manga.description}</p>
-
-          {/* Tags Section */}
-          <p className="text-white flex items-center gap-4 mt-3">
+          <p className="text-white mt-2">
+            {mangaData
+              ? mangaData.description
+              : "รายละเอียดเพิ่มเติมของมังงะ"}
+          </p>
+          <div className="text-white flex items-center gap-4 mt-3">
             Tags:{" "}
-            {manga.tag.map((tag) => (
-              <Link key={tag} className="px-4 py-1 bg-gray-700 hover:bg-gray-800" href={`/tags/${tag}`}>
+            {(mangaData && mangaData.tag
+              ? mangaData.tag
+              : ["Action", "Adventure"]
+            ).map((tag) => (
+              <Link
+                key={tag}
+                className="px-4 py-1 bg-gray-700 hover:bg-gray-800"
+                href={`/tags/${tag}`}
+              >
                 {tag}
               </Link>
             ))}
-          </p>
-          
-          <p className="text-white flex items-center gap-4 mt-3">
-            แชร์ตอนนี้ให้เพื่อน: <div onClick={()=>copyToClipboard()} className="px-4 rounded-full bg-gray-700 hover:bg-gray-800 flex gap-1 items-center cursor-pointer">แชร์ <ShareIcon className="size-4" /></div>
-          </p>
+          </div>
+          <div className="text-white flex items-center gap-4 mt-3">
+            แชร์ตอนนี้ให้เพื่อน:{" "}
+            <div
+              onClick={() => copyToClipboard()}
+              className="px-4 rounded-full bg-gray-700 hover:bg-gray-800 flex gap-1 items-center cursor-pointer"
+            >
+              แชร์ <ShareIcon className="w-4 h-4" />
+            </div>
+          </div>
         </div>
+      </section>
+
+      {/* Episode Navigation (top) */}
+      <section className="md:px-[12%] mt-4 flex justify-between">
+        {prevEpisode && (
+          <Link href={`/${slug}/${prevEpisode}`}>
+            <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white">
+              {"< "}ตอนที่แล้ว
+            </button>
+          </Link>
+        )}
+        {canShowNext && (
+          <Link href={`/${slug}/${nextEpisode}`}>
+            <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white">
+              ตอนต่อไป{" >"}
+            </button>
+          </Link>
+        )}
       </section>
 
       {/* Manga Reader */}
@@ -124,7 +205,25 @@ export default function EpisodePage() {
         <MangaReader mangaImages={mangaImages} />
       </section>
 
-      {/* ✅ "Go to Top" Button */}
+      {/* Episode Navigation (bottom) */}
+      <section className="md:px-[12%] mt-4 flex justify-between">
+        {prevEpisode && (
+          <Link href={`/${slug}/${prevEpisode}`}>
+            <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white">
+              {"< "}ตอนที่แล้ว
+            </button>
+          </Link>
+        )}
+        {canShowNext && (
+          <Link href={`/${slug}/${nextEpisode}`}>
+            <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white">
+              ตอนต่อไป{" >"}
+            </button>
+          </Link>
+        )}
+      </section>
+
+      {/* "Go to Top" Button */}
       {showScroll && (
         <button
           onClick={scrollToTop}

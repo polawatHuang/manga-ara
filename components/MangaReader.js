@@ -58,8 +58,8 @@ export default function MangaReader({ mangaImages }) {
         {/* Episode Selection Dropdown */}
         <select
           className="px-3 py-1 bg-gray-800 text-white text-sm cursor-pointer"
-          value={params.ep}
-          onChange={(e) => router.push(`/${params.slug}/${e.target.value}`)}
+          value={params.ep.slice(2,3)}
+          onChange={(e) => router.push(`/${params.slug}/ep${e.target.value}`)}
         >
           {manga?.ep.map((episode) => (
             <option key={episode.episode} value={episode.episode}>

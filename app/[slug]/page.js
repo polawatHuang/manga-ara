@@ -14,6 +14,7 @@ export default function SlugPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [manga, setManga] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [episode, setEpisode] = useState([]);
 
   // ✅ Fetch manga details dynamically
   useEffect(() => {
@@ -25,6 +26,9 @@ export default function SlugPage() {
         const data = await response.json();
         const foundManga = data.find((item) => item.slug === `/${decodedSlug}`);
         setManga(foundManga || null);
+        if (foundManga.ep.episode) {
+          setEpisode(foundManga.ep.length === undefined ? [foundManga.ep] : foundManga.ep);
+        }
       } catch (error) {
         console.error("Error fetching manga:", error);
       } finally {
@@ -107,14 +111,14 @@ export default function SlugPage() {
           <hr className="my-2" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <Link
-              href={`${decodedSlug}/1`}
+              href={`${decodedSlug}/ep1`}
               className="w-full bg-gray-800 hover:bg-gray-900 p-4 text-center hover:no-underline"
             >
               <span>ตอนแรก</span>
               <h4>ตอนที่ 1</h4>
             </Link>
             <Link
-              href={`${decodedSlug}/${manga.ep.length}`}
+              href={`${decodedSlug}/ep${manga.ep.length}`}
               className="w-full bg-gray-800 hover:bg-gray-900 p-4 text-center hover:no-underline"
             >
               <span>ตอนล่าสุด</span>
@@ -132,11 +136,11 @@ export default function SlugPage() {
             />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-4">
-            {filteredEpisodes.length > 0 ? (
-              filteredEpisodes.map(({ episode, created_date }) => (
+            {episode.length > 0 ? (
+              episode.map(({ episode, created_date }) => (
                 <Link
                   key={episode}
-                  href={`${decodedSlug}/${episode}`}
+                  href={`${decodedSlug}/ep${episode}`}
                   className="bg-blue-500 hover:bg-blue-600 hover:no-underline px-4 py-2 flex justify-between"
                 >
                   <span className="text-white font-[600]">
