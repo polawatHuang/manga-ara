@@ -38,9 +38,8 @@ export default function EpisodePage() {
       const data = await response.json();
       const mangaDT = await mangaRes.json();
 
-      // The API returns the slug with a leading slash (e.g. "/guild-no-uketsukejou-desu-ga").
-      // Compare with the route parameter by prepending "/" to slug.
-      const foundManga = mangaDT.find((item) => item.slug === `/${slug}`);
+      // The API returns the slug with a leading slash (e.g. "guild-no-uketsukejou-desu-ga").
+      const foundManga = mangaDT.find((item) => item.slug === slug);
       if (foundManga) {
         setMangaData(foundManga);
       }

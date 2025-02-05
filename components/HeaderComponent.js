@@ -2,23 +2,46 @@
 import { useState, useEffect } from "react";
 import { MagnifyingGlassIcon, Bars3Icon } from "@heroicons/react/24/solid";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; 
-import { goToRandomManga } from "@/utils/randomManga"; 
+import { useRouter } from "next/navigation";
+import { goToRandomManga } from "@/utils/randomManga";
 import MobileMenubarComponent from "./MobileMenubar";
-import mangas from "@/database/mangas";
 
 const HeaderComponent = () => {
   const [isShowMenu, setIsShowMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredMangas, setFilteredMangas] = useState([]);
-  const router = useRouter(); 
+  const [mangas, setMangas] = useState([]);
+  const [menubar, setMenubar] = useState([]);
+  const router = useRouter();
 
-  const menubar = [
-    { id: 1, name: "สุ่มเลือกอ่านมังงะ", href: "" },
-    { id: 2, name: "มังฮวาเกาหลี", href: "/manhuas" },
-    { id: 3, name: "Tag ทั้งหมด", href: "/tags" },
-    { id: 4, name: "มังงะที่กดถูกใจ", href: "/favorite-manga" },
-  ];
+  // ✅ Load data from localStorage (cache) or fetch from API
+  const loadData = async (key, apiUrl, setState) => {
+    const cachedData = JSON.parse(localStorage.getItem(key));
+
+    if (cachedData) {
+      setState(cachedData.data); // Load from cache
+    }
+
+    try {
+      const response = await fetch(apiUrl);
+      if (!response.ok) throw new Error(`Error fetching ${key}`);
+      const apiData = await response.json();
+
+      // ✅ Check if API data is different from cached data
+      if (JSON.stringify(apiData) !== JSON.stringify(cachedData?.data)) {
+        setState(apiData); // Update state
+        localStorage.setItem(key, JSON.stringify({ data: apiData })); // Update cache
+      }
+    } catch (error) {
+      console.error(`Error fetching ${key}:`, error);
+    }
+  };
+
+  // ✅ Load mangas and menubar from API (with caching)
+  useEffect(() => {
+    loadData("cachedMangas", "/api/mangas", setMangas);
+    loadData("cachedMenubar", "/api/menubar", setMenubar);
+  }, []);
 
   // ✅ Filter manga list dynamically based on search query
   useEffect(() => {
@@ -30,7 +53,7 @@ const HeaderComponent = () => {
       manga.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredMangas(filtered);
-  }, [searchQuery]);
+  }, [searchQuery, mangas]);
 
   // ✅ Handle selection of manga
   const handleSelectManga = (slug) => {
@@ -54,9 +77,9 @@ const HeaderComponent = () => {
 
         {/* 🔎 Search bar */}
         <div className="relative">
-          <form className="flex">
+          <form className="flex" onSubmit={(e) => e.preventDefault()}>
             <input
-              className="h-[40px] hover:bg-gray-600 focus:outline-none !rounded-l-full ring:none md:min-w-[150px] bg-gray-500 px-3 text-white"
+              className="h-[40px] hover:bg-gray-600 focus:outline-none !rounded-l-full md:min-w-[150px] bg-gray-500 px-3 text-white"
               placeholder="ค้นหาชื่อมังงะ..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

@@ -24,7 +24,7 @@ export default function SlugPage() {
         if (!response.ok) throw new Error("Failed to fetch manga data");
 
         const data = await response.json();
-        const foundManga = data.find((item) => item.slug === `/${decodedSlug}`);
+        const foundManga = data.find((item) => item.slug === slug);
         setManga(foundManga || null);
         // Always set episode as an array: if foundManga.ep is not an array, wrap it in an array.
         if (foundManga && foundManga.ep) {
@@ -39,7 +39,7 @@ export default function SlugPage() {
       }
     }
     fetchManga();
-  }, [decodedSlug]);
+  }, [slug]);
 
   // ✅ Loading animation (Spinner)
   if (loading) {
@@ -71,7 +71,7 @@ export default function SlugPage() {
         <div className="w-full bg-gray-700 px-4 py-2">
           <Link href="/">Homepage</Link>
           {" / "}
-          <Link href="/">{decodedSlug}</Link>
+          <Link href="/">{slug}</Link>
         </div>
       </section>
 
@@ -121,14 +121,14 @@ export default function SlugPage() {
           <hr className="my-2" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <Link
-              href={`${decodedSlug}/ep1`}
+              href={`/${slug}/ep1`}
               className="w-full bg-gray-800 hover:bg-gray-900 p-4 text-center hover:no-underline"
             >
               <span>ตอนแรก</span>
               <h4>ตอนที่ 1</h4>
             </Link>
             <Link
-              href={`${decodedSlug}/ep${episode.length}`}
+              href={`/${slug}/ep${episode.length}`}
               className="w-full bg-gray-800 hover:bg-gray-900 p-4 text-center hover:no-underline"
             >
               <span>ตอนล่าสุด</span>
@@ -150,7 +150,7 @@ export default function SlugPage() {
               filteredEpisodes.map(({ episode, created_date }) => (
                 <Link
                   key={episode}
-                  href={`${decodedSlug}/ep${episode}`}
+                  href={`/${slug}/ep${episode}`}
                   className="bg-blue-500 hover:bg-blue-600 hover:no-underline px-4 py-2 flex justify-between"
                 >
                   <span className="text-white font-[600]">

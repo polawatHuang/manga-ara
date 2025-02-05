@@ -8,20 +8,59 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
-import mangas from "@/database/mangas"; // Import manga data
 
 export default function MangaReader({ mangaImages }) {
   const [viewMode, setViewMode] = useState("full"); // "full" or "single"
   const [currentPage, setCurrentPage] = useState(1);
+  const [manga, setManga] = useState(null);
   const params = useParams();
   const router = useRouter();
   const swiperRef = useRef(null);
 
-  // Find the current manga using `slug`
-  const manga = mangas.find((item) => item.slug.includes(params.slug));
-  const totalPages = mangaImages.length; // Get total pages count
+  const totalPages = mangaImages.length;
 
-  // Handle click navigation in Single Page Mode
+  // ✅ Sorting function based on page number
+  const sortedImages = [...mangaImages].sort((a, b) => {
+    const pageA = parseInt(a.match(/page(\d+)/)?.[1] || 0, 10);
+    const pageB = parseInt(b.match(/page(\d+)/)?.[1] || 0, 10);
+    return pageA - pageB;
+  });
+
+  // ✅ Fetch manga from API or localStorage cache
+  const fetchMangaData = async () => {
+    try {
+      const cachedMangas = JSON.parse(localStorage.getItem("cachedMangas")) || [];
+
+      // ✅ Ensure cachedMangas is an array
+      if (!Array.isArray(cachedMangas)) {
+        localStorage.removeItem("cachedMangas"); // Clear invalid data
+      }
+
+      let mangaData = Array.isArray(cachedMangas)
+        ? cachedMangas.find((item) => item.slug.includes(params.slug))
+        : null;
+
+      // ✅ Fetch from API if not in cache
+      if (!mangaData) {
+        const response = await fetch("/api/mangas"); // ✅ Fixed syntax error
+        if (!response.ok) {
+          throw new Error("Failed to fetch mangas");
+        }
+        const mangas = await response.json();
+
+        if (Array.isArray(mangas)) {
+          localStorage.setItem("cachedMangas", JSON.stringify(mangas));
+          mangaData = mangas.find((item) => item.slug.includes(params.slug));
+        }
+      }
+
+      setManga(mangaData);
+    } catch (error) {
+      console.error("Error fetching manga:", error);
+    }
+  };
+
+  // ✅ Handle image click (Single Page Mode)
   const handleImageClick = (e) => {
     if (!swiperRef.current) return;
     const { clientX, target } = e;
@@ -29,13 +68,13 @@ export default function MangaReader({ mangaImages }) {
     const clickPosition = clientX - left;
 
     if (clickPosition < width / 2) {
-      swiperRef.current.slidePrev(); // Clicked left side → Previous slide
+      swiperRef.current.slidePrev();
     } else {
-      swiperRef.current.slideNext(); // Clicked right side → Next slide
+      swiperRef.current.slideNext();
     }
   };
 
-  // Handle keyboard navigation
+  // ✅ Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (!swiperRef.current) return;
@@ -46,27 +85,35 @@ export default function MangaReader({ mangaImages }) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // ✅ Fetch manga data when component mounts
+  useEffect(() => {
+    fetchMangaData();
+  }, [params.slug]);
+
   return (
     <div className="w-full p-4 bg-black text-white min-h-screen">
       {/* Top Menu */}
       <div className="flex justify-between items-center mb-4">
-        {/* Back Button */}
         <Link href={"/" + params.slug}>
           <ArrowUturnLeftIcon className="p-1 bg-gray-700 hover:bg-gray-800 size-7" />
         </Link>
 
         {/* Episode Selection Dropdown */}
-        <select
-          className="px-3 py-1 bg-gray-800 text-white text-sm cursor-pointer"
-          value={params.ep.slice(2,3)}
-          onChange={(e) => router.push(`/${params.slug}/ep${e.target.value}`)}
-        >
-          {manga?.ep.map((episode) => (
-            <option key={episode.episode} value={episode.episode}>
-              ตอนที่ {episode.episode}
-            </option>
-          ))}
-        </select>
+        {Array.isArray(manga?.ep) && manga.ep.length > 0 ? (
+          <select
+            className="px-3 py-1 bg-gray-800 text-white text-sm cursor-pointer"
+            value={params.ep}
+            onChange={(e) => router.push(`/${params.slug}/ep${e.target.value}`)}
+          >
+            {manga.ep.map((episode, index) => (
+              <option key={index} value={episode.episode}>
+                ตอนที่ {episode.episode}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <div className="text-gray-400">ไม่มีตอนให้เลือก</div>
+        )}
 
         {/* View Mode Dropdown */}
         <select
@@ -75,47 +122,44 @@ export default function MangaReader({ mangaImages }) {
           value={viewMode}
         >
           <option value="full">อ่านแบบหน้ายาว</option>
-          <option value="single">อ่านแบบที่ละหน้า</option>
+          <option value="single">อ่านแบบทีละหน้า</option>
         </select>
 
-        {/* Navigation Buttons (Only for Single Page Mode) */}
+        {/* Navigation Buttons (Single Page Mode) */}
         {viewMode === "single" && (
           <div className="hidden md:flex items-center gap-1 md:gap-2">
-            <button className="px-1 md:px-3 py-1 bg-gray-700 cursor-pointer" onClick={() => swiperRef.current?.slidePrev()}>
+            <button
+              className="px-1 md:px-3 py-1 bg-gray-700 cursor-pointer"
+              onClick={() => swiperRef.current?.slidePrev()}
+            >
               Prev
             </button>
-            <button className="px-1 md:px-3 py-1 bg-gray-700 cursor-pointer" onClick={() => swiperRef.current?.slideNext()}>
+            <button
+              className="px-1 md:px-3 py-1 bg-gray-700 cursor-pointer"
+              onClick={() => swiperRef.current?.slideNext()}
+            >
               Next
             </button>
           </div>
         )}
       </div>
 
-      {/* ✅ Page Indicator */}
-      {viewMode === "single" && (
-        <div className="text-center text-gray-400 my-4">
-          Page {currentPage} of {totalPages}
-        </div>
-      )}
-
       {/* Manga Display */}
       {viewMode === "full" ? (
-        // Full Page Mode: Show All Images
         <div className="flex flex-col">
-          {mangaImages.map((src, index) => (
+          {sortedImages.map((src, index) => (
             <img key={index} src={src} alt={`Manga Page ${index + 1}`} className="w-full" loading="lazy" />
           ))}
         </div>
       ) : (
-        // Single Page Mode: Image Slider with Click Navigation
         <Swiper
           modules={[Navigation]}
-          navigation={{ prevEl: null, nextEl: null }} // Hides default Swiper arrows
+          navigation={{ prevEl: null, nextEl: null }}
           onSwiper={(swiper) => (swiperRef.current = swiper)}
-          onSlideChange={(swiper) => setCurrentPage(swiper.realIndex + 1)} // Update current page number
+          onSlideChange={(swiper) => setCurrentPage(swiper.realIndex + 1)}
           className="w-full relative"
         >
-          {mangaImages.map((src, index) => (
+          {sortedImages.map((src, index) => (
             <SwiperSlide key={index}>
               <img
                 src={src}
@@ -128,32 +172,28 @@ export default function MangaReader({ mangaImages }) {
         </Swiper>
       )}
 
-      {/* ✅ Page Indicator */}
-      {viewMode === "single" && (
-        <div className="text-center text-gray-400 mt-4">
-          Page {currentPage} of {totalPages}
-        </div>
-      )}
-
       {/* Bottom Menu */}
       <div className="flex justify-between items-center mt-4">
-        {/* Back Button */}
         <Link href={"/" + params.slug}>
           <ArrowUturnLeftIcon className="p-1 bg-gray-700 hover:bg-gray-800 size-7" />
         </Link>
 
         {/* Episode Selection Dropdown */}
-        <select
-          className="px-3 py-1 bg-gray-800 text-white text-sm cursor-pointer"
-          value={params.ep}
-          onChange={(e) => router.push(`/${params.slug}/${e.target.value}`)}
-        >
-          {manga?.ep.map((episode) => (
-            <option key={episode.episode} value={episode.episode}>
-              ตอนที่ {episode.episode}
-            </option>
-          ))}
-        </select>
+        {Array.isArray(manga?.ep) && manga.ep.length > 0 ? (
+          <select
+            className="px-3 py-1 bg-gray-800 text-white text-sm cursor-pointer"
+            value={params.ep}
+            onChange={(e) => router.push(`/${params.slug}/ep${e.target.value}`)}
+          >
+            {manga.ep.map((episode, index) => (
+              <option key={index} value={episode.episode}>
+                ตอนที่ {episode.episode}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <div className="text-gray-400">ไม่มีตอนให้เลือก</div>
+        )}
 
         {/* View Mode Dropdown */}
         <select
@@ -162,16 +202,22 @@ export default function MangaReader({ mangaImages }) {
           value={viewMode}
         >
           <option value="full">อ่านแบบหน้ายาว</option>
-          <option value="single">อ่านแบบที่ละหน้า</option>
+          <option value="single">อ่านแบบทีละหน้า</option>
         </select>
 
-        {/* Navigation Buttons (Only for Single Page Mode) */}
+        {/* Navigation Buttons (Single Page Mode) */}
         {viewMode === "single" && (
           <div className="hidden md:flex items-center gap-1 md:gap-2">
-            <button className="px-1 md:px-3 py-1 bg-gray-700 cursor-pointer" onClick={() => swiperRef.current?.slidePrev()}>
+            <button
+              className="px-1 md:px-3 py-1 bg-gray-700 cursor-pointer"
+              onClick={() => swiperRef.current?.slidePrev()}
+            >
               Prev
             </button>
-            <button className="px-1 md:px-3 py-1 bg-gray-700 cursor-pointer" onClick={() => swiperRef.current?.slideNext()}>
+            <button
+              className="px-1 md:px-3 py-1 bg-gray-700 cursor-pointer"
+              onClick={() => swiperRef.current?.slideNext()}
+            >
               Next
             </button>
           </div>
