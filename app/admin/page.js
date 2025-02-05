@@ -15,6 +15,7 @@ import {
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import clsx from "clsx";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import dayjs from "dayjs";
 
 /**
  * React Select custom styles to force black text.
@@ -221,15 +222,41 @@ export default function AdminPage() {
       }
     }
     try {
-      await addDoc(collection(db, `manga/${selectedMangaId}/episodes`), {
-        episode: episodeNumber,
-        created_date: new Date().toISOString(),
-        totalPage: episodeFiles ? episodeFiles.length : 0,
-        view: 0,
-      });
-      setEpisodeNumber("");
-      setEpisodeFiles(null);
-      alert("Episode created!");
+      // ✅ Reference to the manga document
+    const mangaRef = doc(db, "manga", selectedMangaId);
+
+    // ✅ Get existing 'ep' array
+    const mangaDoc = await getDoc(mangaRef);
+    const existingData = mangaDoc.exists() ? mangaDoc.data() : {};
+    const existingEpisodes = existingData.ep || [];
+
+    // ✅ Check if episode already exists
+    const episodeExists = existingEpisodes.some(
+      (ep) => ep.episode === episodeNumber
+    );
+    if (episodeExists) {
+      alert("Episode already exists!");
+      return;
+    }
+
+    // ✅ New episode data (as a map)
+    const newEpisode = {
+      episode: episodeNumber,
+      created_date: dayjs().format("YYYY-MM-DD"),
+      totalPage: episodeFiles ? episodeFiles.length : 0,
+      view: 0,
+    };
+
+    // ✅ Append the new episode to the 'ep' array
+    const updatedEpisodes = [...existingEpisodes, newEpisode];
+
+    // ✅ Update Firestore document with the new 'ep' array
+    await updateDoc(mangaRef, { ep: updatedEpisodes });
+
+    // ✅ Reset form and notify
+    setEpisodeNumber("");
+    setEpisodeFiles(null);
+    alert("Episode created!");
     } catch (err) {
       console.error(err);
       alert("Error creating episode");
@@ -451,7 +478,7 @@ export default function AdminPage() {
       {/* ============ MANGA TAB ============ */}
       {activeTab === "manga" && (
         <section>
-          <div className="p-4 bg-gray-700 mb-4 overflow-hidden relative">
+          <div className="p-4 bg-gray-700 mb-4 relative">
             <h2 className="mb-6">การจัดการ Manga</h2>
             <div className="mb-4 flex gap-2 items-center">
               <label>ชื่อเรื่อง:</label>
@@ -658,17 +685,23 @@ export default function AdminPage() {
               <label>Tag ID: </label>
               <input
                 style={blackInputStyle}
-                value={tagIdValue === ""? tagList.length + 1 : tagIdValue}
+                value={tagIdValue === "" ? tagList.length + 1 : tagIdValue}
                 onChange={(e) => setTagIdValue(e.target.value)}
               />
             </div>
 
             {!editingTagDocId ? (
-              <button onClick={createTag} className="px-4 py-2 bg-green-600 hover:bg-green-700 mt-[1rem]">
+              <button
+                onClick={createTag}
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 mt-[1rem]"
+              >
                 Create Tag
               </button>
             ) : (
-              <button onClick={updateTag} className="px-4 py-2 bg-orange-600 hover:bg-orange-700 mt-[1rem]">
+              <button
+                onClick={updateTag}
+                className="px-4 py-2 bg-orange-600 hover:bg-orange-700 mt-[1rem]"
+              >
                 Update Tag
               </button>
             )}
@@ -686,20 +719,22 @@ export default function AdminPage() {
           <div className="p-4 bg-gray-700 mb-4">
             <h3 className="mb-4">Existing Tags</h3>
             <div className="p-4 bg-gray-500">
-            <ul>
-              {tagList.map((t,index) => (
-                <li key={t.docId} style={{ marginBottom: "0.5rem" }}>
-                  {t.name}
-                  <button
-                    className="ml-[1rem] px-2 bg-blue-500 hover:bg-blue-600 rounded-full"
-                    onClick={() => handleEditTag(t.docId)}
-                  >
-                    Edit
-                  </button>
-                  {index+1 !== tagList.length ? <div className="w-full h-[1px] bg-gray-400 my-4" /> : null}
-                </li>
-              ))}
-            </ul>
+              <ul>
+                {tagList.map((t, index) => (
+                  <li key={t.docId} style={{ marginBottom: "0.5rem" }}>
+                    {t.name}
+                    <button
+                      className="ml-[1rem] px-2 bg-blue-500 hover:bg-blue-600 rounded-full"
+                      onClick={() => handleEditTag(t.docId)}
+                    >
+                      Edit
+                    </button>
+                    {index + 1 !== tagList.length ? (
+                      <div className="w-full h-[1px] bg-gray-400 my-4" />
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </section>
@@ -709,75 +744,83 @@ export default function AdminPage() {
       {activeTab === "menubar" && (
         <section>
           <div className="p-4 bg-gray-700 mb-4">
-          <h2 className="mb-4">การจัดการ Menu Bar</h2>
-          <div className="mb-4 flex gap-2 items-center">
-            <label>ชื่อ Menu: </label>
-            <input
-              style={blackInputStyle}
-              value={menuName}
-              placeholder="กรุณาตั้งชื่อเมนู"
-              className="px-2 rounded-[4px] h-[36px]"
-              onChange={(e) => setMenuName(e.target.value)}
-            />
-          </div>
-          <div className="mb-4 flex gap-2 items-center">
-            <label>Href: </label>
-            <input
-              style={blackInputStyle}
-              value={menuHref}
-              placeholder="ตั้งชื่อ Link นี้"
-              className="px-2 rounded-[4px] h-[36px]"
-              onChange={(e) => setMenuHref(e.target.value)}
-            />
-          </div>
-          <div className="mb-4 flex gap-2 items-center hidden">
-            <label>Menu ID: </label>
-            <input
-              style={blackInputStyle}
-              value={menuIdValue === "" ? menuList.length+1 : menuIdValue}
-              className="px-2 rounded-[4px] h-[36px]"
-              onChange={(e) => setMenuIdValue(e.target.value)}
-            />
-          </div>
+            <h2 className="mb-4">การจัดการ Menu Bar</h2>
+            <div className="mb-4 flex gap-2 items-center">
+              <label>ชื่อ Menu: </label>
+              <input
+                style={blackInputStyle}
+                value={menuName}
+                placeholder="กรุณาตั้งชื่อเมนู"
+                className="px-2 rounded-[4px] h-[36px]"
+                onChange={(e) => setMenuName(e.target.value)}
+              />
+            </div>
+            <div className="mb-4 flex gap-2 items-center">
+              <label>Href: </label>
+              <input
+                style={blackInputStyle}
+                value={menuHref}
+                placeholder="ตั้งชื่อ Link นี้"
+                className="px-2 rounded-[4px] h-[36px]"
+                onChange={(e) => setMenuHref(e.target.value)}
+              />
+            </div>
+            <div className="mb-4 flex gap-2 items-center hidden">
+              <label>Menu ID: </label>
+              <input
+                style={blackInputStyle}
+                value={menuIdValue === "" ? menuList.length + 1 : menuIdValue}
+                className="px-2 rounded-[4px] h-[36px]"
+                onChange={(e) => setMenuIdValue(e.target.value)}
+              />
+            </div>
 
-          {!editingMenuDocId ? (
-            <button onClick={createMenuItem} className="mt-[0.5rem] px-4 py-2 bg-green-500 hover:bg-green-600">
-              Create Menu Item
-            </button>
-          ) : (
-            <button onClick={updateMenuItem} className="mt-[0.5rem] px-4 py-2 bg-orange-500 hover:bg-orange-600">
-              Update Menu Item
-            </button>
-          )}
+            {!editingMenuDocId ? (
+              <button
+                onClick={createMenuItem}
+                className="mt-[0.5rem] px-4 py-2 bg-green-500 hover:bg-green-600"
+              >
+                Create Menu Item
+              </button>
+            ) : (
+              <button
+                onClick={updateMenuItem}
+                className="mt-[0.5rem] px-4 py-2 bg-orange-500 hover:bg-orange-600"
+              >
+                Update Menu Item
+              </button>
+            )}
 
-          {editingMenuDocId && (
-            <button
-              onClick={resetMenuForm}
-              className="mt-[0.5rem] px-4 py-2 bg-red-500 hover:bg-red-600 ml-4"
-            >
-              Cancel
-            </button>
-          )}
+            {editingMenuDocId && (
+              <button
+                onClick={resetMenuForm}
+                className="mt-[0.5rem] px-4 py-2 bg-red-500 hover:bg-red-600 ml-4"
+              >
+                Cancel
+              </button>
+            )}
           </div>
 
           <div className="p-4 bg-gray-700 mb-4">
-          <h3 className="mb-4">Existing Menu Items</h3>
-          <div className="p-4 bg-gray-500 ">
-          <ul>
-            {menuList.map((m,index) => (
-              <li key={m.docId} style={{ marginBottom: "0.5rem" }}>
-                {m.name} - {m.href}
-                <button
-                  className="ml-[1rem] px-2 rounded-full bg-blue-500 hover:bg-blue-600"
-                  onClick={() => handleEditMenuItem(m.docId)}
-                >
-                  Edit
-                </button>
-                {index+1 !== menuList.length? <div className="w-full h-[1px] bg-gray-400 my-4" /> : null}
-              </li>
-            ))}
-          </ul>
-          </div>
+            <h3 className="mb-4">Existing Menu Items</h3>
+            <div className="p-4 bg-gray-500 ">
+              <ul>
+                {menuList.map((m, index) => (
+                  <li key={m.docId} style={{ marginBottom: "0.5rem" }}>
+                    {m.name} - {m.href}
+                    <button
+                      className="ml-[1rem] px-2 rounded-full bg-blue-500 hover:bg-blue-600"
+                      onClick={() => handleEditMenuItem(m.docId)}
+                    >
+                      Edit
+                    </button>
+                    {index + 1 !== menuList.length ? (
+                      <div className="w-full h-[1px] bg-gray-400 my-4" />
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </section>
       )}
