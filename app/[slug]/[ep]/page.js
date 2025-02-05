@@ -107,7 +107,7 @@ export default function EpisodePage() {
 
   // Use mangaData.ep.episode as the latest available episode.
   const latestEpisode =
-    mangaData && mangaData.ep ? Number(mangaData.ep.episode) : 0;
+    mangaData && mangaData?.ep ? Number(mangaData?.ep?.episode) : 0;
   const canShowNext = currentEpNumber < latestEpisode;
 
   return (
