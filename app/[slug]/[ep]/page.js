@@ -105,9 +105,12 @@ export default function EpisodePage() {
   const prevEpisode = currentEpNumber > 1 ? `ep${currentEpNumber - 1}` : null;
   const nextEpisode = `ep${currentEpNumber + 1}`;
 
-  // Use mangaData.ep.episode as the latest available episode.
+  // ✅ Use array methods to get the highest episode number
   const latestEpisode =
-    mangaData && mangaData?.ep ? Number(mangaData?.ep?.episode) : 0;
+    mangaData?.ep && mangaData.ep.length > 0
+      ? Math.max(...mangaData.ep.map((episode) => Number(episode.episode)))
+      : 0;
+
   const canShowNext = currentEpNumber < latestEpisode;
 
   return (
@@ -150,9 +153,7 @@ export default function EpisodePage() {
           </h1>
           <hr className="my-2" />
           <p className="text-white mt-2">
-            {mangaData
-              ? mangaData.description
-              : "รายละเอียดเพิ่มเติมของมังงะ"}
+            {mangaData ? mangaData.description : "รายละเอียดเพิ่มเติมของมังงะ"}
           </p>
           <div className="text-white flex items-center gap-4 mt-3">
             Tags:{" "}

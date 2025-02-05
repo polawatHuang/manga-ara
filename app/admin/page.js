@@ -105,8 +105,8 @@ export default function AdminPage() {
         backgroundImage: backgroundUrl,
         tag: tagArray,
         view: 0,
-        created_date: Timestamp.now().toDate().toISOString(),
-        updated_date: Timestamp.now().toDate().toISOString(),
+        created_date: dayjs().format("YYYY-MM-DD"),
+        updated_date: dayjs().format("YYYY-MM-DD"),
       });
 
       resetMangaForm();
@@ -165,7 +165,7 @@ export default function AdminPage() {
         slug: mangaSlug,
         description: mangaDescription,
         tag: selectedTags.map((t) => t.value),
-        updated_date: Timestamp.now().toDate().toISOString(),
+        updated_date: dayjs().format("YYYY-MM-DD"),
       };
       if (newBgUrl) {
         updatedFields.backgroundImage = newBgUrl;
