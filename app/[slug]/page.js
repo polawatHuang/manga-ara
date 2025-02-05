@@ -26,8 +26,11 @@ export default function SlugPage() {
         const data = await response.json();
         const foundManga = data.find((item) => item.slug === `/${decodedSlug}`);
         setManga(foundManga || null);
-        if (foundManga.ep.episode) {
-          setEpisode(foundManga.ep.length === undefined ? [foundManga.ep] : foundManga.ep);
+        // Always set episode as an array: if foundManga.ep is not an array, wrap it in an array.
+        if (foundManga && foundManga.ep) {
+          setEpisode(
+            Array.isArray(foundManga.ep) ? foundManga.ep : [foundManga.ep]
+          );
         }
       } catch (error) {
         console.error("Error fetching manga:", error);
@@ -42,7 +45,8 @@ export default function SlugPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-black gap-4">
-        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" /><span>กำลังโหลดข้อมูล...</span>
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        <span>กำลังโหลดข้อมูล...</span>
       </div>
     );
   }
@@ -53,7 +57,7 @@ export default function SlugPage() {
   }
 
   // ✅ Filter episodes based on search term
-  const filteredEpisodes = filterEpisodes(manga.ep, searchTerm);
+  const filteredEpisodes = filterEpisodes(episode, searchTerm);
 
   return (
     <div className="relative w-full min-h-screen max-w-6xl mx-auto md:p-8 pb-20 gap-16 sm:p-2">
@@ -99,7 +103,13 @@ export default function SlugPage() {
           </p>
           <br />
           <p className="text-white flex items-center gap-4">
-            แชร์เรื่องนี้ให้เพื่อน: <div onClick={()=>copyToClipboard()} className="px-4 rounded-full bg-gray-700 hover:bg-gray-800 flex gap-1 items-center cursor-pointer">แชร์ <ShareIcon className="size-4" /></div>
+            แชร์เรื่องนี้ให้เพื่อน:{" "}
+            <div
+              onClick={() => copyToClipboard()}
+              className="px-4 rounded-full bg-gray-700 hover:bg-gray-800 flex gap-1 items-center cursor-pointer"
+            >
+              แชร์ <ShareIcon className="size-4" />
+            </div>
           </p>
         </div>
       </section>
@@ -118,11 +128,11 @@ export default function SlugPage() {
               <h4>ตอนที่ 1</h4>
             </Link>
             <Link
-              href={`${decodedSlug}/ep${manga.ep.length}`}
+              href={`${decodedSlug}/ep${episode.length}`}
               className="w-full bg-gray-800 hover:bg-gray-900 p-4 text-center hover:no-underline"
             >
               <span>ตอนล่าสุด</span>
-              <h4>ตอนที่ {manga.ep.length}</h4>
+              <h4>ตอนที่ {episode.length}</h4>
             </Link>
           </div>
           <div className="mt-4 w-full relative">
@@ -136,8 +146,8 @@ export default function SlugPage() {
             />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-4">
-            {episode.length > 0 ? (
-              episode.map(({ episode, created_date }) => (
+            {filteredEpisodes.length > 0 ? (
+              filteredEpisodes.map(({ episode, created_date }) => (
                 <Link
                   key={episode}
                   href={`${decodedSlug}/ep${episode}`}
