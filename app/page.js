@@ -124,7 +124,7 @@ export default function Home() {
         <CardSliderComponent
           mangaList={mangas.filter(
             (item) =>
-              dayjs(item.created_date).format("YYYY-MM") ===
+              dayjs(item.updated_date).format("YYYY-MM") ===
               dayjs().format("YYYY-MM")
           )}
           hasFevFunction={true}
