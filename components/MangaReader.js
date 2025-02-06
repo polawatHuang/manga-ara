@@ -26,10 +26,16 @@ export default function MangaReader({ mangaImages }) {
     return pageA - pageB;
   });
 
+  function getEpisodeNumber(epString) {
+    const match = epString.match(/\d+/); // Extract numbers from the string
+    return match ? parseInt(match[0], 10) : null; // Convert to integer
+  }
+
   // ✅ Fetch manga from API or localStorage cache
   const fetchMangaData = async () => {
     try {
-      const cachedMangas = JSON.parse(localStorage.getItem("cachedMangas")) || [];
+      const cachedMangas =
+        JSON.parse(localStorage.getItem("cachedMangas")) || [];
 
       // ✅ Ensure cachedMangas is an array
       if (!Array.isArray(cachedMangas)) {
@@ -102,7 +108,9 @@ export default function MangaReader({ mangaImages }) {
         {Array.isArray(manga?.ep) && manga.ep.length > 0 ? (
           <select
             className="px-3 py-1 bg-gray-800 text-white text-sm cursor-pointer"
-            value={params.ep}
+            value={
+              getEpisodeNumber(params.ep) || (manga.ep.length > 0 ? manga.ep[0].episode : "")
+            }
             onChange={(e) => router.push(`/${params.slug}/ep${e.target.value}`)}
           >
             {manga.ep.map((episode, index) => (
@@ -124,6 +132,10 @@ export default function MangaReader({ mangaImages }) {
           <option value="full">อ่านแบบหน้ายาว</option>
           <option value="single">อ่านแบบทีละหน้า</option>
         </select>
+        
+        {viewMode === "single" ? <section>
+          หนัา {currentPage}/{totalPages}
+        </section> : null}
 
         {/* Navigation Buttons (Single Page Mode) */}
         {viewMode === "single" && (
@@ -148,7 +160,13 @@ export default function MangaReader({ mangaImages }) {
       {viewMode === "full" ? (
         <div className="flex flex-col">
           {sortedImages.map((src, index) => (
-            <img key={index} src={src} alt={`Manga Page ${index + 1}`} className="w-full" loading="lazy" />
+            <img
+              key={index}
+              src={src}
+              alt={`Manga Page ${index + 1}`}
+              className="w-full"
+              loading="lazy"
+            />
           ))}
         </div>
       ) : (
@@ -182,7 +200,9 @@ export default function MangaReader({ mangaImages }) {
         {Array.isArray(manga?.ep) && manga.ep.length > 0 ? (
           <select
             className="px-3 py-1 bg-gray-800 text-white text-sm cursor-pointer"
-            value={params.ep}
+            value={
+              getEpisodeNumber(params.ep) || (manga.ep.length > 0 ? manga.ep[0].episode : "")
+            }
             onChange={(e) => router.push(`/${params.slug}/ep${e.target.value}`)}
           >
             {manga.ep.map((episode, index) => (
@@ -204,6 +224,10 @@ export default function MangaReader({ mangaImages }) {
           <option value="full">อ่านแบบหน้ายาว</option>
           <option value="single">อ่านแบบทีละหน้า</option>
         </select>
+
+        {viewMode === "single" ? <section>
+          หนัา {currentPage}/{totalPages}
+        </section> : null}
 
         {/* Navigation Buttons (Single Page Mode) */}
         {viewMode === "single" && (
