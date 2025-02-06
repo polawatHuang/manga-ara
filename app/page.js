@@ -6,6 +6,7 @@ import CardComponent from "@/components/CardComponent";
 import CardSliderComponent from "@/components/CardSliderComponent";
 import { FireIcon, HeartIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
+import dayjs from "dayjs";
 
 export default function Home() {
   const [favoriteMangas, setFavoriteMangas] = useState([]);
@@ -35,6 +36,16 @@ export default function Home() {
     };
     localStorage.setItem(key, JSON.stringify(cacheData));
   };
+
+  function getRandomFourItems(array) {
+    if (!Array.isArray(array) || array.length === 0) return []; // Handle empty or invalid input
+  
+    // Shuffle the array using Fisher-Yates algorithm
+    const shuffled = [...array].sort(() => Math.random() - 0.5);
+  
+    // Return the first 4 items (or fewer if array length < 4)
+    return shuffled.slice(0, 4);
+  }  
 
   const fetchData = async () => {
     setLoading(true); // Start loading
@@ -110,7 +121,14 @@ export default function Home() {
           <FireIcon className="size-7 text-red-600" />
           อ่านการ์ตูนยอดนิยมประจำเดือนนี้
         </h2>
-        <CardSliderComponent mangaList={mangas} hasFevFunction={true} />
+        <CardSliderComponent
+          mangaList={mangas.filter(
+            (item) =>
+              dayjs(item.created_date).format("YYYY-MM") ===
+              dayjs().format("YYYY-MM")
+          )}
+          hasFevFunction={true}
+        />
       </section>
 
       {/* Favorite Mangas */}
@@ -150,7 +168,7 @@ export default function Home() {
             </h3>
             <hr className="opacity-50 my-2" />
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-              {mangas.map((manga) => (
+              {getRandomFourItems(mangas).map((manga) => (
                 <CardComponent key={manga.id} manga={manga} />
               ))}
             </div>
