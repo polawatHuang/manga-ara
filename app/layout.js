@@ -1,6 +1,7 @@
 import { Kanit } from "next/font/google";
 import "./globals.css";
 import HeaderComponent from "@/components/HeaderComponent";
+import FooterComponent from "@/components/FooterComponent";
 
 const kanit = Kanit({
   variable: "--font-kanit",
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
       >
         <HeaderComponent />
         {children}
+        <FooterComponent />
       </body>
     </html>
   );
