@@ -102,7 +102,7 @@ export default function SlugPage() {
             ))}
           </p>
           <br />
-          <p className="text-white flex items-center gap-4">
+          <div className="text-white flex items-center gap-4">
             แชร์เรื่องนี้ให้เพื่อน:{" "}
             <div
               onClick={() => copyToClipboard()}
@@ -110,7 +110,7 @@ export default function SlugPage() {
             >
               แชร์ <ShareIcon className="size-4" />
             </div>
-          </p>
+          </div>
         </div>
       </section>
 

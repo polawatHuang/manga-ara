@@ -111,9 +111,9 @@ const HeaderComponent = () => {
             {menubar.map((item) => (
               <li key={item.id}>
                 {item.name === "สุ่มเลือกอ่านมังงะ" ? (
-                  <div onClick={() => goToRandomManga(router)} className="hover:underline cursor-pointer">
+                  <button onClick={() => goToRandomManga(router)} className="hover:underline cursor-pointer">
                     {item.name}
-                  </div>
+                  </button>
                 ) : (
                   <Link href={item.href} className="hover:underline cursor-pointer">
                     {item.name}
