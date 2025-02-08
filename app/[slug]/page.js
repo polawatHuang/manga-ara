@@ -7,12 +7,15 @@ import { MagnifyingGlassIcon, ShareIcon } from "@heroicons/react/24/solid";
 import dayjs from "dayjs";
 import Link from "next/link";
 import copyToClipboard from "@/utils/copyToClipboard";
+import CardComponent from "@/components/CardComponent";
+import getRandomFourItems from "@/utils/getRandomFourItems";
 
 export default function SlugPage() {
   const { slug } = useParams();
-  const decodedSlug = decodeURIComponent(slug); // ✅ Decode Thai slugs properly
+  //const decodedSlug = decodeURIComponent(slug); // ✅ Decode Thai slugs properly
   const [searchTerm, setSearchTerm] = useState("");
   const [manga, setManga] = useState(null);
+  const [allManga, setAllManga] = useState([]);
   const [loading, setLoading] = useState(true);
   const [episode, setEpisode] = useState([]);
 
@@ -26,6 +29,7 @@ export default function SlugPage() {
         const data = await response.json();
         const foundManga = data.find((item) => item.slug === slug);
         setManga(foundManga || null);
+        setAllManga(data);
         // Always set episode as an array: if foundManga.ep is not an array, wrap it in an array.
         if (foundManga && foundManga.ep) {
           setEpisode(
@@ -169,6 +173,21 @@ export default function SlugPage() {
             )}
           </div>
         </div>
+      </section>
+
+      <section className="md:px-[12%] mt-4">
+        {/* Recommended Manga */}
+        <div className="w-full bg-gray-700 px-4 py-5">
+            <h3 className="flex items-center gap-2 text-2xl font-[600]">
+              แนะนำสำหรับคุณโดยเฉพาะ
+            </h3>
+            <hr className="opacity-50 my-2" />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+              {getRandomFourItems(allManga).map((manga) => (
+                <CardComponent key={manga.id} manga={manga} />
+              ))}
+            </div>
+          </div>
       </section>
     </div>
   );

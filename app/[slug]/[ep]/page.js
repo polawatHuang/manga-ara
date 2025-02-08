@@ -7,10 +7,13 @@ import MangaReader from "@/components/MangaReader";
 import Link from "next/link";
 import { ShareIcon } from "@heroicons/react/24/solid";
 import copyToClipboard from "@/utils/copyToClipboard";
+import CardComponent from "@/components/CardComponent";
+import getRandomFourItems from "@/utils/getRandomFourItems";
 
 export default function EpisodePage() {
   const { slug, ep } = useParams();
   const [mangaData, setMangaData] = useState(null);
+  const [allManga, setAllManga] = useState([]);
   const [mangaImages, setMangaImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showScroll, setShowScroll] = useState(false);
@@ -40,6 +43,9 @@ export default function EpisodePage() {
 
       // The API returns the slug with a leading slash (e.g. "guild-no-uketsukejou-desu-ga").
       const foundManga = mangaDT.find((item) => item.slug === slug);
+      
+      setAllManga(mangaDT);
+
       if (foundManga) {
         setMangaData(foundManga);
       }
@@ -221,6 +227,21 @@ export default function EpisodePage() {
             </button>
           </Link>
         )}
+      </section>
+
+      <section className="md:px-[12%] mt-4">
+        {/* Recommended Manga */}
+        <div className="w-full bg-gray-700 px-4 py-5">
+            <h3 className="flex items-center gap-2 text-2xl font-[600]">
+              แนะนำสำหรับคุณโดยเฉพาะ
+            </h3>
+            <hr className="opacity-50 my-2" />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+              {getRandomFourItems(allManga).map((manga) => (
+                <CardComponent key={manga.id} manga={manga} />
+              ))}
+            </div>
+          </div>
       </section>
 
       {/* "Go to Top" Button */}

@@ -60,7 +60,7 @@ export default function TagPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredMangas.map((manga) => (
             <div key={manga.id} className="relative group">
-              <Link href={manga.slug} className="hover:no-underline">
+              <Link href={"/"+manga.slug} className="hover:no-underline">
                 <div className="bg-gray-800 overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 transition-transform duration-300 transform hover:scale-105">
                   <img
                     src={manga.backgroundImage}

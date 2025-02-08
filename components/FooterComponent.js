@@ -3,9 +3,11 @@
 import { goToRandomManga } from "@/utils/randomManga";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation"; // ✅ Import useRouter
 
 const FooterComponent = () => {
   const [menuItems, setMenuItems] = useState([]);
+  const router = useRouter(); // ✅ Define router inside the component
 
   useEffect(() => {
     const fetchMenuItems = async () => {
@@ -56,7 +58,7 @@ const FooterComponent = () => {
               .map((item) => (
                 <li key={item.id} className="mb-2">
                   <button
-                    onClick={() => goToRandomManga(router)}
+                    onClick={() => goToRandomManga(router)} // ✅ Pass router here
                     className="hover:underline cursor-pointer"
                   >
                     {item.name}

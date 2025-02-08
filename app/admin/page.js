@@ -64,12 +64,23 @@ export default function AdminPage() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [tagOptions, setTagOptions] = useState([]);
   const [editingMangaId, setEditingMangaId] = useState(null);
+  const [advertiseList, setAdvertiseList] = useState([]);
+  const [adName, setAdName] = useState("");
+  const [adImageFile, setAdImageFile] = useState(null);
+  const [editingAdId, setEditingAdId] = useState(null);
 
   // Fetch existing manga
   const fetchMangaList = async () => {
     const snapshot = await getDocs(collection(db, "manga"));
     const data = snapshot.docs.map((d) => ({ docId: d.id, ...d.data() }));
     setMangaList(data);
+  };
+
+  // Fetch Advertisements
+  const fetchAdvertiseList = async () => {
+    const snapshot = await getDocs(collection(db, "advertise"));
+    const data = snapshot.docs.map((d) => ({ docId: d.id, ...d.data() }));
+    setAdvertiseList(data);
   };
 
   // Fetch /api/tags (example) and convert to react-select options
@@ -82,6 +93,89 @@ export default function AdminPage() {
     } catch (err) {
       console.error("Error fetching tag options:", err);
     }
+  };
+
+  // Create Advertisement
+  const createAd = async () => {
+    try {
+      let imageUrl = "";
+      if (adImageFile) {
+        const storageRef = ref(storage, `advertises/${adImageFile.name}`);
+        await uploadBytes(storageRef, adImageFile);
+        imageUrl = await getDownloadURL(storageRef);
+      }
+
+      await addDoc(collection(db, "advertise"), {
+        name: adName,
+        image: imageUrl,
+        created_date: new Date().toISOString().split("T")[0],
+      });
+
+      resetAdForm();
+      alert("Advertisement created!");
+      fetchAdvertiseList();
+    } catch (err) {
+      console.error(err);
+      alert("Error creating advertisement");
+    }
+  };
+
+  // Load existing advertisement into form
+  const handleEditAd = (adDocId) => {
+    const found = advertiseList.find((ad) => ad.docId === adDocId);
+    if (found) {
+      setEditingAdId(adDocId);
+      setAdName(found.name || "");
+    }
+  };
+
+  // Update Advertisement
+  const updateAd = async () => {
+    if (!editingAdId) return;
+    try {
+      const docRef = doc(db, "advertise", editingAdId);
+      let newImageUrl = null;
+
+      if (adImageFile) {
+        const storageRef = ref(storage, `advertises/${adImageFile.name}`);
+        await uploadBytes(storageRef, adImageFile);
+        newImageUrl = await getDownloadURL(storageRef);
+      }
+
+      const updatedFields = {
+        name: adName,
+      };
+      if (newImageUrl) {
+        updatedFields.image = newImageUrl;
+      }
+
+      await updateDoc(docRef, updatedFields);
+      alert("Advertisement updated!");
+      resetAdForm();
+      fetchAdvertiseList();
+    } catch (err) {
+      console.error(err);
+      alert("Error updating advertisement");
+    }
+  };
+
+  // Delete Advertisement
+  const deleteAd = async (adDocId) => {
+    try {
+      await deleteDoc(doc(db, "advertise", adDocId));
+      alert("Advertisement deleted!");
+      fetchAdvertiseList();
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting advertisement");
+    }
+  };
+
+  // Reset form
+  const resetAdForm = () => {
+    setEditingAdId(null);
+    setAdName("");
+    setAdImageFile(null);
   };
 
   // Create new manga
@@ -223,40 +317,40 @@ export default function AdminPage() {
     }
     try {
       // ✅ Reference to the manga document
-    const mangaRef = doc(db, "manga", selectedMangaId);
+      const mangaRef = doc(db, "manga", selectedMangaId);
 
-    // ✅ Get existing 'ep' array
-    const mangaDoc = await getDoc(mangaRef);
-    const existingData = mangaDoc.exists() ? mangaDoc.data() : {};
-    const existingEpisodes = existingData.ep || [];
+      // ✅ Get existing 'ep' array
+      const mangaDoc = await getDoc(mangaRef);
+      const existingData = mangaDoc.exists() ? mangaDoc.data() : {};
+      const existingEpisodes = existingData.ep || [];
 
-    // ✅ Check if episode already exists
-    const episodeExists = existingEpisodes.some(
-      (ep) => ep.episode === episodeNumber
-    );
-    if (episodeExists) {
-      alert("Episode already exists!");
-      return;
-    }
+      // ✅ Check if episode already exists
+      const episodeExists = existingEpisodes.some(
+        (ep) => ep.episode === episodeNumber
+      );
+      if (episodeExists) {
+        alert("Episode already exists!");
+        return;
+      }
 
-    // ✅ New episode data (as a map)
-    const newEpisode = {
-      episode: episodeNumber,
-      created_date: dayjs().format("YYYY-MM-DD"),
-      totalPage: episodeFiles ? episodeFiles.length : 0,
-      view: 0,
-    };
+      // ✅ New episode data (as a map)
+      const newEpisode = {
+        episode: episodeNumber,
+        created_date: dayjs().format("YYYY-MM-DD"),
+        totalPage: episodeFiles ? episodeFiles.length : 0,
+        view: 0,
+      };
 
-    // ✅ Append the new episode to the 'ep' array
-    const updatedEpisodes = [...existingEpisodes, newEpisode];
+      // ✅ Append the new episode to the 'ep' array
+      const updatedEpisodes = [...existingEpisodes, newEpisode];
 
-    // ✅ Update Firestore document with the new 'ep' array
-    await updateDoc(mangaRef, { ep: updatedEpisodes });
+      // ✅ Update Firestore document with the new 'ep' array
+      await updateDoc(mangaRef, { ep: updatedEpisodes });
 
-    // ✅ Reset form and notify
-    setEpisodeNumber("");
-    setEpisodeFiles(null);
-    alert("Episode created!");
+      // ✅ Reset form and notify
+      setEpisodeNumber("");
+      setEpisodeFiles(null);
+      alert("Episode created!");
     } catch (err) {
       console.error(err);
       alert("Error creating episode");
@@ -426,6 +520,7 @@ export default function AdminPage() {
     fetchMangaForEpisodes();
     fetchTagList();
     fetchMenuList();
+    fetchAdvertiseList();
   }, []);
 
   /* ======================
@@ -472,6 +567,15 @@ export default function AdminPage() {
           onClick={() => setActiveTab("menubar")}
         >
           Menu Bar
+        </button>
+        <button
+          className={clsx(
+            activeTab === "advertise" ? "bg-gray-700" : "bg-gray-500",
+            "px-4 py-1 hover:bg-gray-600 rounded-t-md"
+          )}
+          onClick={() => setActiveTab("advertise")}
+        >
+          Advertises
         </button>
       </div>
 
@@ -821,6 +925,88 @@ export default function AdminPage() {
                 ))}
               </ul>
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* ============ ADVERTISE TAB ============ */}
+      {activeTab === "advertise" && (
+        <section>
+          <div className="p-4 bg-gray-700 mb-4">
+            <h2 className="mb-4">Manage Advertisements</h2>
+            <div className="mb-4 flex gap-2 items-center">
+              <label>Name:</label>
+              <input
+                value={adName}
+                className="px-2 rounded-[4px] h-[36px] text-black"
+                placeholder="ตั้งชื่อโฆษณา"
+                onChange={(e) => setAdName(e.target.value)}
+              />
+            </div>
+            <div className="mb-4">
+              <label>Upload รูปโฆษณา: </label>
+              <input
+                type="file"
+                onChange={(e) => setAdImageFile(e.target.files[0])}
+              />
+            </div>
+            {!editingAdId ? (
+              <button
+                onClick={createAd}
+                className="px-4 py-2 bg-green-500 hover:bg-green-600"
+              >
+                Create Ad
+              </button>
+            ) : (
+              <button
+                onClick={updateAd}
+                className="px-4 py-2 bg-orange-500 hover:bg-orange-600"
+              >
+                Update Ad
+              </button>
+            )}
+            {editingAdId && (
+              <button
+                onClick={resetAdForm}
+                className="ml-4 px-4 py-2 bg-red-500 hover:bg-red-600"
+              >
+                Cancel
+              </button>
+            )}
+          </div>
+
+          <div className="p-4 bg-gray-700">
+            <h3 className="mb-4">Existing Advertisements</h3>
+            <ul className="p-4">
+              {advertiseList.map((ad) => (
+                <li key={ad.docId} className="mb-4 bg-gray-500 p-4 flex justify-between">
+                  <div>
+                    <strong>{ad.name}</strong>
+                    {ad.image && (
+                      <img
+                        src={ad.image}
+                        alt={ad.name}
+                        className="h-16 w-auto mt-2"
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => handleEditAd(ad.docId)}
+                      className="mr-2 px-4 bg-blue-500 hover:bg-blue-600"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteAd(ad.docId)}
+                      className="px-4 bg-red-500 hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
       )}

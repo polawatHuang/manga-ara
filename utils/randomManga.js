@@ -50,7 +50,7 @@ export async function goToRandomManga(router) {
     }
 
     // ✅ Navigate to the selected manga's page
-    router.push(randomManga.slug);
+    router.push("/"+randomManga.slug);
   } catch (error) {
     console.error("Error fetching mangas:", error);
   }
