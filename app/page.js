@@ -8,6 +8,7 @@ import { FireIcon, HeartIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import dayjs from "dayjs";
 import getRandomFourItems from "@/utils/getRandomFourItems";
+import formatNumber from "@/utils/formatNumber";
 
 export default function Home() {
   const [favoriteMangas, setFavoriteMangas] = useState([]);
@@ -87,6 +88,27 @@ export default function Home() {
     const storedFavorites =
       JSON.parse(localStorage.getItem("favoriteMangas")) || [];
     setFavoriteMangas(storedFavorites);
+  }, []);
+
+  useEffect(() => {
+    // Check if FB SDK is already loaded
+    if (typeof window !== "undefined" && window.FB) {
+      window.FB.XFBML.parse();
+    } else {
+      // Load SDK manually if not present
+      const script = document.createElement("script");
+      script.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v16.0";
+      script.async = true;
+      script.defer = true;
+      script.crossOrigin = "anonymous";
+      document.body.appendChild(script);
+      
+      script.onload = () => {
+        if (window.FB) {
+          window.FB.XFBML.parse();
+        }
+      };
+    }
   }, []);
 
   // ✅ Loading animation
@@ -187,18 +209,19 @@ export default function Home() {
                   />
                   <div className="px-2">
                     <b className="text-white mb-1 line-clamp-3">{item.name}</b>
-                    <p className="text-white mb-1">ยอดวิว: {item.view} วิว</p>
+                    <p className="text-white mb-1">
+                      ยอดวิว: {formatNumber(item.view)} วิว
+                    </p>
                     <div className="text-white mb-1 flex gap-2">
                       Tags:{" "}
                       <div className="flex gap-2 flex-wrap w-full">
                         {item.tag?.map((tag) => (
-                          <Link
+                          <button
                             key={tag}
-                            href={`/tags/${tag}`}
-                            className="rounded-full bg-blue-500 hover:bg-blue-600 hover:no-underline px-2"
+                            className="rounded-full bg-blue-500 px-2"
                           >
                             {tag}
-                          </Link>
+                          </button>
                         ))}
                       </div>
                     </div>
@@ -230,6 +253,35 @@ export default function Home() {
 
       <section className="mt-[60px]">
         <AdvertiseComponent />
+      </section>
+
+      <section>
+        <h3 className="flex items-center gap-2 text-2xl font-[600]">
+          ฝากกดติดตามเพจ Manga Ara ด้วยนะครับ
+        </h3>
+        <p>อยากให้แปลเรื่องไหนมาคอมเมนต์ที่เพจได้เลยนะครับ</p>
+        <div className="w-full mt-4">
+          <div
+            className="fb-page"
+            data-href="https://www.facebook.com/profile.php?id=100068343493780"
+            data-tabs=""
+            data-width="500"
+            data-height="500"
+            data-small-header="false"
+            data-adapt-container-width="true"
+            data-hide-cover="false"
+            data-show-facepile="true"
+          >
+            <blockquote
+              cite="https://www.facebook.com/profile.php?id=100068343493780"
+              className="fb-xfbml-parse-ignore"
+            >
+              <a href="https://www.facebook.com/profile.php?id=100068343493780">
+                Manga Ara
+              </a>
+            </blockquote>
+          </div>
+        </div>
       </section>
     </div>
   );

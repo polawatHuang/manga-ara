@@ -6,20 +6,28 @@ import FooterComponent from "@/components/FooterComponent";
 const kanit = Kanit({
   variable: "--font-kanit",
   subsets: ["latin"],
-  weight: ["100","200","300","400","500","600","700"]
+  weight: ["100", "200", "300", "400", "500", "600", "700"],
 });
 
 export const metadata = {
   title: "MANGA ARA - อ่านมังงะแปลไทย อัปเดตไวที่สุด!",
-  description: "MANGA ARA คือเว็บไซต์อ่านการ์ตูนออนไลน์ที่ออกแบบมาให้ใช้งานง่าย สะดวก รวดเร็ว พร้อมอัปเดตมังงะใหม่ทุกวัน! พบกับมังงะหลากหลายแนว ทั้งแอ็กชัน โรแมนซ์ แฟนตาซี และอีกมากมาย ทุกเรื่องแปลไทยให้อ่านฟรี คุณภาพคมชัด โหลดไว ไม่พลาดทุกตอนสำคัญ!",
+  description:
+    "MANGA ARA คือเว็บไซต์อ่านการ์ตูนออนไลน์ที่ออกแบบมาให้ใช้งานง่าย สะดวก รวดเร็ว พร้อมอัปเดตมังงะใหม่ทุกวัน! พบกับมังงะหลากหลายแนว ทั้งแอ็กชัน โรแมนซ์ แฟนตาซี และอีกมากมาย ทุกเรื่องแปลไทยให้อ่านฟรี คุณภาพคมชัด โหลดไว ไม่พลาดทุกตอนสำคัญ!",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${kanit.variable} antialiased`}
-      >
+      <head>
+        <script
+          async
+          defer
+          crossOrigin="anonymous"
+          src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v16.0"
+          nonce="your_nonce"
+        ></script>
+      </head>
+      <body className={`${kanit.variable} antialiased`}>
         <HeaderComponent />
         {children}
         <FooterComponent />
