@@ -36,8 +36,8 @@ const FooterComponent = () => {
           </p>
           <p className="mt-4">
             ติดต่อโฆษณา:{" "}
-            <a href="mailto:kaitolovemiku@hotmail.com" target="_blank">
-              kaitolovemiku@hotmail.com
+            <a href="mailto:mangaara2025@gmail.com" target="_blank">
+              mangaara2025@gmail.com
             </a>
           </p>
         </div>
