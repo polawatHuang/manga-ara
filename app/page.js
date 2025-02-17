@@ -1,6 +1,4 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { Metadata } from "next";
 import AdvertiseComponent from "@/components/AdvertiseComponent";
 import CardComponent from "@/components/CardComponent";
 import CardSliderComponent from "@/components/CardSliderComponent";
@@ -10,116 +8,65 @@ import dayjs from "dayjs";
 import getRandomFourItems from "@/utils/getRandomFourItems";
 import formatNumber from "@/utils/formatNumber";
 
-export default function Home() {
-  const [favoriteMangas, setFavoriteMangas] = useState([]);
-  const [mangas, setMangas] = useState([]);
-  const [tags, setTags] = useState([]);
-  const [loading, setLoading] = useState(true); // ✅ Loading state
-
-  const filterMostView = (data, slice = 5) => {
-    const sorted = [...data].sort((a, b) => b.view - a.view);
-    return sorted.slice(0, slice);
-  };
-
-  // ✅ Check for cached data
-  const loadFromCache = () => {
-    const cachedMangas = JSON.parse(localStorage.getItem("cachedMangas"));
-    const cachedTags = JSON.parse(localStorage.getItem("cachedTags"));
-
-    if (cachedMangas) setMangas(cachedMangas.data);
-    if (cachedTags) setTags(cachedTags.data);
-  };
-
-  // ✅ Save data to cache with timestamp
-  const saveToCache = (key, data) => {
-    const cacheData = {
-      data,
-      timestamp: new Date().toISOString(),
-    };
-    localStorage.setItem(key, JSON.stringify(cacheData));
-  };
-
-  const fetchData = async () => {
-    setLoading(true); // Start loading
-
-    try {
-      const mangaAPI = await fetch("/api/mangas");
-      const tagAPI = await fetch("/api/tags");
-
-      if (!mangaAPI.ok) throw new Error(`Manga API error: ${mangaAPI.status}`);
-      if (!tagAPI.ok) throw new Error(`Tag API error: ${tagAPI.status}`);
-
-      const mangaData = await mangaAPI.json();
-      const tagData = await tagAPI.json();
-
-      // ✅ Compare with cache
-      const cachedMangas = JSON.parse(localStorage.getItem("cachedMangas"));
-      const cachedTags = JSON.parse(localStorage.getItem("cachedTags"));
-
-      if (
-        !cachedMangas ||
-        JSON.stringify(cachedMangas.data) !== JSON.stringify(mangaData)
-      ) {
-        saveToCache("cachedMangas", mangaData);
-      }
-
-      if (
-        !cachedTags ||
-        JSON.stringify(cachedTags.data) !== JSON.stringify(tagData)
-      ) {
-        saveToCache("cachedTags", tagData);
-      }
-
-      setMangas(mangaData);
-      setTags(tagData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false); // Stop loading
+// ✅ Fetch manga data on the server
+async function fetchMangaData() {
+  const mangaRes = await fetch(
+    "https://mangaara.vercel.app/api/mangas/&page=1",
+    {
+      cache: "no-store",
     }
+  );
+
+  if (!mangaRes.ok) return [];
+
+  const mangaData = await mangaRes.json();
+  return (
+    mangaData.data.results.map((manga) => ({
+      id: manga.id,
+      name: manga.name,
+      slug: manga.slug,
+      description: manga.description,
+      backgroundImage: manga.imageCover,
+      tag: manga.genres.map((genre) => genre.genreName),
+      view: manga.view || 0,
+      created_date: dayjs(manga.createdAt).format("YYYY-MM-DD"),
+      updated_date: dayjs(manga.updatedAt).format("YYYY-MM-DD"),
+    })) || []
+  );
+}
+
+// ✅ Generate dynamic metadata (SEO)
+export async function generateMetadata() {
+  const mangas = await fetchMangaData();
+  const topManga = mangas.length > 0 ? mangas[0] : null;
+  const metaTitle = topManga
+    ? `อ่าน ${topManga.name} และการ์ตูนยอดฮิต | Manga`
+    : "อ่านการ์ตูนยอดนิยม | Manga";
+  const metaDescription = topManga
+    ? topManga.description
+    : "เว็บไซต์อ่านมังงะยอดนิยม มีมังงะอัพเดทใหม่ทุกวัน";
+  const metaImage = topManga ? topManga.imageCover : "/default-meta.jpg";
+
+  return {
+    title: metaTitle,
+    description: metaDescription,
+    openGraph: {
+      title: metaTitle,
+      description: metaDescription,
+      images: [{ url: metaImage }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: metaTitle,
+      description: metaDescription,
+      images: [metaImage],
+    },
   };
+}
 
-  useEffect(() => {
-    loadFromCache(); // ✅ Load cached data first
-    fetchData(); // ✅ Fetch fresh data
-  }, []);
-
-  useEffect(() => {
-    const storedFavorites =
-      JSON.parse(localStorage.getItem("favoriteMangas")) || [];
-    setFavoriteMangas(storedFavorites);
-  }, []);
-
-  useEffect(() => {
-    // Check if FB SDK is already loaded
-    if (typeof window !== "undefined" && window.FB) {
-      window.FB.XFBML.parse();
-    } else {
-      // Load SDK manually if not present
-      const script = document.createElement("script");
-      script.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v16.0";
-      script.async = true;
-      script.defer = true;
-      script.crossOrigin = "anonymous";
-      document.body.appendChild(script);
-      
-      script.onload = () => {
-        if (window.FB) {
-          window.FB.XFBML.parse();
-        }
-      };
-    }
-  }, []);
-
-  // ✅ Loading animation
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-black gap-4">
-        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-        <span className="text-white">กำลังโหลดข้อมูล...</span>
-      </div>
-    );
-  }
+// ✅ Server-side component
+export default async function Home() {
+  const mangas = await fetchMangaData();
 
   return (
     <div className="relative w-full min-h-screen max-w-6xl mx-auto md:p-8 pb-20 gap-16 sm:p-2">
@@ -137,27 +84,12 @@ export default function Home() {
         <CardSliderComponent
           mangaList={mangas.filter(
             (item) =>
-              dayjs(item.updated_date).format("YYYY-MM") ===
+              dayjs(item.updatedAt).format("YYYY-MM") ===
               dayjs().format("YYYY-MM")
           )}
           hasFevFunction={true}
         />
       </section>
-
-      {/* Favorite Mangas */}
-      {favoriteMangas.length > 0 && (
-        <section>
-          <h2 className="flex items-center gap-2">
-            <HeartIcon className="size-7 text-pink-600" />
-            มังงะที่กดถูกใจ
-          </h2>
-
-          <CardSliderComponent
-            mangaList={favoriteMangas}
-            hasFevFunction={false}
-          />
-        </section>
-      )}
 
       <section className="w-full grid grid-cols-1 md:grid-cols-12 gap-4">
         <div className="col-span-12 md:col-span-8">
@@ -172,114 +104,6 @@ export default function Home() {
                 <CardComponent key={manga.id} manga={manga} />
               ))}
             </div>
-          </div>
-
-          {/* Recommended Manga */}
-          <div className="w-full bg-gray-700 px-4 py-5">
-            <h3 className="flex items-center gap-2 text-2xl font-[600]">
-              แนะนำสำหรับคุณโดยเฉพาะ
-            </h3>
-            <hr className="opacity-50 my-2" />
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-              {getRandomFourItems(mangas).map((manga) => (
-                <CardComponent key={manga.id} manga={manga} />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="col-span-12 md:col-span-4 relative">
-          <div className="w-full bg-gray-700 px-4 py-5 mb-4">
-            <h3 className="flex items-center gap-2 text-2xl font-[600]">
-              5 เรื่องยอดนิยมตลอดกาล
-            </h3>
-            <hr className="opacity-50 my-2" />
-            <div className="w-full flex flex-wrap gap-2 mt-4">
-              {filterMostView(mangas).map((item) => (
-                <Link
-                  href={item.slug}
-                  key={item.name}
-                  className="flex hover:bg-gray-500 p-2 w-full hover:no-underline"
-                >
-                  <img
-                    src={item.backgroundImage}
-                    alt={item.name}
-                    className="h-[150px] w-[100px] object-cover"
-                    loading="lazy"
-                  />
-                  <div className="px-2">
-                    <b className="text-white mb-1 line-clamp-3">{item.name}</b>
-                    <p className="text-white mb-1">
-                      ยอดวิว: {formatNumber(item.view)} วิว
-                    </p>
-                    <div className="text-white mb-1 flex gap-2">
-                      Tags:{" "}
-                      <div className="flex gap-2 flex-wrap w-full">
-                        {item.tag?.map((tag) => (
-                          <button
-                            key={tag}
-                            className="rounded-full bg-blue-500 px-2"
-                          >
-                            {tag}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="w-full bg-gray-700 px-4 py-5 mb-2">
-            <h3 className="flex items-center gap-2 text-2xl font-[600]">
-              Tag ทั้งหมด
-            </h3>
-            <hr className="opacity-50 my-2" />
-            <div className="w-full flex flex-wrap gap-2">
-              {tags.map((item) => (
-                <Link
-                  key={item.name}
-                  href={`/tags/${item.name}`}
-                  className="rounded-full bg-gray-500 hover:bg-blue-500 hover:no-underline px-2 py-1"
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mt-[60px]">
-        <AdvertiseComponent />
-      </section>
-
-      <section>
-        <h3 className="flex items-center gap-2 text-2xl font-[600]">
-          ฝากกดติดตามเพจ Manga Ara ด้วยนะครับ
-        </h3>
-        <p>อยากให้แปลเรื่องไหนมาคอมเมนต์ที่เพจได้เลยนะครับ</p>
-        <div className="w-full mt-4">
-          <div
-            className="fb-page"
-            data-href="https://www.facebook.com/profile.php?id=100068343493780"
-            data-tabs=""
-            data-width="500"
-            data-height="500"
-            data-small-header="false"
-            data-adapt-container-width="true"
-            data-hide-cover="false"
-            data-show-facepile="true"
-          >
-            <blockquote
-              cite="https://www.facebook.com/profile.php?id=100068343493780"
-              className="fb-xfbml-parse-ignore"
-            >
-              <a href="https://www.facebook.com/profile.php?id=100068343493780">
-                Manga Ara
-              </a>
-            </blockquote>
           </div>
         </div>
       </section>

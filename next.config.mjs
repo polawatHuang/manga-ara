@@ -8,6 +8,10 @@ const nextConfig = {
           hostname: 'firebasestorage.googleapis.com',
           pathname: '/v0/b/**', // ✅ Allows all Firebase Storage paths
         },
+        {
+          protocol: 'https',
+          hostname: "manga-gg.com",
+        },
       ],
     },
   };
