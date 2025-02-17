@@ -3,37 +3,8 @@ import AdvertiseComponent from "@/components/AdvertiseComponent";
 import CardComponent from "@/components/CardComponent";
 import CardSliderComponent from "@/components/CardSliderComponent";
 import { FireIcon, HeartIcon } from "@heroicons/react/24/solid";
-import Link from "next/link";
 import dayjs from "dayjs";
-import getRandomFourItems from "@/utils/getRandomFourItems";
-import formatNumber from "@/utils/formatNumber";
-
-// ✅ Fetch manga data on the server
-async function fetchMangaData() {
-  const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
-  const params = new URLSearchParams({ page: "1" }).toString();
-  const url = `https://mangayuzu.com/api/v1/get/search?orderBy=view&sortBy=desc&page=${params}`;
-
-  const mangaRes = await fetch(url, { cache: "no-store" });
-
-  if (!mangaRes.ok) return [];
-
-  const mangaData = await mangaRes.json();
-  console.log("server",mangaData)
-  return (
-    mangaData.data.results.map((manga) => ({
-      id: manga.id,
-      name: manga.name,
-      slug: manga.slug,
-      description: manga.description,
-      backgroundImage: manga.imageCover,
-      tag: manga.genres.map((genre) => genre.genreName),
-      view: manga.view || 0,
-      created_date: dayjs(manga.createdAt).format("YYYY-MM-DD"),
-      updated_date: dayjs(manga.updatedAt).format("YYYY-MM-DD"),
-    })) || []
-  );
-}
+import fetchMangaData from "@/utils/fetchMangaData";
 
 // ✅ Generate dynamic metadata (SEO)
 export async function generateMetadata() {
