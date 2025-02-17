@@ -11,7 +11,7 @@ import formatNumber from "@/utils/formatNumber";
 // ✅ Fetch manga data on the server
 async function fetchMangaData() {
   const mangaRes = await fetch(
-    "https://mangaara.vercel.app/api/mangas/&page=1",
+    "https://mangaara.vercel.app/api/mangas&page=1",
     {
       cache: "no-store",
     }
