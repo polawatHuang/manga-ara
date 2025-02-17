@@ -9,9 +9,9 @@ export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const page = searchParams.get("page") || 1; // Default to page 1 if not provided
-
+    const type = searchParams.get("type") || ""; // Default to page "" if not provided
     const response = await fetch(
-      `https://mangayuzu.com/api/v1/get/search?orderBy=view&sortBy=desc&page=${page}`
+      `https://mangayuzu.com/api/v1/get/search?type=${type}orderBy=created&sortBy=desc&page=${page}`
     );
 
     if (!response.ok) {

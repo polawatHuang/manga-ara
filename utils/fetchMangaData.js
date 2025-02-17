@@ -1,8 +1,8 @@
 // ✅ Use an absolute URL for API calls on the server
-async function fetchMangaData(page = 1) {
+async function fetchMangaData(page = 1, type = "") {
   try {
     const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
-    const url = `${baseURL}/mangas?page=${page}`; // ✅ Correct absolute URL
+    const url = `${baseURL}/mangas?page=${page}&type=${type}`; // ✅ Correct absolute URL
 
     const mangaRes = await fetch(url, {
       cache: "no-store",
