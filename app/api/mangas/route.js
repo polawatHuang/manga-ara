@@ -33,7 +33,7 @@ export async function GET(req) {
       updated_date: dayjs(manga.updatedAt).format("YYYY-MM-DD"),
     }));
 
-    return Response.json({ success: true, page: parseInt(page), formattedData });
+    return Response.json({ success: true, page: parseInt(page), result: formattedData });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

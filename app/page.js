@@ -10,16 +10,16 @@ import formatNumber from "@/utils/formatNumber";
 
 // ✅ Fetch manga data on the server
 async function fetchMangaData() {
-  const mangaRes = await fetch(
-    "https://mangaara.vercel.app/api/mangas&page=1",
-    {
-      cache: "no-store",
-    }
-  );
+  const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+  const params = new URLSearchParams({ page: "1" }).toString();
+  const url = `https://mangayuzu.com/api/v1/get/search?orderBy=view&sortBy=desc&page=${params}`;
+
+  const mangaRes = await fetch(url, { cache: "no-store" });
 
   if (!mangaRes.ok) return [];
 
   const mangaData = await mangaRes.json();
+  console.log("server",mangaData)
   return (
     mangaData.data.results.map((manga) => ({
       id: manga.id,
