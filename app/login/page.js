@@ -6,6 +6,7 @@ import { auth } from "@/firebaseConfig";
 import { useRouter } from "next/navigation";
 import { Dialog } from "@headlessui/react";
 import Link from "next/link";
+import { ChevronLeftIcon } from "@heroicons/react/24/solid";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -96,10 +97,10 @@ export default function LoginPage() {
 
             <Link
               href="/"
-              className="w-full rounded-md bg-green-500 hover:bg-green-600 py-2 text-white px-2"
+              className="w-full pt-2 text-gray-500 flex gap-2 items-center hover:no-underline"
               disabled={loading}
             >
-              Go back to homepage
+              <ChevronLeftIcon className="size-5"/> Go back to homepage
             </Link>
           </Dialog.Panel>
         </div>
