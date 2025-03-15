@@ -8,19 +8,17 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Extract the URL from the query parameters
+        // Extract URL from query parameters
         const { url } = req.query;
         if (!url) {
             return res.status(400).json({ error: "Missing URL parameter" });
         }
 
-        // Normalize URL format
+        // Decode and normalize the URL
         const decodedUrl = decodeURIComponent(url);
 
-        // Set directory for storing images
+        // Define directory to store images
         const imagesDir = path.join(process.cwd(), "public", "manga_images");
-
-        // Ensure the directory exists
         fs.ensureDirSync(imagesDir);
 
         // Launch Puppeteer
@@ -30,7 +28,7 @@ export default async function handler(req, res) {
 
         await page.goto(decodedUrl, { waitUntil: "networkidle2" });
 
-        // Extract image URLs
+        // Extract image URLs from the page
         const imageUrls = await page.evaluate(() => {
             return Array.from(document.querySelectorAll(".page-break.no-gaps img")).map(img => img.src);
         });
