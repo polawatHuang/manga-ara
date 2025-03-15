@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import { db, storage } from "@/firebaseConfig";
@@ -10,12 +9,14 @@ import {
   getDocs,
   addDoc,
   updateDoc,
-  Timestamp,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import clsx from "clsx";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import dayjs from "dayjs";
+import { signOut, onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { auth } from "@/firebaseConfig";
 
 /**
  * React Select custom styles to force black text.
@@ -444,11 +445,32 @@ export default function AdminPage() {
   const [menuIdValue, setMenuIdValue] = useState("");
   const [editingMenuDocId, setEditingMenuDocId] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push("/login"); // ✅ Redirect to login if not authenticated
+      } else {
+        setUser(user);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [router]);
 
   const fetchMenuList = async () => {
     const snapshot = await getDocs(collection(db, "menubar"));
     const data = snapshot.docs.map((d) => ({ docId: d.id, ...d.data() }));
     setMenuList(data);
+  };
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.push("/login"); // ✅ Redirect to login after logout
   };
 
   const createMenuItem = async () => {
@@ -526,9 +548,24 @@ export default function AdminPage() {
   /* ======================
    * RENDER
    * ====================== */
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
   return (
     <main className="p-4 md:px-0 md:max-w-6xl mx-auto">
-      <h1 className="mb-4">Admin Page</h1>
+      <h1>Admin Page</h1>
+
+      <div className="flex items-cneter justify-between mb-4">
+      {user && <p className="text-lg">Welcome, {user.email}</p>}
+        <button
+          onClick={handleLogout}
+          className="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+        >
+          Logout
+        </button>
+      </div>
 
       {/* Tab Navigation */}
       <div className="flex gap-2">

@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebaseConfig";
 import { useRouter } from "next/navigation";
 import { Dialog } from "@headlessui/react";
 import Link from "next/link";
-import { ChevronLeftIcon } from "@heroicons/react/24/solid";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,6 +19,17 @@ export default function LoginPage() {
     setIsOpen(true); // Keep the modal open
   }, []);
 
+   // ✅ Automatically redirect logged-in users to /admin
+   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/admin");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [router]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -27,9 +37,9 @@ export default function LoginPage() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push("/admin"); // Redirect on success
+      router.push("/admin"); // ✅ Redirect on success
     } catch (err) {
-      setError("Invalid email or password");
+      setError("Invalid email or password " + err.message);
     } finally {
       setLoading(false);
     }
