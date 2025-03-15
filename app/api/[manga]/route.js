@@ -6,36 +6,12 @@ const mangasCollection = collection(db, "manga");
 // GET: Fetch all mangas
 export async function GET() {
   try {
-      const { searchParams } = new URL(req.url);
-      const page = searchParams.get("page") || 1; // Default to page 1 if not provided
-      const type = searchParams.get("type") || ""; // Default to page "" if not provided
-      const response = await fetch(
-        `https://mangayuzu.com/api/v1/get/search?type=${type}orderBy=created&sortBy=desc&page=${page}`
-      );
-  
-      if (!response.ok) {
-        throw new Error(`API request failed with status: ${response.status}`);
-      }
-  
-      const data = await response.json();
-  
-      // Extract relevant fields and format the response
-      const formattedData = data.data.results.map((manga) => ({
-        id: manga.id,
-        name: manga.name,
-        slug: manga.slug,
-        description: manga.description,
-        backgroundImage: manga.imageCover,
-        tag: manga.genres.map((genre) => genre.genreName),
-        view: manga.view || 0,
-        created_date: dayjs(manga.createdAt).format("YYYY-MM-DD"),
-        updated_date: dayjs(manga.updatedAt).format("YYYY-MM-DD"),
-      }));
-  
-      return Response.json({ success: true, page: parseInt(page), result: formattedData });
-    } catch (error) {
-      return Response.json({ error: error.message }, { status: 500 });
-    }
+    const snapshot = await getDocs(mangasCollection);
+    const mangas = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return Response.json(mangas);
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 }
 
 // POST: Add a new manga
