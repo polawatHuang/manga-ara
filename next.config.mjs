@@ -12,6 +12,10 @@ const nextConfig = {
           protocol: 'https',
           hostname: "manga-gg.com",
         },
+        {
+          protocol: 'https',
+          hostname: "www.anime-sugoi.com",
+        },
       ],
     },
   };
