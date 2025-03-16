@@ -129,14 +129,14 @@ export default function SlugPage() {
               className="w-full bg-gray-800 hover:bg-gray-900 p-4 text-center hover:no-underline"
             >
               <span>ตอนแรก</span>
-              <h4>ตอนที่ 1</h4>
+              <h4>ตอนที่ {episode[0]?.episode}</h4>
             </Link>
             <Link
-              href={`/${slug}/ep${episode.length}`}
+              href={`/${slug}/ep${episode[episode.length-1]?.episode}`}
               className="w-full bg-gray-800 hover:bg-gray-900 p-4 text-center hover:no-underline"
             >
               <span>ตอนล่าสุด</span>
-              <h4>ตอนที่ {episode.length}</h4>
+              <h4>ตอนที่ {episode[episode.length-1]?.episode}</h4>
             </Link>
           </div>
           <div className="mt-4 w-full relative">
