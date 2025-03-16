@@ -1,7 +1,7 @@
 import AdvertiseComponent from "@/components/AdvertiseComponent";
 import CardComponent from "@/components/CardComponent";
 import CardSliderComponent from "@/components/CardSliderComponent";
-import { FireIcon } from "@heroicons/react/24/solid";
+import { BookOpenIcon, FireIcon } from "@heroicons/react/24/solid";
 import dayjs from "dayjs";
 import fetchMangaData from "@/utils/fetchMangaData";
 import Link from "next/link";
@@ -74,7 +74,7 @@ export default async function Home() {
 
       <section className="w-full mt-4">
         <h2 className="flex items-center gap-2 mb-4">
-          <FireIcon className="size-7 text-red-600" />
+          <BookOpenIcon className="size-7 text-yellow-600" />
           อยากให้แปลการ์ตูนเรื่องไหน ทักเพจเรามาได้เลย
         </h2>
         <Link href="https://www.facebook.com/profile.php?id=100068343493780" target="_blank">
