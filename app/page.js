@@ -6,6 +6,8 @@ import dayjs from "dayjs";
 import fetchMangaData from "@/utils/fetchMangaData";
 import Link from "next/link";
 import fetchTagData from "@/utils/fetchTagData";
+import Image from "next/image";
+import FBPage from "@/public/images/facebook-page.png";
 
 // ✅ Server-side component
 export default async function Home() {
@@ -68,6 +70,16 @@ export default async function Home() {
             </div>
           </div>
         </div>
+      </section>
+
+      <section className="w-full mt-4">
+        <h2 className="flex items-center gap-2 mb-4">
+          <FireIcon className="size-7 text-red-600" />
+          อยากให้แปลการ์ตูนเรื่องไหน ทักเพจเรามาได้เลย
+        </h2>
+        <Link href="https://www.facebook.com/profile.php?id=100068343493780" target="_blank">
+          <Image src={FBPage} alt="Manga Ara Facebook Page" className="w-full h-auto" loading="lazy" />
+        </Link>
       </section>
     </div>
   );
