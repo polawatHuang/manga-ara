@@ -53,7 +53,32 @@ export default async function Home() {
           </div>
         </div>
         <div className="col-span-12 md:col-span-4">
-          {/* Advertise */}
+          {/* Facebook page */}
+          <div className="col-span-12 md:col-span-2 bg-gray-700 px-4 py-5 mb-4 flex flex-col">
+            <h3 className="text-2xl font-semibold">
+              อยากให้แปลเรื่องไหน ทักเพจเรามาได้เลย
+            </h3>
+            <hr className="opacity-50 my-2" />
+            <Link
+              href="https://www.facebook.com/profile.php?id=100068343493780"
+              target="_blank"
+            >
+              <Image
+                src={FBPage}
+                alt="Manga Ara Facebook Page"
+                className="w-full h-auto"
+                loading="lazy"
+              />
+            </Link>
+            <Link
+              href="https://www.facebook.com/profile.php?id=100068343493780"
+              target="_blank"
+              className="bg-blue-500 hover:bg-blue-600 hover:no-underline text-white px-4 py-2 rounded-full w-full mt-5 text-center"
+            >
+              คลิกติดตามเพจ
+            </Link>
+          </div>
+          {/* Tags compnent */}
           <div className="col-span-12 md:col-span-2 bg-gray-700 px-4 py-5">
             <h3 className="text-2xl font-semibold">Tag ทั้งหมด</h3>
             <hr className="opacity-50 my-2" />
@@ -70,16 +95,6 @@ export default async function Home() {
             </div>
           </div>
         </div>
-      </section>
-
-      <section className="w-full mt-4">
-        <h2 className="flex items-center gap-2 mb-4">
-          <BookOpenIcon className="size-7 text-yellow-600" />
-          อยากให้แปลการ์ตูนเรื่องไหน ทักเพจเรามาได้เลย
-        </h2>
-        <Link href="https://www.facebook.com/profile.php?id=100068343493780" target="_blank">
-          <Image src={FBPage} alt="Manga Ara Facebook Page" className="w-full h-auto" loading="lazy" />
-        </Link>
       </section>
     </div>
   );
