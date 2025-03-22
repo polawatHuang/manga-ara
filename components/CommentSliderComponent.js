@@ -92,40 +92,42 @@ export default function CommentSliderComponent({
         {mangaList.map((manga) => (
           <SwiperSlide key={manga.id} className="relative">
             {/* Manga Card */}
-            <Link className="overflow-hidden bg-yellow-500" href={manga.slug}>
-              <div className="bg-white p-4 rounded-lg text-black flex gap-4">
-                <div className="flex-initial w-[40%]">
-                  <Image
-                    src={manga.backgroundImage}
-                    alt="test"
-                    width={150}
-                    height={300}
-                    className="h-[300px] w-auto bg-cover"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="relative flex-initial w-[60%]">
-                  <h4 className="font-[400]">
-                    ชื่อเรื่อง: My Lucky Encounter From The Game Turned
-                  </h4>
-                  <p>ผู้แนะนำ: โสเภ ณีน้อย</p>
-                  <p>ข้อความ:</p>
-                  <div className="bg-[#f0f2f5] rounded-lg p-4 mt-2 mb-4">
-                    โหย!เรื่องนี้สนุกมากๆ เลยนะ พระเอกก็หลอกมาก หล่อเหลือเกิน
-                    อยากให้ลองดูจริงๆ ฉากต่อสู้ก็เวอร์วังมาก รวมๆแล้ว ให้เต็มเลย
-                    ดูเลยเดียวนี้!
+            <div className="overflow-hidden bg-yellow-500">
+              <Link href={manga.slug}>
+                <div className="bg-white p-4 rounded-lg text-black flex gap-4">
+                  <div className="flex-initial w-[40%]">
+                    <Image
+                      src={manga.backgroundImage}
+                      alt="test"
+                      width={150}
+                      height={300}
+                      className="h-[300px] w-auto bg-cover"
+                      loading="lazy"
+                    />
                   </div>
-                  <div className="w-full flex justify-end">
-                    <Link
-                      href="/manga/my-lucky-encounter-from-the-game-turned-into-reality"
-                      className="bg-blue-500 hover:bg-blue-600 px-4 py-2 text-white rounded-full"
-                    >
-                      คลิกอ่านเลย
-                    </Link>
+                  <div className="relative flex-initial w-[60%]">
+                    <h4 className="font-[400]">
+                      ชื่อเรื่อง: My Lucky Encounter From The Game Turned
+                    </h4>
+                    <p>ผู้แนะนำ: โสเภ ณีน้อย</p>
+                    <p>ข้อความ:</p>
+                    <div className="bg-[#f0f2f5] rounded-lg p-4 mt-2 mb-4">
+                      โหย!เรื่องนี้สนุกมากๆ เลยนะ พระเอกก็หลอกมาก หล่อเหลือเกิน
+                      อยากให้ลองดูจริงๆ ฉากต่อสู้ก็เวอร์วังมาก รวมๆแล้ว ให้เต็มเลย
+                      ดูเลยเดียวนี้!
+                    </div>
+                    <div className="w-full flex justify-end">
+                      <Link
+                        href="/manga/my-lucky-encounter-from-the-game-turned-into-reality"
+                        className="bg-blue-500 hover:bg-blue-600 px-4 py-2 text-white rounded-full"
+                      >
+                        คลิกอ่านเลย
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </div>
           </SwiperSlide>
         ))}
       </Swiper>
