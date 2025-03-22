@@ -96,9 +96,9 @@ export default function CommentSliderComponent({
                   />
                 </div>
                 <div className="relative flex-initial w-[60%]">
-                  <h4 className="font-[400]">
+                  <p>
                     ชื่อเรื่อง: {manga.name}
-                  </h4>
+                  </p>
                   <p>ผู้แนะนำ: {manga.commenter}</p>
                   <p>ข้อความ:</p>
                   <div className="bg-[#f0f2f5] rounded-lg p-4 mt-2 mb-4">
