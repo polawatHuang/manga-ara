@@ -40,19 +40,10 @@ const ChevronRightIcon = () => (
 
 export default function CommentSliderComponent({
   mangaList,
-  hasFevFunction = false,
 }) {
   const swiperRef = useRef(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
-  const [favorites, setFavorites] = useState([]);
-
-  // Load favorite mangas from localStorage
-  useEffect(() => {
-    const storedFavorites =
-      JSON.parse(localStorage.getItem("favoriteMangas")) || [];
-    setFavorites(storedFavorites);
-  }, []);
 
   return (
     <div className="relative w-full px-4 py-6">
@@ -106,14 +97,12 @@ export default function CommentSliderComponent({
                 </div>
                 <div className="relative flex-initial w-[60%]">
                   <h4 className="font-[400]">
-                    ชื่อเรื่อง: My Lucky Encounter From The Game Turned
+                    ชื่อเรื่อง: {manga.name}
                   </h4>
-                  <p>ผู้แนะนำ: โสเภ ณีน้อย</p>
+                  <p>ผู้แนะนำ: {manga.commenter}</p>
                   <p>ข้อความ:</p>
                   <div className="bg-[#f0f2f5] rounded-lg p-4 mt-2 mb-4">
-                    โหย!เรื่องนี้สนุกมากๆ เลยนะ พระเอกก็หลอกมาก หล่อเหลือเกิน
-                    อยากให้ลองดูจริงๆ ฉากต่อสู้ก็เวอร์วังมาก รวมๆแล้ว ให้เต็มเลย
-                    ดูเลยเดียวนี้!
+                    {manga.comment}
                   </div>
                   <div className="w-full flex justify-end">
                     <Link

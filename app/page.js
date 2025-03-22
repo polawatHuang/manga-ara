@@ -1,7 +1,7 @@
 import AdvertiseComponent from "@/components/AdvertiseComponent";
 import CardComponent from "@/components/CardComponent";
 import CardSliderComponent from "@/components/CardSliderComponent";
-import { BookOpenIcon, FireIcon, HandThumbUpIcon } from "@heroicons/react/24/solid";
+import { FireIcon, HandThumbUpIcon } from "@heroicons/react/24/solid";
 import dayjs from "dayjs";
 import fetchMangaData from "@/utils/fetchMangaData";
 import Link from "next/link";
@@ -10,12 +10,13 @@ import Image from "next/image";
 import FBPage from "@/public/images/facebook-page.png";
 import filterMangaItems from "@/utils/filterMangaItems";
 import CommentSliderComponent from "@/components/CommentSliderComponent";
+import fetchRecommendData from "@/utils/fetchRecommendData";
 
 // ✅ Server-side component
 export default async function Home() {
   const mangas = await fetchMangaData();
   const tags = await fetchTagData();
-  const imageUrl = "https://firebasestorage.googleapis.com/v0/b/manga-ara.firebasestorage.app/o/images%2Fmy-lucky-encounter-from-the-game-turned-into-reality%2Fbg.jpg?alt=media&token=a275c69a-d9e8-4dbe-acc7-71f2df619037"
+  const recommentdManga = await fetchRecommendData();
 
   return (
     <div className="relative w-full min-h-screen max-w-6xl mx-auto md:p-8 pb-20 gap-16 sm:p-2">
@@ -47,12 +48,7 @@ export default async function Home() {
         </h2>
         <div className="mb-4 w-full">
         <CommentSliderComponent
-          mangaList={mangas.filter(
-            (item) =>
-              dayjs(item.updatedAt).format("YYYY-MM") ===
-              dayjs().format("YYYY-MM")
-          )}
-          hasFevFunction={true}
+          mangaList={recommentdManga}
         />
         </div>
       </section>
