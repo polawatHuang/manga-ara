@@ -100,9 +100,35 @@ export default async function Home() {
 
       <section className="w-full grid grid-cols-1 md:grid-cols-12 gap-4">
         <div className="col-span-12">
-          <div className="w-full bg-gray-700 px-4 py-5 mb-4">
+          <div className="w-full bg-gray-700 px-4 py-5">
             <h3 className="flex items-center gap-2 text-2xl font-[600]">
               แนวผู้หญิงอ่าน
+            </h3>
+            <hr className="opacity-50 my-2" />
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-4">
+              {filterMangaItems([], "", 6,mangas).map((manga) => (
+                <CardComponent key={manga.id} manga={manga} />
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="col-span-12">
+          <div className="w-full bg-gray-700 px-4 py-5">
+            <h3 className="flex items-center gap-2 text-2xl font-[600]">
+              แนวชายรักชาย (Yaoi)
+            </h3>
+            <hr className="opacity-50 my-2" />
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-4">
+              {filterMangaItems([], "", 6,mangas).map((manga) => (
+                <CardComponent key={manga.id} manga={manga} />
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="col-span-12">
+          <div className="w-full bg-gray-700 px-4 py-5">
+            <h3 className="flex items-center gap-2 text-2xl font-[600]">
+            แนวผู้ชายอ่าน
             </h3>
             <hr className="opacity-50 my-2" />
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-4">
