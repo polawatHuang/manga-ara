@@ -1,7 +1,7 @@
 import AdvertiseComponent from "@/components/AdvertiseComponent";
 import CardComponent from "@/components/CardComponent";
 import CardSliderComponent from "@/components/CardSliderComponent";
-import { BookOpenIcon, FireIcon } from "@heroicons/react/24/solid";
+import { BookOpenIcon, FireIcon, HandThumbUpIcon } from "@heroicons/react/24/solid";
 import dayjs from "dayjs";
 import fetchMangaData from "@/utils/fetchMangaData";
 import Link from "next/link";
@@ -9,11 +9,13 @@ import fetchTagData from "@/utils/fetchTagData";
 import Image from "next/image";
 import FBPage from "@/public/images/facebook-page.png";
 import filterMangaItems from "@/utils/filterMangaItems";
+import CommentSliderComponent from "@/components/CommentSliderComponent";
 
 // ✅ Server-side component
 export default async function Home() {
   const mangas = await fetchMangaData();
   const tags = await fetchTagData();
+  const imageUrl = "https://firebasestorage.googleapis.com/v0/b/manga-ara.firebasestorage.app/o/images%2Fmy-lucky-encounter-from-the-game-turned-into-reality%2Fbg.jpg?alt=media&token=a275c69a-d9e8-4dbe-acc7-71f2df619037"
 
   return (
     <div className="relative w-full min-h-screen max-w-6xl mx-auto md:p-8 pb-20 gap-16 sm:p-2">
@@ -36,6 +38,23 @@ export default async function Home() {
           )}
           hasFevFunction={true}
         />
+      </section>
+
+      <section>
+        <h2 className="flex items-center gap-2">
+          <HandThumbUpIcon className="size-7 text-yellow-400" />
+          มังงะแนะนำจากทางบ้าน
+        </h2>
+        <div className="mb-4 w-full">
+        <CommentSliderComponent
+          mangaList={mangas.filter(
+            (item) =>
+              dayjs(item.updatedAt).format("YYYY-MM") ===
+              dayjs().format("YYYY-MM")
+          )}
+          hasFevFunction={true}
+        />
+        </div>
       </section>
 
       <section className="w-full grid grid-cols-1 md:grid-cols-12 gap-4">

@@ -6,8 +6,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    //const targetUrl = "https://mangasuper.com/manga/guild-no-uketsukejou/%e0%b8%95%e0%b8%ad%e0%b8%99%e0%b8%97%e0%b8%b5%e0%b9%88-3/";
-    const targetUrl = "https://mangasuper.com/manga/after-kissing-many-girls/%e0%b8%95%e0%b8%ad%e0%b8%99%e0%b8%97%e0%b8%b5%e0%b9%88-2/"
+    const targetUrl = "https://neko-hentai.net/c0wj9/shindol-henshin-metamorphosis-1/"
 
     // Fetch page content
     const response = await axios.get(targetUrl);
@@ -15,7 +14,7 @@ export async function GET() {
 
     // Extract image URLs inside class 'page-break no-gaps'
     const imageUrls = [];
-    $(".page-break.no-gaps img").each((index, element) => {
+    $("#manga-warpper-all img").each((index, element) => {
       const imgUrl = $(element).attr("data-src") || $(element).attr("src");
       if (imgUrl) imageUrls.push(imgUrl);
     });
