@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     //const targetUrl = "https://mangasuper.com/manga/guild-no-uketsukejou/%e0%b8%95%e0%b8%ad%e0%b8%99%e0%b8%97%e0%b8%b5%e0%b9%88-3/";
-    const targetUrl = "https://mangasuper.com/manga/reality-quest/%e0%b8%95%e0%b8%ad%e0%b8%99%e0%b8%97%e0%b8%b5%e0%b9%88-1/"
+    const targetUrl = "https://mangasuper.com/manga/after-kissing-many-girls/%e0%b8%95%e0%b8%ad%e0%b8%99%e0%b8%97%e0%b8%b5%e0%b9%88-2/"
 
     // Fetch page content
     const response = await axios.get(targetUrl);

@@ -106,7 +106,7 @@ export default async function Home() {
             </h3>
             <hr className="opacity-50 my-2" />
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-4">
-              {filterMangaItems([], "", 6,mangas).map((manga) => (
+              {filterMangaItems(["ผู้หญิงอ่าน"], "", 6,mangas).map((manga) => (
                 <CardComponent key={manga.id} manga={manga} />
               ))}
             </div>
@@ -119,7 +119,7 @@ export default async function Home() {
             </h3>
             <hr className="opacity-50 my-2" />
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-4">
-              {filterMangaItems([], "", 6,mangas).map((manga) => (
+              {filterMangaItems(["Yaoi"], "", 6,mangas).map((manga) => (
                 <CardComponent key={manga.id} manga={manga} />
               ))}
             </div>
@@ -132,7 +132,7 @@ export default async function Home() {
             </h3>
             <hr className="opacity-50 my-2" />
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-4">
-              {filterMangaItems([], "", 6,mangas).map((manga) => (
+              {filterMangaItems(["ผู้ชายอ่าน"], "", 6,mangas).map((manga) => (
                 <CardComponent key={manga.id} manga={manga} />
               ))}
             </div>
@@ -145,7 +145,7 @@ export default async function Home() {
             </h3>
             <hr className="opacity-50 my-2" />
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-4">
-              {filterMangaItems([], "", 6,mangas).map((manga) => (
+              {filterMangaItems(["Yuri"], "", 6,mangas).map((manga) => (
                 <CardComponent key={manga.id} manga={manga} />
               ))}
             </div>
