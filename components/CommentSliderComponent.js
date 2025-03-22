@@ -92,7 +92,7 @@ export default function CommentSliderComponent({
         {mangaList.map((manga) => (
           <SwiperSlide key={manga.id} className="relative">
             {/* Manga Card */}
-            <div className="overflow-hidden bg-yellow-500">
+            <div className="overflow-hidden">
               <Link href={manga.slug}>
                 <div className="bg-white p-4 rounded-lg text-black flex gap-4">
                   <div className="flex-initial w-[40%]">
