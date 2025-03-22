@@ -38,9 +38,7 @@ const ChevronRightIcon = () => (
   </svg>
 );
 
-export default function CommentSliderComponent({
-  mangaList,
-}) {
+export default function CommentSliderComponent({ mangaList }) {
   const swiperRef = useRef(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
@@ -66,6 +64,7 @@ export default function CommentSliderComponent({
           640: { slidesPerView: 1 }, // Tablet
           1024: { slidesPerView: 2 }, // PC
         }}
+        autoplay={{ delay: 5000, disableOnInteraction: false }}
         loop={false}
         onSlideChange={(swiper) => {
           // Update slide state (isBeginning, isEnd) on slide change
@@ -96,22 +95,18 @@ export default function CommentSliderComponent({
                   />
                 </div>
                 <div className="relative flex-initial w-[60%]">
-                  <p>
-                    ชื่อเรื่อง: {manga.name}
-                  </p>
+                  <p>ชื่อเรื่อง: {manga.name}</p>
                   <p>ผู้แนะนำ: {manga.commenter}</p>
                   <p>ข้อความ:</p>
                   <div className="bg-[#f0f2f5] rounded-lg p-4 mt-2 mb-4">
                     {manga.comment}
                   </div>
-                  <div className="w-full flex justify-end">
-                    <Link
-                      href={manga.slug}
-                      className="bg-blue-500 hover:bg-blue-600 px-4 py-2 text-white rounded-full"
-                    >
-                      คลิกอ่านเลย
-                    </Link>
-                  </div>
+                  <Link
+                    href={manga.slug}
+                    className="absolute bottom-0 right-0 bg-blue-500 hover:bg-blue-600 px-4 py-2 text-white rounded-full"
+                  >
+                    คลิกอ่านเลย
+                  </Link>
                 </div>
               </div>
             </div>
