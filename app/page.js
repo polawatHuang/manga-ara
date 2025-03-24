@@ -48,7 +48,7 @@ export default async function Home() {
           มังงะแนะนำจากทางบ้าน
         </h2>
         <div className="w-full">
-          <CommentSliderComponent mangaList={recommentdManga} />
+          <CommentSliderComponent mangaList={recommentdManga.filter(item=>item.status === "published")} />
         </div>
       </section>
 
@@ -109,7 +109,7 @@ export default async function Home() {
               ))}
             </div>
           </div>
-          <RecommendFormComponent />
+          <RecommendFormComponent mangaList={mangas} />
         </div>
       </section>
 
