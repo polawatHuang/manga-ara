@@ -9,6 +9,7 @@ import Link from "next/link";
 import copyToClipboard from "@/utils/copyToClipboard";
 import CardComponent from "@/components/CardComponent";
 import getRandomFourItems from "@/utils/getRandomFourItems";
+import ViewTracker from "@/components/ViewTracker";
 
 export default function SlugPage() {
   const { slug } = useParams();
@@ -92,6 +93,8 @@ export default function SlugPage() {
           <hr className="my-2" />
           <br />
           <p className="text-white">เรื่องย่อ: {manga.description}</p>
+          <br />
+          <p className="text-white">ยอดวิว: <ViewTracker mangaID={manga.id} /> วิว</p>
           <br />
           <p className="text-white flex items-center gap-4">
             Tags:{" "}

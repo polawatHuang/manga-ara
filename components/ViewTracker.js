@@ -1,27 +1,40 @@
-import { db } from "@/utils/firebase";
-import { doc, updateDoc, increment } from "firebase/firestore";
+import { db } from "@/firebaseConfig"; // Import Firestore configuration
+import { doc, updateDoc, increment, getDoc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
-const ViewTracker = ({ mangaSlug }) => {
+const ViewTracker = ({ mangaID }) => {
   const [viewCount, setViewCount] = useState(0);
 
-  // Fetch the current view count from Firestore on initial render (optional)
+  // Check if mangaID is defined before fetching view count
   useEffect(() => {
+    if (!mangaID) {
+      console.error("mangaID is undefined");
+      return; // Exit if mangaID is not provided
+    }
+
     const fetchViewCount = async () => {
-      const mangaDocRef = doc(db, "mangas", mangaSlug);  // Firestore path
+      const mangaDocRef = doc(db, "manga", mangaID);  // Firestore path
       const docSnapshot = await getDoc(mangaDocRef);
 
       if (docSnapshot.exists()) {
         setViewCount(docSnapshot.data().view || 0); // Use Firestore view count
+      } else {
+        // If document doesn't exist, create it with initial view count 0
+        await setDoc(mangaDocRef, { view: 0 }, { merge: true });
       }
     };
 
     fetchViewCount();
-  }, [mangaSlug]);
+  }, [mangaID]);
 
   // Increment view count function
   const incrementViewCount = async () => {
-    const mangaDocRef = doc(db, "mangas", mangaSlug);
+    if (!mangaID) {
+      console.error("mangaID is undefined");
+      return; // Exit if mangaID is not provided
+    }
+
+    const mangaDocRef = doc(db, "manga", mangaID);  // Firestore path
 
     try {
       // Update the Firestore document, incrementing the view count
@@ -30,7 +43,7 @@ const ViewTracker = ({ mangaSlug }) => {
       });
 
       // Update local state to reflect the increment immediately
-      setViewCount(prev => prev + 1);
+      setViewCount((prev) => prev + 1);
     } catch (error) {
       console.error("Error updating view count: ", error);
     }
@@ -38,16 +51,12 @@ const ViewTracker = ({ mangaSlug }) => {
 
   // Call incrementViewCount when the user clicks to view manga details
   useEffect(() => {
-    incrementViewCount();  // You can control when to call this function
-  }, [mangaSlug]);
+    if (mangaID) {
+      incrementViewCount();  // Increment the view count if mangaID is defined
+    }
+  }, [mangaID]);
 
-  return (
-    <div>
-      <h3>Manga: {mangaSlug}</h3>
-      <p>Views: {viewCount}</p>
-      {/* Rest of the manga details */}
-    </div>
-  );
+  return viewCount;
 };
 
 export default ViewTracker;
