@@ -98,7 +98,7 @@ export default function RecommendFormComponent({ mangaList }) {
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="ใส่ชื่อของคุณที่นี่"
-        className="border-[1px] border-solid border-[#ccc] rounded-lg py-2 px-4"
+        className="border-[1px] border-solid border-[#ccc] rounded-lg py-2 px-4 hover:border-[#2584fc] focus:border-[#2584fc]"
       />
 
       <p>
@@ -143,7 +143,7 @@ export default function RecommendFormComponent({ mangaList }) {
         value={review}
         onChange={(e) => setReview(e.target.value)}
         placeholder="เขียนรีวิวที่นี่"
-        className="border-[1px] border-solid border-[#ccc] rounded-lg py-2 px-4 min-h-[100px]"
+        className="border-[1px] border-solid border-[#ccc] rounded-lg py-2 px-4 min-h-[100px] hover:border-[#2584fc] focus:border-[#2584fc]"
       />
 
       <button
