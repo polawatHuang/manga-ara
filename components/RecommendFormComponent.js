@@ -46,7 +46,7 @@ export default function RecommendFormComponent() {
   };
 
   return (
-    <form className="bg-white text-black p-4 rounded-lg flex flex-col gap-2 w-full">
+    <form className="bg-white text-black p-4 flex flex-col gap-2 w-full">
       <h4>รีวิวมังงะที่อยากแนะนำให้ทุกคน</h4>
       <p>ชื่อ <sup className="text-red-500">*</sup></p>
       <input
@@ -85,7 +85,7 @@ export default function RecommendFormComponent() {
       />
       <button
         type="submit"
-        className="bg-blue-500 hover:bg-blue-600 px-4 py-2 text-white rounded-lg"
+        className="bg-blue-500 hover:bg-blue-600 px-4 py-2 text-white rounded-full mt-2"
       >
         ส่งรีวิว
       </button>
