@@ -84,7 +84,7 @@ export default function CommentSliderComponent({ mangaList }) {
             {/* Manga Card */}
             <div className="overflow-hidden">
               <div className="bg-white p-4 rounded-lg text-black flex gap-4">
-                <div className="flex-initial w-[40%]">
+                <div className="flex-initial w-[50%] md:w-[40%]">
                   <Image
                     src={manga.backgroundImage}
                     alt="test"
@@ -94,19 +94,21 @@ export default function CommentSliderComponent({ mangaList }) {
                     loading="lazy"
                   />
                 </div>
-                <div className="relative flex-initial w-[60%]">
+                <div className="relative flex-initial w-[50%] md:w-[60%]">
                   <p>ชื่อเรื่อง: {manga.name}</p>
                   <p>ผู้แนะนำ: {manga.commenter}</p>
                   <p>ข้อความ:</p>
                   <div className="bg-[#f0f2f5] rounded-lg p-4 mt-2 mb-4">
                     {manga.comment}
                   </div>
+                  <div className="flex justify-end">
                   <Link
                     href={manga.slug}
-                    className="absolute bottom-0 right-0 bg-blue-500 hover:bg-blue-600 px-4 py-2 text-white rounded-full"
+                    className="md:absolute bottom-0 right-0 bg-blue-500 hover:bg-blue-600 px-4 py-2 text-white rounded-full"
                   >
                     คลิกอ่านเลย
                   </Link>
+                  </div>
                 </div>
               </div>
             </div>
