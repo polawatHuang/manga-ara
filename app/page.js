@@ -11,6 +11,7 @@ import FBPage from "@/public/images/facebook-page.png";
 import filterMangaItems from "@/utils/filterMangaItems";
 import CommentSliderComponent from "@/components/CommentSliderComponent";
 import fetchRecommendData from "@/utils/fetchRecommendData";
+import RecommendFormComponent from "@/components/RecommendFormComponent";
 
 // ✅ Server-side component
 export default async function Home() {
@@ -46,14 +47,12 @@ export default async function Home() {
           <HandThumbUpIcon className="size-7 text-yellow-400" />
           มังงะแนะนำจากทางบ้าน
         </h2>
-        <div className="mb-4 w-full">
-        <CommentSliderComponent
-          mangaList={recommentdManga}
-        />
+        <div className="w-full">
+          <CommentSliderComponent mangaList={recommentdManga} />
         </div>
       </section>
 
-      <section className="w-full grid grid-cols-1 md:grid-cols-12 gap-4">
+      <section className="w-full grid grid-cols-1 md:grid-cols-12 gap-4 mt-8">
         <div className="col-span-12 md:col-span-8">
           {/* New Manga */}
           <div className="w-full bg-gray-700 px-4 py-5 mb-4">
@@ -95,7 +94,7 @@ export default async function Home() {
             </Link>
           </div>
           {/* Tags compnent */}
-          <div className="col-span-12 md:col-span-2 bg-gray-700 px-4 py-5">
+          <div className="col-span-12 md:col-span-2 bg-gray-700 px-4 py-5 mb-4">
             <h3 className="text-2xl font-semibold">Tag ทั้งหมด</h3>
             <hr className="opacity-50 my-2" />
             <div className="flex flex-wrap gap-2">
@@ -110,6 +109,7 @@ export default async function Home() {
               ))}
             </div>
           </div>
+          <RecommendFormComponent />
         </div>
       </section>
 
@@ -121,7 +121,7 @@ export default async function Home() {
             </h3>
             <hr className="opacity-50 my-2" />
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-4">
-              {filterMangaItems(["ผู้หญิงอ่าน"], "", 6,mangas).map((manga) => (
+              {filterMangaItems(["ผู้หญิงอ่าน"], "", 6, mangas).map((manga) => (
                 <CardComponent key={manga.id} manga={manga} />
               ))}
             </div>
@@ -134,7 +134,7 @@ export default async function Home() {
             </h3>
             <hr className="opacity-50 my-2" />
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-4">
-              {filterMangaItems(["Yaoi"], "", 6,mangas).map((manga) => (
+              {filterMangaItems(["Yaoi"], "", 6, mangas).map((manga) => (
                 <CardComponent key={manga.id} manga={manga} />
               ))}
             </div>
@@ -143,11 +143,11 @@ export default async function Home() {
         <div className="col-span-12">
           <div className="w-full bg-gray-700 px-4 py-5">
             <h3 className="flex items-center gap-2 text-2xl font-[600]">
-            แนวผู้ชายอ่าน
+              แนวผู้ชายอ่าน
             </h3>
             <hr className="opacity-50 my-2" />
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-4">
-              {filterMangaItems(["ผู้ชายอ่าน"], "", 6,mangas).map((manga) => (
+              {filterMangaItems(["ผู้ชายอ่าน"], "", 6, mangas).map((manga) => (
                 <CardComponent key={manga.id} manga={manga} />
               ))}
             </div>
@@ -156,11 +156,11 @@ export default async function Home() {
         <div className="col-span-12">
           <div className="w-full bg-gray-700 px-4 py-5">
             <h3 className="flex items-center gap-2 text-2xl font-[600]">
-            แนวหญิงรักหญิง (Yuri)
+              แนวหญิงรักหญิง (Yuri)
             </h3>
             <hr className="opacity-50 my-2" />
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-4">
-              {filterMangaItems(["Yuri"], "", 6,mangas).map((manga) => (
+              {filterMangaItems(["Yuri"], "", 6, mangas).map((manga) => (
                 <CardComponent key={manga.id} manga={manga} />
               ))}
             </div>
