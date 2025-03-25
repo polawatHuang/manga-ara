@@ -9,6 +9,7 @@ import { ShareIcon } from "@heroicons/react/24/solid";
 import copyToClipboard from "@/utils/copyToClipboard";
 import CardComponent from "@/components/CardComponent";
 import getRandomFourItems from "@/utils/getRandomFourItems";
+import ViewTrackerForEP from "@/components/ViewTrackerForEP";
 
 export default function EpisodePage() {
   const { slug, ep } = useParams();
@@ -159,7 +160,10 @@ export default function EpisodePage() {
           </h1>
           <hr className="my-2" />
           <p className="text-white mt-2">
-            {mangaData ? mangaData.description : "รายละเอียดเพิ่มเติมของมังงะ"}
+            เรื่องย่อ: {mangaData ? mangaData.description : "รายละเอียดเพิ่มเติมของมังงะ"}
+          </p>
+          <p className="text-white mt-2">
+            ยอดวิว: <ViewTrackerForEP mangaID={mangaData.id} episodeIndex={currentEpNumber} /> วิว
           </p>
           <div className="text-white flex items-center gap-4 mt-3">
             Tags:{" "}
