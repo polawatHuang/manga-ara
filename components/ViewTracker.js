@@ -1,5 +1,5 @@
 import { db } from "@/firebaseConfig"; // Import Firestore configuration
-import { doc, updateDoc, increment, getDoc, setDoc } from "firebase/firestore";
+import { doc, updateDoc, increment, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 const ViewTracker = ({ mangaID }) => {
@@ -19,8 +19,8 @@ const ViewTracker = ({ mangaID }) => {
       if (docSnapshot.exists()) {
         setViewCount(docSnapshot.data().view || 0); // Use Firestore view count
       } else {
-        // If document doesn't exist, create it with initial view count 0
-        await setDoc(mangaDocRef, { view: 0 }, { merge: true });
+        // If document doesn't exist, initialize it with the view count of 0 without overwriting other fields
+        await updateDoc(mangaDocRef, { view: 0 });
       }
     };
 
