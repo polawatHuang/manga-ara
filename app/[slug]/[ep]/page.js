@@ -10,6 +10,7 @@ import copyToClipboard from "@/utils/copyToClipboard";
 import CardComponent from "@/components/CardComponent";
 import getRandomFourItems from "@/utils/getRandomFourItems";
 import ViewTrackerForEP from "@/components/ViewTrackerForEP";
+import MangaEpisodeComments from "@/components/MangaEpisodeComments";
 
 export default function EpisodePage() {
   const { slug, ep } = useParams();
@@ -231,6 +232,10 @@ export default function EpisodePage() {
             </button>
           </Link>
         )}
+      </section>
+
+      <section className="md:px-[12%] mt-4">
+        <MangaEpisodeComments mangaID={mangaData.id} episodeID={currentEpNumber} />
       </section>
 
       <section className="md:px-[12%] mt-4">
