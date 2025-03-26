@@ -133,11 +133,11 @@ export default function EpisodePage() {
         <div className="w-full bg-gray-700 px-4 py-2">
           <Link href="/">Homepage</Link>
           {" / "}
-          <Link href={`/manga/${slug}`}>
+          <Link href={`/${slug}`}>
             {mangaData ? mangaData.name : slug}
           </Link>
           {" / "}
-          <Link href={`/manga/${slug}/${currentEpisode}`}>
+          <Link href={`/${slug}/${currentEpisode}`}>
             ตอนที่ {currentEpNumber}
           </Link>
         </div>

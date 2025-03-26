@@ -76,7 +76,7 @@ export default function SlugPage() {
         <div className="w-full bg-gray-700 px-4 py-2">
           <Link href="/">Homepage</Link>
           {" / "}
-          <Link href="/">{slug}</Link>
+          <Link href={"/"+slug}>{slug}</Link>
         </div>
       </section>
 
