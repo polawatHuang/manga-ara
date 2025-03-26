@@ -163,9 +163,9 @@ export default function EpisodePage() {
           <p className="text-white mt-2">
             เรื่องย่อ: {mangaData ? mangaData.description : "รายละเอียดเพิ่มเติมของมังงะ"}
           </p>
-          <p className="text-white mt-2">
+          {/* <p className="text-white mt-2">
             ยอดวิว: <ViewTrackerForEP mangaID={mangaData.id} episodeIndex={currentEpNumber} /> วิว
-          </p>
+          </p> */}
           <div className="text-white flex items-center gap-4 mt-3">
             Tags:{" "}
             {(mangaData && mangaData.tag
