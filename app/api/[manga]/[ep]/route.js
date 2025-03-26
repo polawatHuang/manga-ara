@@ -1,5 +1,3 @@
-// app/api/[manga]/[ep]/route.js
-
 import { NextResponse } from "next/server";
 import { initializeApp, cert, getApps } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
@@ -14,8 +12,10 @@ if (!getApps().length) {
 }
 
 export async function GET(request, { params }) {
-  const { manga, ep } = params; // These come from the dynamic segments of the URL
+  // Await params to ensure we are accessing resolved values
+  const { manga, ep } = await params; // These come from the dynamic segments of the URL
 
+  // Ensure both manga and ep are provided
   if (!manga || !ep) {
     return NextResponse.json(
       { error: "Missing manga or episode parameter." },
