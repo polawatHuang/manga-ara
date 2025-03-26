@@ -88,7 +88,7 @@ export default function SlugPage() {
           className="col-span-12 md:col-span-4 h-[350px] w-auto object-cover"
           loading="lazy"
         />
-        <div className="col-span-12 md:col-span-8 mt-8">
+        <div className="col-span-12 md:col-span-8 mt-2">
           <h1 className="text-2xl">ชื่อเรื่อง: {manga.name}</h1>
           <hr className="my-2" />
           <br />
