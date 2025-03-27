@@ -96,7 +96,7 @@ export default function SlugPage() {
           <br />
           <p className="text-white">ยอดวิว: <ViewTracker mangaID={manga.id} /> วิว</p>
           <br />
-          <p className="text-white flex items-center gap-4">
+          <p className="text-white flex flex-wrap items-center gap-4">
             Tags:{" "}
             {manga.tag.map((tag) => (
               <Link
