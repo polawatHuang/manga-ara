@@ -154,7 +154,7 @@ export default function SlugPage() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-4">
             {filteredEpisodes.length > 0 ? (
-              filteredEpisodes.map(({ episode, created_date }) => (
+              filteredEpisodes.sort((a, b) => b.episode - a.episode).map(({ episode, created_date }) => (
                 <Link
                   key={episode}
                   href={`/${slug}/ep${episode}`}
