@@ -46,6 +46,13 @@ const ViewTrackerForEP = ({ mangaID, episodeIndex }) => {
 
         // Immediately reflect the increment in local state
         setViewCount((prev) => prev + 1);
+
+        // Fetch the updated episode data to synchronize viewCount
+        const updatedDocSnapshot = await getDoc(mangaDocRef);
+        const updatedEpisodeData = updatedDocSnapshot.data()?.ep?.[episodeIndex];
+        if (updatedEpisodeData) {
+          setViewCount(updatedEpisodeData.view || 0); // Update viewCount with the latest value
+        }
       } catch (error) {
         console.error("Error updating view count: ", error);
       }
