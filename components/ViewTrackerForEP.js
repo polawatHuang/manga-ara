@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 const ViewTrackerForEP = ({ mangaID, episodeIndex }) => {
   const [viewCount, setViewCount] = useState(0);
 
+  // Fetch the current view count for the episode when the component is mounted
   useEffect(() => {
     const fetchEpisodeData = async () => {
       const mangaDocRef = doc(db, "manga", mangaID); // Firestore path to the manga document
@@ -16,8 +17,6 @@ const ViewTrackerForEP = ({ mangaID, episodeIndex }) => {
 
         if (episodeData) {
           setViewCount(episodeData.view || 0); // Set the initial view count from Firestore
-        } else {
-          console.log("Episode not found");
         }
       }
     };
