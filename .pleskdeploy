@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# .pleskdeploy in the root of your repo
+echo "Running deployment script..."
+
+cd /httpdocs 
+
+npm install
+npm run build
+
+pm2 restart next-app || pm2 start npm --name "next-app" -- start
