@@ -199,7 +199,7 @@ export default function AdminPage() {
         manga_name: mangaName,
         manga_slug: mangaSlug,
         manga_disc: mangaDescription,
-        tag_id: selectedTags.length > 0 ? selectedTags[0].value : null,
+        tag_id: selectedTags.length > 0 ? selectedTags : null,
         manga_bg_img: base64Image,
       });
 
