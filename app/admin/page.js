@@ -179,33 +179,31 @@ export default function AdminPage() {
     setAdImageFile(null);
   };
 
+  const readFileAsBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(",")[1]); // remove base64 prefix
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
   // Create new manga
   const createManga = async () => {
     try {
-      let backgroundUrl = "";
-      if (mangaBackgroundFile && mangaSlug) {
-        const storageRef = ref(
-          storage,
-          `images/${mangaSlug}/${mangaBackgroundFile.name}`
-        );
-        await uploadBytes(storageRef, mangaBackgroundFile);
-        backgroundUrl = await getDownloadURL(storageRef);
+      let base64Image = null;
+      if (mangaBackgroundFile) {
+        base64Image = await readFileAsBase64(mangaBackgroundFile);
       }
-      const tagArray = selectedTags.map((t) => t.value);
 
-      await addDoc(collection(db, "manga"), {
-        name: mangaName,
-        slug: mangaSlug,
-        description: mangaDescription,
-        backgroundImage: backgroundUrl,
-        tag: tagArray,
-        view: 0,
-        created_date: dayjs().format("YYYY-MM-DD"),
-        updated_date: dayjs().format("YYYY-MM-DD"),
+      await axios.post("https://www.mangaara.com/api/mangas", {
+        manga_name: mangaName,
+        manga_slug: mangaSlug,
+        manga_disc: mangaDescription,
+        tag_id: selectedTags.length > 0 ? selectedTags[0].value : null,
+        manga_bg_img: base64Image,
       });
 
       resetMangaForm();
-      alert("Manga created!");
       fetchMangaList();
     } catch (err) {
       console.error(err);
@@ -550,7 +548,11 @@ export default function AdminPage() {
    * ====================== */
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
   }
 
   return (
@@ -558,7 +560,7 @@ export default function AdminPage() {
       <h1>Admin Page</h1>
 
       <div className="flex items-cneter justify-between mb-4">
-      {user && <p className="text-lg">Welcome, {user.email}</p>}
+        {user && <p className="text-lg">Welcome, {user.email}</p>}
         <button
           onClick={handleLogout}
           className="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
@@ -1016,7 +1018,10 @@ export default function AdminPage() {
             <h3 className="mb-4">Existing Advertisements</h3>
             <ul className="p-4">
               {advertiseList.map((ad) => (
-                <li key={ad.docId} className="mb-4 bg-gray-500 p-4 flex justify-between">
+                <li
+                  key={ad.docId}
+                  className="mb-4 bg-gray-500 p-4 flex justify-between"
+                >
                   <div>
                     <strong>{ad.name}</strong>
                     {ad.image && (
