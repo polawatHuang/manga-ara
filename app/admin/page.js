@@ -14,9 +14,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import clsx from "clsx";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import dayjs from "dayjs";
-import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { auth } from "@/firebaseConfig";
 
 /**
  * React Select custom styles to force black text.
