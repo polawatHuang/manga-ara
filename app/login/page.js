@@ -26,6 +26,7 @@ export default function LoginPage() {
       if (isLoggedIn === "true") {
         router.push("/admin");
       }
+      setEmail(localStorage.getItem("email") || "");
   }, [router]);
 
   const signIn = async (email, password) => {
@@ -70,7 +71,7 @@ export default function LoginPage() {
               Login
             </Dialog.Title>
             
-            Welcome back {localStorage.getItem("email") || "Guest"}
+            Welcome back {email || "Guest"}
 
             {error && (
               <p className="text-red-500 text-sm text-center">{error}</p>
