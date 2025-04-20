@@ -185,41 +185,42 @@ export default function AdminPage() {
       reader.readAsDataURL(file);
     });
 
-  // Create new manga
-  const createManga = async () => {
-    try {
-      let base64Image = null;
-      if (mangaBackgroundFile) {
-        base64Image = await readFileAsBase64(mangaBackgroundFile);
+    const createManga = async () => {
+      try {
+        let base64Image = null;
+        let imageFilename = null;
+    
+        if (mangaBackgroundFile && mangaSlug) {
+          base64Image = await readFileAsBase64(mangaBackgroundFile);
+          imageFilename = `${mangaSlug}_${mangaBackgroundFile.name}`;
+        }
+    
+        const res = await fetch("https://www.mangaara.com/api/mangas", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            manga_name: mangaName,
+            manga_slug: mangaSlug,
+            manga_disc: mangaDescription,
+            tag_id: selectedTags.length > 0 ? selectedTags[0].value : null,
+            manga_bg_img: `/images/${imageFilename}`,
+            manga_bg_blob: base64Image,
+          }),
+        });
+    
+        if (res.ok) {
+          alert("Manga created successfully!");
+          resetMangaForm();
+          fetchMangaList();
+        } else {
+          const error = await res.json();
+          alert("Failed to create manga: " + error?.error || res.statusText);
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error creating manga");
       }
-  
-      const res = await fetch("https://www.mangaara.com/api/mangas", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json", // ✅ important
-        },
-        body: JSON.stringify({
-          manga_name: mangaName,
-          manga_slug: mangaSlug,
-          manga_disc: mangaDescription,
-          tag_id: selectedTags.length > 0 ? selectedTags[0].value : null, // ✅ ensure INT
-          manga_bg_img: base64Image,
-        }),
-      });
-  
-      if (res.ok) {
-        alert("Manga created successfully!");
-        resetMangaForm();
-        fetchMangaList();
-      } else {
-        const error = await res.json();
-        alert("Failed to create manga: " + error?.error || res.statusText);
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error creating manga");
-    }
-  };  
+    };    
 
   // Load existing manga into the form
   const handleEditManga = async (mangaDocId) => {
