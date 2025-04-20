@@ -20,8 +20,8 @@ export default function LoginPage() {
     setIsOpen(true); // Keep the modal open
   }, []);
 
-   // ✅ Automatically redirect logged-in users to /admin
-   useEffect(() => {
+  // ✅ Automatically redirect logged-in users to /admin
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         router.push("/admin");
@@ -31,14 +31,25 @@ export default function LoginPage() {
     return () => unsubscribe();
   }, [router]);
 
+  // ✅ Function to handle login with local username and password
+  const signIn = async (auth, email, password) => {
+    setLoading(true);
+    setError("");
+    if ( email === process.env.EMAIL && password === process.env.PASSWORD ) {
+      localStorage.setItem("isLoggedIn", "true");
+      router.push("/admin"); // ✅ Redirect on success
+    } else {
+      setError("Invalid email or password");
+    }
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      router.push("/admin"); // ✅ Redirect on success
+      signIn(auth, email, password);
     } catch (err) {
       setError("Invalid email or password " + err.message);
     } finally {
@@ -100,7 +111,7 @@ export default function LoginPage() {
               className="w-full pt-2 text-gray-500 flex gap-2 items-center hover:no-underline"
               disabled={loading}
             >
-              <ChevronLeftIcon className="size-5"/> Go back to homepage
+              <ChevronLeftIcon className="size-5" /> Go back to homepage
             </Link>
           </Dialog.Panel>
         </div>

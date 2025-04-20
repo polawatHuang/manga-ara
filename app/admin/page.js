@@ -448,16 +448,11 @@ export default function AdminPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
+      const isLoggedIn = localStorage.getItem("isLoggedIn");
+      if (isLoggedIn !== "true") {
         router.push("/login"); // ✅ Redirect to login if not authenticated
-      } else {
-        setUser(user);
-      }
+      } 
       setLoading(false);
-    });
-
-    return () => unsubscribe();
   }, [router]);
 
   const fetchMenuList = async () => {
@@ -467,7 +462,7 @@ export default function AdminPage() {
   };
 
   const handleLogout = async () => {
-    await signOut(auth);
+    localStorage.removeItem("isLoggedIn");
     router.push("/login"); // ✅ Redirect to login after logout
   };
 
