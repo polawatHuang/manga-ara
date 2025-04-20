@@ -205,12 +205,9 @@ export default function AdminPage() {
       });
 
       if (res) {
-        const data = await res.json();
-        if (data && data.manga_id) {
-          alert("Manga created successfully!");
-        } else {
-          alert("Failed to create manga");
-        }
+        alert("Manga created successfully!");
+      } else {
+        alert("Failed to create manga");
       }
 
       resetMangaForm();
