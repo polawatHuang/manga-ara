@@ -50,14 +50,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
-
-    try {
-      signIn(email, password);
-    } catch (err) {
-      setError("Invalid email or password " + err.message);
-    } finally {
-      setLoading(false);
-    }
+    signIn(email, password);
   };
 
   return (
