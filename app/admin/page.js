@@ -441,16 +441,17 @@ export default function AdminPage() {
   const [menuIdValue, setMenuIdValue] = useState("");
   const [editingMenuDocId, setEditingMenuDocId] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const email = localStorage.getItem("email");
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-      const isLoggedIn = localStorage.getItem("isLoggedIn");
-      if (isLoggedIn !== "true") {
-        router.push("/login"); // ✅ Redirect to login if not authenticated
-      } 
-      setLoading(false);
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    setEmail(localStorage.getItem("email") || "");
+    if (isLoggedIn !== "true") {
+      router.push("/login"); // ✅ Redirect to login if not authenticated
+    }
+    setLoading(false);
   }, [router]);
 
   const fetchMenuList = async () => {

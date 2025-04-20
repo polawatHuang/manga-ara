@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebaseConfig";
 import { useRouter } from "next/navigation";
 import { Dialog } from "@headlessui/react";
 import Link from "next/link";
@@ -26,7 +24,6 @@ export default function LoginPage() {
       if (isLoggedIn === "true") {
         router.push("/admin");
       }
-      setEmail(localStorage.getItem("email") || "");
   }, [router]);
 
   const signIn = async (email, password) => {
@@ -70,8 +67,6 @@ export default function LoginPage() {
             <Dialog.Title className="text-2xl font-semibold text-center mb-4">
               Login
             </Dialog.Title>
-            
-            Welcome back {email || "Guest"}
 
             {error && (
               <p className="text-red-500 text-sm text-center">{error}</p>
