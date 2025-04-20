@@ -441,7 +441,7 @@ export default function AdminPage() {
   const [menuIdValue, setMenuIdValue] = useState("");
   const [editingMenuDocId, setEditingMenuDocId] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [user, setUser] = useState(null);
+  const email = localStorage.getItem("email");
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -461,6 +461,7 @@ export default function AdminPage() {
 
   const handleLogout = async () => {
     localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("email");
     router.push("/login"); // ✅ Redirect to login after logout
   };
 
@@ -553,7 +554,7 @@ export default function AdminPage() {
       <h1>Admin Page</h1>
 
       <div className="flex items-cneter justify-between mb-4">
-        {user && <p className="text-lg">Welcome, {user.email}</p>}
+        {email && <p className="text-lg">Welcome, {email}</p>}
         <button
           onClick={handleLogout}
           className="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"

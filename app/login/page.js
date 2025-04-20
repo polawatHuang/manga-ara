@@ -37,6 +37,7 @@ export default function LoginPage() {
   
     if (email === localEmail && password === localPassword) {
       localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("email", email);
       router.push("/admin");
     } else {
       setError("Invalid email or password");
