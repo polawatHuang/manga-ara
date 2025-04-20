@@ -193,13 +193,25 @@ export default function AdminPage() {
         base64Image = await readFileAsBase64(mangaBackgroundFile);
       }
 
-      await axios.post("https://www.mangaara.com/api/mangas", {
-        manga_name: mangaName,
-        manga_slug: mangaSlug,
-        manga_disc: mangaDescription,
-        tag_id: selectedTags.length > 0 ? selectedTags : null,
-        manga_bg_img: base64Image,
+      const res = await fetch("https://www.mangaara.com/api/mangas", {
+        method: "POST",
+        body: JSON.stringify({
+          manga_name: mangaName,
+          manga_slug: mangaSlug,
+          manga_disc: mangaDescription,
+          tag_id: selectedTags.length > 0 ? selectedTags : null,
+          manga_bg_img: base64Image,
+        }),
       });
+
+      if (res) {
+        const data = await res.json();
+        if (data && data.manga_id) {
+          alert("Manga created successfully!");
+        } else {
+          alert("Failed to create manga");
+        }
+      }
 
       resetMangaForm();
       fetchMangaList();
