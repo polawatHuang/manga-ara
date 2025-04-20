@@ -447,8 +447,9 @@ export default function AdminPage() {
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn");
+    const email = localStorage.getItem("email");
     setEmail(localStorage.getItem("email") || "");
-    if (isLoggedIn !== "true") {
+    if (isLoggedIn !== "true" && email !== process.env.NEXT_PUBLIC_EMAIL) {
       router.push("/login"); // ✅ Redirect to login if not authenticated
     }
     setLoading(false);
