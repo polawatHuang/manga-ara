@@ -22,25 +22,27 @@ export default function LoginPage() {
 
   // ✅ Automatically redirect logged-in users to /admin
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+      if (isLoggedIn === "true") {
         router.push("/admin");
       }
-    });
-
-    return () => unsubscribe();
   }, [router]);
 
-  // ✅ Function to handle login with local username and password
-  const signIn = async (auth, email, password) => {
+  const signIn = async (email, password) => {
     setLoading(true);
     setError("");
-    if ( email === process.env.EMAIL && password === process.env.PASSWORD ) {
+  
+    const localEmail = process.env.NEXT_PUBLIC_EMAIL;
+    const localPassword = process.env.NEXT_PUBLIC_PASSWORD;
+  
+    if (email === localEmail && password === localPassword) {
       localStorage.setItem("isLoggedIn", "true");
-      router.push("/admin"); // ✅ Redirect on success
+      router.push("/admin");
     } else {
       setError("Invalid email or password");
     }
+  
+    setLoading(false);
   };
 
   const handleLogin = async (e) => {
@@ -49,7 +51,7 @@ export default function LoginPage() {
     setError("");
 
     try {
-      signIn(auth, email, password);
+      signIn(email, password);
     } catch (err) {
       setError("Invalid email or password " + err.message);
     } finally {
