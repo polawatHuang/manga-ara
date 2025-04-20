@@ -76,6 +76,8 @@ export default function LoginPage() {
             <Dialog.Title className="text-2xl font-semibold text-center mb-4">
               Login
             </Dialog.Title>
+            
+            Welcome back {localStorage.getItem("email") || "Guest"}
 
             {error && (
               <p className="text-red-500 text-sm text-center">{error}</p>
