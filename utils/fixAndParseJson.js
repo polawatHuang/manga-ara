@@ -1,16 +1,17 @@
 export const fixAndParseJson = (inputStr) => {
-    // Step 1: Remove the outer double quotes
+    // Step 1: Remove the outer quotes from the string (to work with the array part)
     const unquoted = inputStr.slice(1, -1);
 
-    // Step 2: Add quotes around keys using RegEx
-    const quotedKeys = unquoted.replace(/([{,])\s*(\w+)\s*:/g, '$1"$2":');
+    // Step 2: Fix keys by adding double quotes around them
+    const fixedKeys = unquoted.replace(/([{,])\s*(\w+)\s*:/g, '$1"$2":');
 
-    // Step 3: Add quotes around date value (optional, for safety)
-    const quotedDates = quotedKeys.replace(
-        /"created_date":\s*([0-9\-:\s]+)/g,
-        (_, date) => `"created_date": "${date.trim()}"`
-    );
+    console.log("Fixed JSON string:", fixedKeys);  // Debugging line
 
-    // Step 4: Parse as JSON
-    return JSON.parse(quotedDates);
+    // Step 3: Parse the corrected string into JSON
+    try {
+        return JSON.parse(fixedKeys);
+    } catch (err) {
+        console.error("Error parsing JSON:", err);
+        return null;  // Return null if parsing fails
+    }
 }
