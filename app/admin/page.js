@@ -212,7 +212,6 @@ export default function AdminPage() {
     }
   };
 
-
   // Load existing manga into the form
   const handleEditManga = async (mangaDocId) => {
     try {
