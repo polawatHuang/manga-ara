@@ -194,7 +194,7 @@ export default function AdminPage() {
     formData.append('manga_bg_img', mangaBackgroundFile);
 
     try {
-      const res = await fetch('https://mangaara.com/api/mangas', {
+      const res = await fetch('https://www.mangaara.com/api/mangas', {
         method: 'POST',
         body: formData,
       });
