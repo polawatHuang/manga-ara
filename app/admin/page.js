@@ -185,42 +185,33 @@ export default function AdminPage() {
       reader.readAsDataURL(file);
     });
 
-    const createManga = async () => {
-      try {
-        let base64Image = null;
-        let imageFilename = null;
-    
-        if (mangaBackgroundFile && mangaSlug) {
-          base64Image = await readFileAsBase64(mangaBackgroundFile);
-          imageFilename = `${mangaSlug}_${mangaBackgroundFile.name}`;
-        }
-    
-        const res = await fetch("https://www.mangaara.com/api/mangas", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            manga_name: mangaName,
-            manga_slug: mangaSlug,
-            manga_disc: mangaDescription,
-            tag_id: selectedTags.length > 0 ? selectedTags[0].value : null,
-            manga_bg_img: `/images/${imageFilename}`,
-            manga_bg_blob: base64Image,
-          }),
-        });
-    
-        if (res.ok) {
-          alert("Manga created successfully!");
-          resetMangaForm();
-          fetchMangaList();
-        } else {
-          const error = await res.json();
-          alert("Failed to create manga: " + error?.error || res.statusText);
-        }
-      } catch (err) {
-        console.error(err);
-        alert("Error creating manga");
+  const createManga = async () => {
+    const formData = new FormData();
+    formData.append('manga_name', mangaName);
+    formData.append('manga_slug', mangaSlug);
+    formData.append('manga_disc', mangaDescription);
+    formData.append('tag_id', selectedTags[0].value);
+    formData.append('manga_bg_img', mangaBackgroundFile);
+
+    try {
+      const res = await fetch('https://mangaara.com/api/mangas', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (res.ok) {
+        alert('Manga created successfully!');
+        resetMangaForm();
+        fetchMangaList();
+      } else {
+        alert('Failed to create manga');
       }
-    };    
+    } catch (err) {
+      console.error(err);
+      alert('Error creating manga');
+    }
+  };
+
 
   // Load existing manga into the form
   const handleEditManga = async (mangaDocId) => {
@@ -754,8 +745,8 @@ export default function AdminPage() {
                           .toLowerCase()
                           .includes(searchKeyword.toLowerCase())
                       ).length && (
-                      <div className="h-[1px] w-full bg-gray-400 my-4" />
-                    )}
+                        <div className="h-[1px] w-full bg-gray-400 my-4" />
+                      )}
                   </li>
                 ))}
             </ul>
