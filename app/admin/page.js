@@ -15,6 +15,7 @@ import clsx from "clsx";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
+import { arrayToString } from "@/utils/arrayToString";
 
 /**
  * React Select custom styles to force black text.
@@ -190,7 +191,13 @@ export default function AdminPage() {
     formData.append('manga_name', mangaName);
     formData.append('manga_slug', mangaSlug);
     formData.append('manga_disc', mangaDescription);
-    formData.append('tag_id', selectedTags[0].value);
+
+    // Extract values from selectedTags array and convert them to an array of strings
+    const tagValues = selectedTags.map(tag => tag.value);
+
+    // If you need to convert it to the specific format "['aaa','bbb']"
+    formData.append('tag_id', `['${tagValues.join("','")}']`);
+
     formData.append('manga_bg_img', mangaBackgroundFile);
 
     try {
