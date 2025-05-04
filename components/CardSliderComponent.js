@@ -26,6 +26,8 @@ export default function CardSliderComponent({ mangaList , hasFevFunction = false
   const [isEnd, setIsEnd] = useState(false);
   const [favorites, setFavorites] = useState([]);
 
+  console.log("mangaList", mangaList);
+
   // Load favorite mangas from localStorage
   useEffect(() => {
     const storedFavorites = JSON.parse(localStorage.getItem("favoriteMangas")) || [];
@@ -91,7 +93,7 @@ export default function CardSliderComponent({ mangaList , hasFevFunction = false
 
             {/* Manga Card */}
             <Link className="overflow-hidden bg-yellow-500" href={manga.slug}>
-              <Image width={187} height={268} src={`https://mangaara.com${manga.manga_bg_img}`} alt={manga.name} className="h-[300px] w-full object-cover" loading="lazy" />
+              <Image width={187} height={268} src={`https://mangaara.com${manga.backgroundImage}`} alt={manga.name} className="h-[300px] w-full object-cover" loading="lazy" />
               <div className="py-4">
                 <h2 className="text-lg font-semibold text-white text-ellipsis line-clamp-3">{manga.name}</h2>
               </div>
