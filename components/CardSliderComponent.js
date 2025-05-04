@@ -26,8 +26,6 @@ export default function CardSliderComponent({ mangaList , hasFevFunction = false
   const [isEnd, setIsEnd] = useState(false);
   const [favorites, setFavorites] = useState([]);
 
-  console.log("mangaList", mangaList);
-
   // Load favorite mangas from localStorage
   useEffect(() => {
     const storedFavorites = JSON.parse(localStorage.getItem("favoriteMangas")) || [];
