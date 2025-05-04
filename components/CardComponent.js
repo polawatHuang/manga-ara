@@ -46,7 +46,7 @@ const CardComponent = ({ manga, hasFevFunction = true }) => {
         <Image
           width={187}
           height={268}
-          src={`https://mangaara.com/api/mangas/${manga.id}/image`}
+          src={`https://mangaara.com${manga.manga_bg_img}`}
           alt={manga.name}
           className="h-[220px] w-full object-cover"
           loading="lazy"

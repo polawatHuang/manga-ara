@@ -86,7 +86,7 @@ export default function CommentSliderComponent({ mangaList }) {
               <div className="bg-white p-4 rounded-lg text-black flex gap-4">
                 <div className="flex-initial w-[50%] md:w-[40%]">
                   <Image
-                    src={`https://mangaara.com/api/mangas/${manga.id}/image`}
+                    src={`https://mangaara.com${manga.manga_bg_img}`}
                     alt="test"
                     width={150}
                     height={300}

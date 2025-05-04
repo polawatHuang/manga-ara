@@ -91,7 +91,7 @@ export default function CardSliderComponent({ mangaList , hasFevFunction = false
 
             {/* Manga Card */}
             <Link className="overflow-hidden bg-yellow-500" href={manga.slug}>
-              <Image width={187} height={268} src={`https://mangaara.com/api/mangas/${manga.id}/image`} alt={manga.name} className="h-[300px] w-full object-cover" loading="lazy" />
+              <Image width={187} height={268} src={`https://mangaara.com${manga.manga_bg_img}`} alt={manga.name} className="h-[300px] w-full object-cover" loading="lazy" />
               <div className="py-4">
                 <h2 className="text-lg font-semibold text-white text-ellipsis line-clamp-3">{manga.name}</h2>
               </div>
