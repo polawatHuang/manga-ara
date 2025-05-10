@@ -302,8 +302,10 @@ export default function AdminPage() {
   const [episodeFiles, setEpisodeFiles] = useState(null);
 
   const fetchMangaForEpisodes = async () => {
-    const snapshot = await getDocs(collection(db, "manga"));
-    const data = snapshot.docs.map((d) => ({ docId: d.id, ...d.data() }));
+    const response = await fetch("/api/mangas");
+    if (!response.ok) throw new Error("Failed to fetch manga data");
+
+    const data = await response.json();
     setMangaForEpisodes(data);
   };
 
@@ -312,63 +314,41 @@ export default function AdminPage() {
       alert("Please select a manga and enter an episode number");
       return;
     }
-    if (episodeFiles && selectedMangaSlug) {
-      for (let i = 0; i < episodeFiles.length; i++) {
-        const file = episodeFiles[i];
-        const storageRef = ref(
-          storage,
-          `images/${selectedMangaSlug}/ep${episodeNumber}/${file.name}`
-        );
-        await uploadBytes(storageRef, file);
-      }
+  
+    const formData = new FormData();
+    formData.append('manga_name', selectedMangaSlug);  // Example: 'metamorphosis'
+    formData.append('episode_number', episodeNumber);  // Example: 1
+    formData.append('totalPage', episodeFiles ? episodeFiles.length : 0);  // Example: 10
+    formData.append('view', 0);  // Example: 1
+  
+    // Append images to the form data
+    for (let i = 0; i < episodeFiles.length; i++) {
+      formData.append('episode_images', episodeFiles[i]);
     }
+  
     try {
-      // ✅ Reference to the manga document
-      const mangaRef = doc(db, "manga", selectedMangaId);
-
-      // ✅ Get existing 'ep' array
-      const mangaDoc = await getDoc(mangaRef);
-      const existingData = mangaDoc.exists() ? mangaDoc.data() : {};
-      const existingEpisodes = existingData.ep || [];
-
-      // ✅ Check if episode already exists
-      const episodeExists = existingEpisodes.some(
-        (ep) => ep.episode === episodeNumber
-      );
-      if (episodeExists) {
-        alert("Episode already exists!");
-        return;
+      const response = await fetch('https://mangaara.com/api/episode', {
+        method: 'POST',
+        body: formData
+      });
+  
+      if (response.ok) {
+        await response.json();
+        alert('Episode created successfully!');
+      } else {
+        alert('Failed to create episode');
       }
-
-      // ✅ New episode data (as a map)
-      const newEpisode = {
-        episode: episodeNumber,
-        created_date: dayjs().format("YYYY-MM-DD"),
-        totalPage: episodeFiles ? episodeFiles.length : 0,
-        view: 0,
-      };
-
-      // ✅ Append the new episode to the 'ep' array
-      const updatedEpisodes = [...existingEpisodes, newEpisode];
-
-      // ✅ Update Firestore document with the new 'ep' array
-      await updateDoc(mangaRef, { ep: updatedEpisodes });
-
-      // ✅ Reset form and notify
-      setEpisodeNumber("");
-      setEpisodeFiles(null);
-      alert("Episode created!");
-    } catch (err) {
-      console.error(err);
-      alert("Error creating episode");
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error creating episode');
     }
-  };
+  };  
 
   const handleSelectMangaForEpisode = (mangaId) => {
     setSelectedMangaId(mangaId);
     const found = mangaForEpisodes.find((m) => m.docId === mangaId);
     if (found) {
-      setSelectedMangaSlug(found.slug || "");
+      setSelectedMangaSlug(found.name || "");
     }
   };
 
@@ -776,7 +756,7 @@ export default function AdminPage() {
                 เลือกชื่อเรื่องที่ต้องการ
               </option>
               {mangaForEpisodes.map((m) => (
-                <option style={blackInputStyle} key={m.docId} value={m.docId}>
+                <option style={blackInputStyle} key={m.id} value={m.id}>
                   {m.name}
                 </option>
               ))}
