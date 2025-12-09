@@ -1,21 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
-import { db, storage } from "@/firebaseConfig";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  addDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+// All Firebase imports removed. Use REST API endpoints for data and uploads.
 import clsx from "clsx";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
-import { arrayToString } from "@/utils/arrayToString";
+// import { arrayToString } from "@/utils/arrayToString";
 
 /**
  * React Select custom styles to force black text.
