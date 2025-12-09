@@ -43,6 +43,46 @@ const blackInputStyle = { color: "black" };
 export default function AdminPage() {
   // Tab selection: 'manga', 'episodes', 'tags', 'menubar'
   const [activeTab, setActiveTab] = useState("manga");
+  // Auth state
+  const [loading, setLoading] = useState(true);
+  const [email, setEmail] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+      setLoading(false);
+      return;
+    }
+    fetch("/api/auth/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.valid) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          router.push("/login");
+        } else {
+          setEmail(data.user.email);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        router.push("/login");
+        setLoading(false);
+      });
+  }, [router]);
+
+  // Only render admin page if authenticated
+  if (loading) {
+    return null; // Or a spinner if you prefer
+  }
 
   /* ======================
    * MANGA MANAGEMENT
@@ -422,9 +462,6 @@ export default function AdminPage() {
   const [menuIdValue, setMenuIdValue] = useState("");
   const [editingMenuDocId, setEditingMenuDocId] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
