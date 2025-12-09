@@ -1,37 +1,40 @@
-import { db } from "@/firebaseConfig";
-import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/menubar`;
 
-const tagsCollection = collection(db, "menubar");
-
-// ✅ GET: Fetch all tags from Firestore
 export async function GET() {
   try {
-    const snapshot = await getDocs(tagsCollection);
-    const tags = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    return Response.json(tags);
+    const response = await fetch(API_URL);
+    const data = await response.json();
+    return Response.json(data);
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
 }
 
-// ✅ POST: Add a new menubar to Firestore
 export async function POST(req) {
   try {
-    const newTag = await req.json();
-    const docRef = await addDoc(tagsCollection, newTag);
-    return Response.json({ message: "Menubar added successfully", id: docRef.id });
+    const body = await req.json();
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await response.json();
+    return Response.json(data);
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
 }
 
-// ✅ DELETE: Remove a menubar from Firestore
 export async function DELETE(req) {
   try {
     const { id } = await req.json();
-    const tagDoc = doc(db, "menubar", id);
-    await deleteDoc(tagDoc);
-    return Response.json({ message: "Menubar deleted successfully" });
+    const response = await fetch(API_URL, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    });
+    const data = await response.json();
+    return Response.json(data);
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

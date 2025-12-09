@@ -1,12 +1,12 @@
-// pages/api/test-connection.js
-import db from "@/utils/db";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/test-connection`;
 
 export async function GET() {
   try {
-    const [rows] = await db.query("SELECT NOW() AS time");
-    return Response.json({ server_time: rows[0].time });
+    const response = await fetch(API_URL);
+    const data = await response.json();
+    return Response.json(data);
   } catch (err) {
-    console.error("[DB ERROR]", err);
+    console.error("[API ERROR]", err);
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

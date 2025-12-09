@@ -1,0 +1,173 @@
+{
+  "name": "manga-ara-tests",
+  "version": "1.0.0",
+  "description": "Comprehensive Cypress test suite for manga-ara application",
+  "testSummary": {
+    "totalTests": 237,
+    "okCases": 139,
+    "ngCases": 98,
+    "pages": 7,
+    "apiEndpoints": 19
+  },
+  "testFiles": [
+    {
+      "file": "home.cy.js",
+      "description": "Home page tests",
+      "okCases": 17,
+      "ngCases": 6,
+      "total": 23
+    },
+    {
+      "file": "login.cy.js",
+      "description": "Login page tests",
+      "okCases": 11,
+      "ngCases": 14,
+      "total": 25
+    },
+    {
+      "file": "admin.cy.js",
+      "description": "Admin page tests (manga, episodes, tags, menubar management)",
+      "okCases": 35,
+      "ngCases": 10,
+      "total": 45
+    },
+    {
+      "file": "manga-detail.cy.js",
+      "description": "Manga detail page tests",
+      "okCases": 20,
+      "ngCases": 15,
+      "total": 35
+    },
+    {
+      "file": "episode-reader.cy.js",
+      "description": "Episode reader page tests",
+      "okCases": 20,
+      "ngCases": 18,
+      "total": 38
+    },
+    {
+      "file": "tags.cy.js",
+      "description": "Tags page and tag detail page tests",
+      "okCases": 18,
+      "ngCases": 16,
+      "total": 34
+    },
+    {
+      "file": "api.cy.js",
+      "description": "API endpoint tests (auth, manga, tags, menubar, recommend, upload)",
+      "okCases": 18,
+      "ngCases": 19,
+      "total": 37
+    }
+  ],
+  "coverage": {
+    "pages": [
+      "Home Page (/)",
+      "Login Page (/login)",
+      "Admin Page (/admin)",
+      "Manga Detail Page (/[slug])",
+      "Episode Reader Page (/[slug]/[ep])",
+      "Tags Page (/tags)",
+      "Tag Detail Page (/tags/[tag])"
+    ],
+    "apiEndpoints": {
+      "authentication": [
+        "POST /api/auth/register",
+        "POST /api/auth/login",
+        "POST /api/auth/logout",
+        "POST /api/auth/verify"
+      ],
+      "manga": [
+        "GET /api/mangas",
+        "POST /api/mangas",
+        "PUT /api/mangas",
+        "DELETE /api/mangas"
+      ],
+      "tags": [
+        "GET /api/tags",
+        "POST /api/tags",
+        "DELETE /api/tags"
+      ],
+      "menubar": [
+        "GET /api/menubar",
+        "POST /api/menubar",
+        "DELETE /api/menubar"
+      ],
+      "recommend": [
+        "GET /api/recommend",
+        "POST /api/recommend",
+        "PUT /api/recommend",
+        "DELETE /api/recommend"
+      ],
+      "upload": [
+        "POST /api/upload"
+      ]
+    }
+  },
+  "testCategories": {
+    "functional": [
+      "Page load and navigation",
+      "Data display",
+      "User interactions",
+      "Form submissions",
+      "File uploads",
+      "Search and filter",
+      "Sorting"
+    ],
+    "errorHandling": [
+      "API errors (500, 404, 401, 403)",
+      "Network failures",
+      "Invalid input",
+      "Missing required fields",
+      "Authentication failures",
+      "Malformed data",
+      "Empty data sets",
+      "Null values"
+    ],
+    "security": [
+      "XSS prevention",
+      "SQL injection prevention",
+      "Authentication validation",
+      "Authorization checks",
+      "Token validation",
+      "Session management"
+    ],
+    "performance": [
+      "Loading states",
+      "Timeout handling",
+      "Lazy loading",
+      "Image optimization",
+      "API response time"
+    ],
+    "responsive": [
+      "Mobile viewport (iPhone X)",
+      "Tablet viewport (iPad)",
+      "Desktop viewport (1280x720)"
+    ]
+  },
+  "customCommands": [
+    "cy.login(email, password)",
+    "cy.logout()",
+    "cy.isLoggedIn()",
+    "cy.mockApiResponse(endpoint, data, statusCode)"
+  ],
+  "prerequisites": [
+    "Node.js >= 16.x",
+    "npm >= 8.x",
+    "Next.js application running on http://localhost:3000",
+    "Backend API running on https://manga.cipacmeeting.com"
+  ],
+  "installation": "npm install --save-dev cypress cypress-file-upload",
+  "runCommands": {
+    "all": "npm test",
+    "interactive": "npm run test:open",
+    "headed": "npm run test:headed",
+    "home": "npm run test:home",
+    "login": "npm run test:login",
+    "admin": "npm run test:admin",
+    "manga": "npm run test:manga",
+    "episode": "npm run test:episode",
+    "tags": "npm run test:tags",
+    "api": "npm run test:api"
+  }
+}

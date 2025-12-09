@@ -18,37 +18,45 @@ export default function LoginPage() {
     setIsOpen(true); // Keep the modal open
   }, []);
 
-  // ✅ Automatically redirect logged-in users to /admin
+  // Automatically redirect logged-in users to /admin if token is valid
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-      if (isLoggedIn === "true") {
-        router.push("/admin");
-      }
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    fetch("/api/auth/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.valid) router.push("/admin");
+      });
   }, [router]);
-
-  const signIn = async (email, password) => {
-    setLoading(true);
-    setError("");
-  
-    const localEmail = process.env.NEXT_PUBLIC_EMAIL;
-    const localPassword = process.env.NEXT_PUBLIC_PASSWORD;
-  
-    if (email === localEmail && password === localPassword) {
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("email", email);
-      router.push("/admin");
-    } else {
-      setError("Invalid email or password");
-    }
-  
-    setLoading(false);
-  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    signIn(email, password);
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        setError(err.error || "Login failed");
+        setLoading(false);
+        return;
+      }
+      const data = await response.json();
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      router.push("/admin");
+    } catch (err) {
+      setError("Login failed");
+    }
+    setLoading(false);
   };
 
   return (

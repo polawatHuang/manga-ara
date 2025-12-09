@@ -1,49 +1,55 @@
-import { db } from "@/firebaseConfig";
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from "firebase/firestore";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/manga`;
 
-const mangasCollection = collection(db, "manga");
-
-// GET: Fetch all mangas
 export async function GET() {
   try {
-    const snapshot = await getDocs(mangasCollection);
-    const mangas = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    return Response.json(mangas);
+    const response = await fetch(API_URL);
+    const data = await response.json();
+    return Response.json(data);
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
 }
 
-// POST: Add a new manga
 export async function POST(req) {
   try {
-    const mangaData = await req.json();
-    const docRef = await addDoc(mangasCollection, mangaData);
-    return Response.json({ message: "Manga added successfully", id: docRef.id });
+    const body = await req.json();
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await response.json();
+    return Response.json(data);
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
 }
 
-// PUT: Update an existing manga
 export async function PUT(req) {
   try {
-    const { id, ...updatedManga } = await req.json();
-    const mangaDoc = doc(db, "manga", id);
-    await updateDoc(mangaDoc, updatedManga);
-    return Response.json({ message: "Manga updated successfully" });
+    const body = await req.json();
+    const response = await fetch(API_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await response.json();
+    return Response.json(data);
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
 }
 
-// DELETE: Remove a manga
 export async function DELETE(req) {
   try {
     const { id } = await req.json();
-    const mangaDoc = doc(db, "manga", id);
-    await deleteDoc(mangaDoc);
-    return Response.json({ message: "Manga deleted successfully" });
+    const response = await fetch(API_URL, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    });
+    const data = await response.json();
+    return Response.json(data);
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

@@ -427,13 +427,34 @@ export default function AdminPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-    const email = localStorage.getItem("email");
-    setEmail(localStorage.getItem("email") || "");
-    if (isLoggedIn !== "true" && email !== process.env.NEXT_PUBLIC_EMAIL) {
-      router.push("/login"); // ✅ Redirect to login if not authenticated
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+    fetch("/api/auth/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.valid) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          router.push("/login");
+        } else {
+          setEmail(data.user.email);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        router.push("/login");
+        setLoading(false);
+      });
   }, [router]);
 
   const fetchMenuList = async () => {
@@ -443,9 +464,17 @@ export default function AdminPage() {
   };
 
   const handleLogout = async () => {
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("email");
-    router.push("/login"); // ✅ Redirect to login after logout
+    const token = localStorage.getItem("token");
+    if (token) {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+    }
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    router.push("/login");
   };
 
   const createMenuItem = async () => {
