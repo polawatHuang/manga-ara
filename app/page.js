@@ -13,6 +13,36 @@ import CommentSliderComponent from "@/components/CommentSliderComponent";
 import fetchRecommendData from "@/utils/fetchRecommendData";
 import RecommendFormComponent from "@/components/RecommendFormComponent";
 
+// SEO Metadata for Homepage
+export const metadata = {
+  title: "อ่านมังงะแปลไทย ออนไลน์ฟรี อัปเดตใหม่ทุกวัน",
+  description: "อ่านการ์ตูนมังงะแปลไทยฟรี อัปเดตใหม่ทุกวัน! รวมมังงะยอดนิยม แอ็กชัน โรแมนซ์ แฟนตาซี ดราม่า ผู้ใหญ่ Yaoi Yuri คุณภาพ HD โหลดเร็ว อ่านง่าย ไม่สะดุด มังงะแนะนำจากทางบ้าน คลิกอ่านเลย!",
+  keywords: "อ่านการ์ตูน, มังงะแปลไทย, อ่านมังงะออนไลน์, การ์ตูนญี่ปุ่น, manga online, อ่านการ์ตูนฟรี, มังงะแนะนำ, อัปเดตมังงะใหม่, การ์ตูนแอ็กชัน, การ์ตูนโรแมนซ์, มังงะยอดนิยม, manga ara",
+  openGraph: {
+    title: "MANGA ARA - อ่านมังงะแปลไทย อัปเดตใหม่ทุกวัน ฟรี!",
+    description: "รวมมังงะยอดนิยมทุกแนว อัปเดตใหม่ทุกวัน แปลไทย คุณภาพ HD อ่านฟรี ไม่สะดุด คลิกอ่านเลย!",
+    url: "https://mangaara.com",
+    type: "website",
+    images: [
+      {
+        url: "/images/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "MANGA ARA - เว็บอ่านมังงะอันดับ 1",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MANGA ARA - อ่านมังงะแปลไทย ฟรี อัปเดตทุกวัน",
+    description: "รวมมังงะยอดนิยมทุกแนว อัปเดตใหม่ทุกวัน แปลไทย คุณภาพ HD",
+    images: ["/images/og-image.jpg"],
+  },
+  alternates: {
+    canonical: "https://mangaara.com",
+  },
+};
+
 // ✅ Server-side component
 export default async function Home() {
   const mangas = await fetchMangaData();
