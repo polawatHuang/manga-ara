@@ -16,8 +16,8 @@ const CardComponent = ({ manga, hasFevFunction = true }) => {
   // Toggle favorite manga
   const toggleFavorite = () => {
     let updatedFavorites;
-    if (favorites.some((fav) => fav.id === manga.id)) {
-      updatedFavorites = favorites.filter((fav) => fav.id !== manga.id); // Remove favorite
+    if (favorites.some((fav) => fav.manga_id === manga.manga_id)) {
+      updatedFavorites = favorites.filter((fav) => fav.manga_id !== manga.manga_id); // Remove favorite
     } else {
       updatedFavorites = [...favorites, manga]; // Add favorite
     }
@@ -34,7 +34,7 @@ const CardComponent = ({ manga, hasFevFunction = true }) => {
         onClick={toggleFavorite}
         className="absolute top-1 right-1 p-2 h-9 bg-black bg-opacity-50 rounded-full flex items-center"
       >
-        {favorites.some((fav) => fav.id === manga.id) ? (
+        {favorites.some((fav) => fav.manga_id === manga.manga_id) ? (
           <span className="text-red-500 text-xl">❤️</span>
         ) : (
           <span className="text-white text-xl mt-[2px]">🤍</span>
@@ -46,9 +46,9 @@ const CardComponent = ({ manga, hasFevFunction = true }) => {
         <Image
           width={187}
           height={268}
-          src={`https://mangaara.com${manga.backgroundImage}`}
+          src={manga.background_image || `https://mangaara.com${manga.backgroundImage}`}
           alt={manga.name}
-          className="h-[220px] w-full object-cover"
+          className="h-[300px] w-full object-cover"
           loading="lazy"
         />
         <div className="py-4">

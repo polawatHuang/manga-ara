@@ -4,7 +4,7 @@ async function fetchMangaData(page = 1, type = "") {
     const url = `${baseURL}/mangas?page=${page}&type=${type}`;
 
     const mangaRes = await fetch(url, {
-      cache: "no-store",
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
     });
 
     if (!mangaRes.ok) {

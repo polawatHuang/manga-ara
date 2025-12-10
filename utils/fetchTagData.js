@@ -1,13 +1,11 @@
 async function fetchTagData(page = 1, type = "") {
-    try {
-      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
-      const url = `${baseURL}/tags?page=${page}&type=${type}`;
-  
-      const tagRes = await fetch(url, {
-        cache: "no-store",
-      });
-  
-      if (!tagRes.ok) {
+  try {
+    const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
+    const url = `${baseURL}/tags?page=${page}&type=${type}`;
+
+    const tagRes = await fetch(url, {
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
+    });      if (!tagRes.ok) {
         console.error("API error:", tagRes.status);
         return [];
       }

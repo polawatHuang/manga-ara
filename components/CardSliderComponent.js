@@ -35,8 +35,8 @@ export default function CardSliderComponent({ mangaList , hasFevFunction = false
   // Toggle favorite manga
   const toggleFavorite = (manga) => {
     let updatedFavorites;
-    if (favorites.some((fav) => fav.id === manga.id)) {
-      updatedFavorites = favorites.filter((fav) => fav.id !== manga.id); // Remove favorite
+    if (favorites.some((fav) => fav.manga_id === manga.manga_id)) {
+      updatedFavorites = favorites.filter((fav) => fav.manga_id !== manga.manga_id); // Remove favorite
     } else {
       updatedFavorites = [...favorites, manga]; // Add favorite
     }
@@ -59,6 +59,7 @@ export default function CardSliderComponent({ mangaList , hasFevFunction = false
       </button> */}
 
       <Swiper
+        key="card-slider-swiper"
         modules={[Navigation, Autoplay]}
         spaceBetween={20}
         slidesPerView={2}
@@ -76,13 +77,13 @@ export default function CardSliderComponent({ mangaList , hasFevFunction = false
         className="w-full"
       >
         {mangaList.map((manga) => (
-          <SwiperSlide key={manga.id} className="relative">
+          <SwiperSlide key={manga.manga_id} className="relative">
             {/* Favorite Button */}
             {hasFevFunction && <button
               onClick={() => toggleFavorite(manga)}
               className="absolute top-1 right-1 p-2 bg-black h-9 bg-opacity-50 rounded-full flex items-center"
             >
-              {favorites.some((fav) => fav.id === manga.id) ? (
+              {favorites.some((fav) => fav.manga_id === manga.manga_id) ? (
                 <span className="text-pink-500 text-xl">❤️</span>
               ) : (
                 <span className="text-white text-xl mt-[2px]">🤍</span>
@@ -91,9 +92,18 @@ export default function CardSliderComponent({ mangaList , hasFevFunction = false
 
             {/* Manga Card */}
             <Link className="overflow-hidden bg-yellow-500" href={manga.slug}>
-              <Image width={187} height={268} src={`https://mangaara.com${manga.backgroundImage}`} alt={manga.name} className="h-[300px] w-full object-cover" loading="lazy" />
+              <Image 
+                width={187} 
+                height={268} 
+                src={manga.background_image || `https://mangaara.com${manga.backgroundImage}`} 
+                alt={manga.name} 
+                className="h-[300px] w-full object-cover" 
+                loading="lazy" 
+              />
               <div className="py-4">
-                <h2 className="text-lg font-semibold text-white text-ellipsis line-clamp-3">{manga.name}</h2>
+                <h2 className="text-lg font-semibold text-white text-ellipsis line-clamp-3">
+                  {manga.name}
+                </h2>
               </div>
             </Link>
           </SwiperSlide>

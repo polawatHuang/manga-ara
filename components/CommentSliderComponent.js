@@ -57,6 +57,7 @@ export default function CommentSliderComponent({ mangaList }) {
       </button>
 
       <Swiper
+        key="comment-slider-swiper"
         modules={[Navigation, Autoplay]}
         spaceBetween={20}
         slidesPerView={1}
@@ -80,13 +81,13 @@ export default function CommentSliderComponent({ mangaList }) {
         className="w-full"
       >
         {mangaList.map((manga) => (
-          <SwiperSlide key={manga.id} className="relative">
+          <SwiperSlide key={manga.recommend_id} className="relative">
             {/* Manga Card */}
             <div className="overflow-hidden">
               <div className="bg-white p-4 rounded-lg text-black flex gap-4">
                 <div className="flex-initial w-[50%] md:w-[40%]">
                   <Image
-                    src={`https://mangaara.com${manga.backgroundImage}`}
+                    src={manga.background_image || `https://mangaara.com${manga.backgroundImage}`}
                     alt="test"
                     width={150}
                     height={300}

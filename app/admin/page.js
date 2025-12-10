@@ -1,12 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Select from "react-select";
+import dynamic from "next/dynamic";
 // All Firebase imports removed. Use REST API endpoints for data and uploads.
 import clsx from "clsx";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 // import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 // import { arrayToString } from "@/utils/arrayToString";
+
+const Select = dynamic(() => import("react-select"), { ssr: false });
 
 /**
  * React Select custom styles to force black text.
@@ -289,6 +291,11 @@ export default function AdminPage() {
   const [selectedMangaSlug, setSelectedMangaSlug] = useState("");
   const [episodeNumber, setEpisodeNumber] = useState("");
   const [episodeFiles, setEpisodeFiles] = useState(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const fetchMangaForEpisodes = async () => {
     const response = await fetch("/api/mangas");
@@ -726,14 +733,16 @@ export default function AdminPage() {
             </div>
             <div className="flex gap-2 mb-4 items-center">
               <label>Tags ของเรื่อง: </label>
-              <Select
-                isMulti
-                styles={selectStyles} // applies black text in dropdown
-                options={tagOptions}
-                value={selectedTags}
-                className="md:w-[20vw]"
-                onChange={(values) => setSelectedTags(values || [])}
-              />
+              {isMounted && (
+                <Select
+                  isMulti
+                  styles={selectStyles} // applies black text in dropdown
+                  options={tagOptions}
+                  value={selectedTags}
+                  className="md:w-[20vw]"
+                  onChange={(values) => setSelectedTags(values || [])}
+                />
+              )}
             </div>
             <div className="mb-4 flex gap-2 items-center">
               <label>รูปปกเรื่อง: </label>
@@ -836,8 +845,8 @@ export default function AdminPage() {
                 เลือกชื่อเรื่องที่ต้องการ
               </option>
               {mangaForEpisodes.map((m) => (
-                <option style={blackInputStyle} key={m.id} value={m.id}>
-                  {m.name}
+                <option style={blackInputStyle} key={m.manga_id} value={m.manga_id}>
+                  {m.manga_name}
                 </option>
               ))}
             </select>

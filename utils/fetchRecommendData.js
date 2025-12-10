@@ -4,7 +4,7 @@ async function fetchRecommendData(page = 1, type = "") {
     const url = `${baseURL}/recommend?page=${page}&type=${type}`;
 
     const recommendRes = await fetch(url, {
-      cache: "no-store",
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
     });
 
     if (!recommendRes.ok) {
