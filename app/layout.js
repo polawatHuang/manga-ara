@@ -10,9 +10,9 @@ const kanit = Kanit({
 });
 
 export const metadata = {
-  metadataBase: new URL('https://mangaara.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://mangaara.com'),
   title: {
-    default: "MANGA ARA - อ่านมังงะแปลไทย อัปเดตไวที่สุด!",
+    default: "อ่านมังงะแปลไทย MANGA ARA - อัปเดตไวที่สุด!",
     template: "%s | MANGA ARA"
   },
   description:
@@ -41,7 +41,6 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "th_TH",
-    url: "https://mangaara.com",
     siteName: "MANGA ARA",
     title: "MANGA ARA - อ่านมังงะแปลไทย อัปเดตไวที่สุด!",
     description: "อ่านการ์ตูนออนไลน์ฟรี มังงะแปลไทย อัปเดตใหม่ทุกวัน! รวมมังงะทุกแนว คุณภาพ HD โหลดเร็ว",
@@ -79,18 +78,20 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mangaara.com';
+  
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "MANGA ARA",
-    "url": "https://mangaara.com",
+    "url": siteUrl,
     "description": "เว็บไซต์อ่านการ์ตูนออนไลน์ มังงะแปลไทย อัปเดตใหม่ทุกวัน",
     "publisher": {
       "@type": "Organization",
       "name": "MANGA ARA",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://mangaara.com/images/logo.png"
+        "url": `${siteUrl}/images/logo.png`
       },
       "contactPoint": {
         "@type": "ContactPoint",
@@ -100,7 +101,10 @@ export default function RootLayout({ children }) {
     },
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://mangaara.com/search?q={search_term_string}",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": `${siteUrl}/search?q={search_term_string}`
+      },
       "query-input": "required name=search_term_string"
     }
   };

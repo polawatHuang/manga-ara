@@ -38,9 +38,6 @@ export const metadata = {
     description: "รวมมังงะยอดนิยมทุกแนว อัปเดตใหม่ทุกวัน แปลไทย คุณภาพ HD",
     images: ["/images/og-image.jpg"],
   },
-  alternates: {
-    canonical: "https://mangaara.com",
-  },
 };
 
 // ✅ Server-side component

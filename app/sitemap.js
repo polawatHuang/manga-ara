@@ -1,5 +1,5 @@
 export default function sitemap() {
-  const baseUrl = 'https://mangaara.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mangaara.com';
   
   return [
     {
@@ -20,6 +20,5 @@ export default function sitemap() {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
-    // Add more static routes as needed
   ];
 }
