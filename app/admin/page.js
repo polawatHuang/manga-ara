@@ -4,7 +4,7 @@ import Select from "react-select";
 // All Firebase imports removed. Use REST API endpoints for data and uploads.
 import clsx from "clsx";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
-import dayjs from "dayjs";
+// import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 // import { arrayToString } from "@/utils/arrayToString";
 
@@ -102,16 +102,19 @@ export default function AdminPage() {
 
   // Fetch existing manga
   const fetchMangaList = async () => {
-    const snapshot = await getDocs(collection(db, "manga"));
-    const data = snapshot.docs.map((d) => ({ docId: d.id, ...d.data() }));
-    setMangaList(data);
+    try {
+      const res = await fetch("/api/mangas");
+      const data = await res.json();
+      setMangaList(data.map(m => ({ ...m, docId: m.manga_id })));
+    } catch (err) {
+      console.error("Error fetching manga list:", err);
+    }
   };
 
-  // Fetch Advertisements
+  // Fetch Advertisements - Not implemented in backend
   const fetchAdvertiseList = async () => {
-    const snapshot = await getDocs(collection(db, "advertise"));
-    const data = snapshot.docs.map((d) => ({ docId: d.id, ...d.data() }));
-    setAdvertiseList(data);
+    // TODO: Implement advertise API endpoint in backend
+    setAdvertiseList([]);
   };
 
   // Fetch /api/tags (example) and convert to react-select options
@@ -128,27 +131,8 @@ export default function AdminPage() {
 
   // Create Advertisement
   const createAd = async () => {
-    try {
-      let imageUrl = "";
-      if (adImageFile) {
-        const storageRef = ref(storage, `advertises/${adImageFile.name}`);
-        await uploadBytes(storageRef, adImageFile);
-        imageUrl = await getDownloadURL(storageRef);
-      }
-
-      await addDoc(collection(db, "advertise"), {
-        name: adName,
-        image: imageUrl,
-        created_date: new Date().toISOString().split("T")[0],
-      });
-
-      resetAdForm();
-      alert("Advertisement created!");
-      fetchAdvertiseList();
-    } catch (err) {
-      console.error(err);
-      alert("Error creating advertisement");
-    }
+    alert("Advertisement feature not yet implemented in backend");
+    // TODO: Implement /api/advertise endpoint in backend
   };
 
   // Load existing advertisement into form
@@ -162,44 +146,14 @@ export default function AdminPage() {
 
   // Update Advertisement
   const updateAd = async () => {
-    if (!editingAdId) return;
-    try {
-      const docRef = doc(db, "advertise", editingAdId);
-      let newImageUrl = null;
-
-      if (adImageFile) {
-        const storageRef = ref(storage, `advertises/${adImageFile.name}`);
-        await uploadBytes(storageRef, adImageFile);
-        newImageUrl = await getDownloadURL(storageRef);
-      }
-
-      const updatedFields = {
-        name: adName,
-      };
-      if (newImageUrl) {
-        updatedFields.image = newImageUrl;
-      }
-
-      await updateDoc(docRef, updatedFields);
-      alert("Advertisement updated!");
-      resetAdForm();
-      fetchAdvertiseList();
-    } catch (err) {
-      console.error(err);
-      alert("Error updating advertisement");
-    }
+    alert("Advertisement feature not yet implemented in backend");
+    // TODO: Implement /api/advertise endpoint in backend
   };
 
   // Delete Advertisement
   const deleteAd = async (adDocId) => {
-    try {
-      await deleteDoc(doc(db, "advertise", adDocId));
-      alert("Advertisement deleted!");
-      fetchAdvertiseList();
-    } catch (err) {
-      console.error(err);
-      alert("Error deleting advertisement");
-    }
+    alert("Advertisement feature not yet implemented in backend");
+    // TODO: Implement /api/advertise endpoint in backend
   };
 
   // Reset form
@@ -232,7 +186,7 @@ export default function AdminPage() {
     formData.append('manga_bg_img', mangaBackgroundFile);
 
     try {
-      const res = await fetch('https://www.mangaara.com/api/mangas', {
+      const res = await fetch('/api/mangas', {
         method: 'POST',
         body: formData,
       });
@@ -251,23 +205,28 @@ export default function AdminPage() {
   };
 
   // Load existing manga into the form
-  const handleEditManga = async (mangaDocId) => {
+  const handleEditManga = async (mangaId) => {
     try {
-      const docRef = doc(db, "manga", mangaDocId);
-      const docSnap = await getDoc(docRef);
-      if (!docSnap.exists()) {
+      const res = await fetch(`/api/mangas?id=${mangaId}`);
+      if (!res.ok) {
         alert("Manga not found!");
         return;
       }
-      const data = docSnap.data();
-      setEditingMangaId(mangaDocId);
-      setMangaName(data.name || "");
-      setMangaSlug(data.slug || "");
-      setMangaDescription(data.description || "");
+      const data = await res.json();
+      setEditingMangaId(mangaId);
+      setMangaName(data.manga_name || "");
+      setMangaSlug(data.manga_slug || "");
+      setMangaDescription(data.manga_disc || "");
       setMangaBackgroundFile(null);
-      if (Array.isArray(data.tag)) {
-        const preSelected = data.tag.map((t) => ({ value: t, label: t }));
-        setSelectedTags(preSelected);
+      // Parse tag_id JSON string to array
+      if (data.tag_id) {
+        try {
+          const tags = JSON.parse(data.tag_id);
+          const preSelected = tags.map((t) => ({ value: t, label: t }));
+          setSelectedTags(preSelected);
+        } catch {
+          setSelectedTags([]);
+        }
       } else {
         setSelectedTags([]);
       }
@@ -281,32 +240,31 @@ export default function AdminPage() {
   const updateManga = async () => {
     if (!editingMangaId) return;
     try {
-      const docRef = doc(db, "manga", editingMangaId);
-      let newBgUrl = null;
-
-      if (mangaBackgroundFile && mangaSlug) {
-        const storageRef = ref(
-          storage,
-          `images/${mangaSlug}/${mangaBackgroundFile.name}`
-        );
-        await uploadBytes(storageRef, mangaBackgroundFile);
-        newBgUrl = await getDownloadURL(storageRef);
-      }
-      const updatedFields = {
-        name: mangaName,
-        slug: mangaSlug,
-        description: mangaDescription,
-        tag: selectedTags.map((t) => t.value),
-        updated_date: dayjs().format("YYYY-MM-DD"),
-      };
-      if (newBgUrl) {
-        updatedFields.backgroundImage = newBgUrl;
+      const formData = new FormData();
+      formData.append('id', editingMangaId);
+      formData.append('manga_name', mangaName);
+      formData.append('manga_slug', mangaSlug);
+      formData.append('manga_disc', mangaDescription);
+      
+      const tagValues = selectedTags.map(tag => tag.value);
+      formData.append('tag_id', JSON.stringify(tagValues));
+      
+      if (mangaBackgroundFile) {
+        formData.append('manga_bg_img', mangaBackgroundFile);
       }
 
-      await updateDoc(docRef, updatedFields);
-      alert("Manga updated!");
-      resetMangaForm();
-      fetchMangaList();
+      const res = await fetch('/api/mangas', {
+        method: 'PUT',
+        body: formData,
+      });
+
+      if (res.ok) {
+        alert("Manga updated!");
+        resetMangaForm();
+        fetchMangaList();
+      } else {
+        alert("Failed to update manga");
+      }
     } catch (err) {
       console.error(err);
       alert("Error updating manga");
@@ -358,7 +316,7 @@ export default function AdminPage() {
     }
   
     try {
-      const response = await fetch('https://mangaara.com/api/episode', {
+      const response = await fetch('https://manga.cipacmeeting.com/api/episode', {
         method: 'POST',
         body: formData
       });
@@ -392,38 +350,46 @@ export default function AdminPage() {
   const [editingTagDocId, setEditingTagDocId] = useState(null);
 
   const fetchTagList = async () => {
-    const snapshot = await getDocs(collection(db, "tag"));
-    const data = snapshot.docs.map((d) => ({ docId: d.id, ...d.data() }));
-    setTagList(data);
+    try {
+      const res = await fetch("/api/tags");
+      const data = await res.json();
+      setTagList(data.map(t => ({ ...t, docId: t.tag_id })));
+    } catch (err) {
+      console.error("Error fetching tags:", err);
+    }
   };
 
   const createTag = async () => {
     try {
-      await addDoc(collection(db, "tag"), {
-        name: tagName,
-        id: Number(tagIdValue),
+      const res = await fetch("/api/tags", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: tagName }),
       });
-      resetTagForm();
-      alert("Tag created!");
-      fetchTagList();
+      
+      if (res.ok) {
+        resetTagForm();
+        alert("Tag created!");
+        fetchTagList();
+      } else {
+        const error = await res.json();
+        alert(error.error || "Error creating tag");
+      }
     } catch (err) {
       console.error(err);
       alert("Error creating tag");
     }
   };
 
-  const handleEditTag = async (docId) => {
+  const handleEditTag = async (tagId) => {
     try {
-      const tagRef = doc(db, "tag", docId);
-      const snap = await getDoc(tagRef);
-      if (!snap.exists()) {
+      const tag = tagList.find(t => t.tag_id === tagId);
+      if (!tag) {
         alert("Tag not found!");
         return;
       }
-      const data = snap.data();
-      setEditingTagDocId(docId);
-      setTagName(data.name || "");
-      setTagIdValue(data.id || "");
+      setEditingTagDocId(tagId);
+      setTagName(tag.name || "");
     } catch (err) {
       console.error(err);
       alert("Error fetching tag");
@@ -433,14 +399,19 @@ export default function AdminPage() {
   const updateTag = async () => {
     if (!editingTagDocId) return;
     try {
-      const tagRef = doc(db, "tag", editingTagDocId);
-      await updateDoc(tagRef, {
-        name: tagName,
-        id: Number(tagIdValue),
+      const res = await fetch(`/api/tags/${editingTagDocId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tag_name: tagName }),
       });
-      alert("Tag updated!");
-      resetTagForm();
-      fetchTagList();
+      
+      if (res.ok || res.status === 204) {
+        alert("Tag updated!");
+        resetTagForm();
+        fetchTagList();
+      } else {
+        alert("Error updating tag");
+      }
     } catch (err) {
       console.error(err);
       alert("Error updating tag");
@@ -463,41 +434,14 @@ export default function AdminPage() {
   const [editingMenuDocId, setEditingMenuDocId] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState("");
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-      setLoading(false);
-      return;
-    }
-    fetch("/api/auth/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.valid) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          router.push("/login");
-        } else {
-          setEmail(data.user.email);
-        }
-        setLoading(false);
-      })
-      .catch(() => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        router.push("/login");
-        setLoading(false);
-      });
-  }, [router]);
-
   const fetchMenuList = async () => {
-    const snapshot = await getDocs(collection(db, "menubar"));
-    const data = snapshot.docs.map((d) => ({ docId: d.id, ...d.data() }));
-    setMenuList(data);
+    try {
+      const res = await fetch("/api/menubar");
+      const data = await res.json();
+      setMenuList(data.map(m => ({ ...m, docId: m.menu_id })));
+    } catch (err) {
+      console.error("Error fetching menu items:", err);
+    }
   };
 
   const handleLogout = async () => {
@@ -516,33 +460,42 @@ export default function AdminPage() {
 
   const createMenuItem = async () => {
     try {
-      await addDoc(collection(db, "menubar"), {
-        name: menuName,
-        href: menuHref,
-        id: Number(menuIdValue),
+      const res = await fetch("/api/menubar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: menuName,
+          href: menuHref,
+          id: Number(menuIdValue),
+          is_active: true
+        }),
       });
-      resetMenuForm();
-      alert("Menu item created!");
-      fetchMenuList();
+      
+      if (res.ok) {
+        resetMenuForm();
+        alert("Menu item created!");
+        fetchMenuList();
+      } else {
+        const error = await res.json();
+        alert(error.error || "Error creating menu item");
+      }
     } catch (err) {
       console.error(err);
       alert("Error creating menu item");
     }
   };
 
-  const handleEditMenuItem = async (docId) => {
+  const handleEditMenuItem = async (menuId) => {
     try {
-      const menuRef = doc(db, "menubar", docId);
-      const snap = await getDoc(menuRef);
-      if (!snap.exists()) {
+      const menu = menuList.find(m => m.menu_id === menuId);
+      if (!menu) {
         alert("Menu item not found!");
         return;
       }
-      const data = snap.data();
-      setEditingMenuDocId(docId);
-      setMenuName(data.name || "");
-      setMenuHref(data.href || "");
-      setMenuIdValue(data.id || "");
+      setEditingMenuDocId(menuId);
+      setMenuName(menu.name || "");
+      setMenuHref(menu.href || "");
+      setMenuIdValue(menu.id?.toString() || "");
     } catch (err) {
       console.error(err);
       alert("Error fetching menu item");
@@ -552,15 +505,23 @@ export default function AdminPage() {
   const updateMenuItem = async () => {
     if (!editingMenuDocId) return;
     try {
-      const menuRef = doc(db, "menubar", editingMenuDocId);
-      await updateDoc(menuRef, {
-        name: menuName,
-        href: menuHref,
-        id: Number(menuIdValue),
+      const res = await fetch(`/api/menubar/${editingMenuDocId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: menuName,
+          href: menuHref,
+          id: Number(menuIdValue),
+        }),
       });
-      alert("Menu item updated!");
-      resetMenuForm();
-      fetchMenuList();
+      
+      if (res.ok || res.status === 204) {
+        alert("Menu item updated!");
+        resetMenuForm();
+        fetchMenuList();
+      } else {
+        alert("Error updating menu item");
+      }
     } catch (err) {
       console.error(err);
       alert("Error updating menu item");
@@ -572,6 +533,68 @@ export default function AdminPage() {
     setMenuName("");
     setMenuHref("");
     setMenuIdValue("");
+  };
+
+  const deleteTag = async (tagId) => {
+    if (!confirm("Are you sure you want to delete this tag?")) return;
+    try {
+      const res = await fetch(`/api/tags/${tagId}`, {
+        method: "DELETE",
+      });
+      
+      if (res.ok) {
+        alert("Tag deleted successfully!");
+        fetchTagList();
+      } else {
+        const error = await res.json();
+        alert(error.error || "Error deleting tag");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting tag");
+    }
+  };
+
+  const deleteMenuItem = async (menuId) => {
+    if (!confirm("Are you sure you want to delete this menu item?")) return;
+    try {
+      const res = await fetch(`/api/menubar/${menuId}`, {
+        method: "DELETE",
+      });
+      
+      if (res.ok) {
+        alert("Menu item deleted successfully!");
+        fetchMenuList();
+      } else {
+        const error = await res.json();
+        alert(error.error || "Error deleting menu item");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting menu item");
+    }
+  };
+
+  const deleteManga = async (mangaId) => {
+    if (!confirm("Are you sure you want to delete this manga?")) return;
+    try {
+      const res = await fetch(`/api/mangas`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: mangaId }),
+      });
+      
+      if (res.ok) {
+        alert("Manga deleted successfully!");
+        fetchMangaList();
+      } else {
+        const error = await res.json();
+        alert(error.error || "Error deleting manga");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting manga");
+    }
   };
 
   /* ======================
@@ -907,13 +930,19 @@ export default function AdminPage() {
             <div className="p-4 bg-gray-500">
               <ul>
                 {tagList.map((t, index) => (
-                  <li key={t.docId} style={{ marginBottom: "0.5rem" }}>
+                  <li key={t.tag_id} style={{ marginBottom: "0.5rem" }}>
                     {t.name}
                     <button
                       className="ml-[1rem] px-2 bg-blue-500 hover:bg-blue-600 rounded-full"
-                      onClick={() => handleEditTag(t.docId)}
+                      onClick={() => handleEditTag(t.tag_id)}
                     >
                       Edit
+                    </button>
+                    <button
+                      className="ml-[1rem] px-2 bg-red-500 hover:bg-red-600 rounded-full"
+                      onClick={() => deleteTag(t.tag_id)}
+                    >
+                      Delete
                     </button>
                     {index + 1 !== tagList.length ? (
                       <div className="w-full h-[1px] bg-gray-400 my-4" />
@@ -992,13 +1021,19 @@ export default function AdminPage() {
             <div className="p-4 bg-gray-500 ">
               <ul>
                 {menuList.map((m, index) => (
-                  <li key={m.docId} style={{ marginBottom: "0.5rem" }}>
+                  <li key={m.menu_id} style={{ marginBottom: "0.5rem" }}>
                     {m.name} - {m.href}
                     <button
                       className="ml-[1rem] px-2 rounded-full bg-blue-500 hover:bg-blue-600"
-                      onClick={() => handleEditMenuItem(m.docId)}
+                      onClick={() => handleEditMenuItem(m.menu_id)}
                     >
                       Edit
+                    </button>
+                    <button
+                      className="ml-[1rem] px-2 rounded-full bg-red-500 hover:bg-red-600"
+                      onClick={() => deleteMenuItem(m.menu_id)}
+                    >
+                      Delete
                     </button>
                     {index + 1 !== menuList.length ? (
                       <div className="w-full h-[1px] bg-gray-400 my-4" />
