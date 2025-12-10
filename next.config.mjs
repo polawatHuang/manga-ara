@@ -19,6 +19,10 @@ const nextConfig = {
         {
           protocol: 'https',
           hostname: "mangaara.*",
+        },
+        {
+          protocol: 'https',
+          hostname: "manga.cipacmeeting.com",
         }
       ],
     },
